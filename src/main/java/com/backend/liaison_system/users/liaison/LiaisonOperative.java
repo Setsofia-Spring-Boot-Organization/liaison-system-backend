@@ -26,8 +26,11 @@ public class LiaisonOperative {
     private LocalDateTime updatedAt;
 
     private String email;
-    private String password;
+    private String firstName;
+    private String lastName;
+    private String otherName;
 
+    private String password;
     private UserRoles role;
 
     @Override
