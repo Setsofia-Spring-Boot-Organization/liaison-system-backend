@@ -14,6 +14,6 @@ public class AuthenticationController {
 
     @PostMapping(path = "login")
     public ResponseEntity<String> loginUser() {
-        return new ResponseEntity<>("logged in successfully!", HttpStatus.OK);
+        return new ResponseEntity<>("User logged in successfully!", HttpStatus.OK);
     }
 }
