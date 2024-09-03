@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +22,9 @@ public class Lecturer {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     private String email;
     private String password;
 
@@ -33,8 +37,8 @@ public class Lecturer {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Lecturer student = (Lecturer) o;
-        return getId() != null && Objects.equals(getId(), student.getId());
+        Lecturer lecturer = (Lecturer) o;
+        return getId() != null && Objects.equals(getId(), lecturer.getId());
     }
 
     @Override

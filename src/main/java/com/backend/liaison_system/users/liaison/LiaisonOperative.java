@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +21,9 @@ public class LiaisonOperative {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     private String email;
     private String password;
