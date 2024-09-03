@@ -1,5 +1,6 @@
 package com.backend.liaison_system.authentication;
 
+import com.backend.liaison_system.dao.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     @PostMapping(path = "login")
-    public ResponseEntity<String> loginUser() {
-        return new ResponseEntity<>("User logged in successfully!", HttpStatus.OK);
+    public ResponseEntity<Response<String>> loginUser() {
+        return new ResponseEntity<>(Response.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("success")
+                .data("What are the details needed for a student?")
+                .build(),
+                HttpStatus.OK
+        );
     }
 }
