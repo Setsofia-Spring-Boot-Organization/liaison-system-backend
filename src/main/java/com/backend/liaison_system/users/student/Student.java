@@ -30,7 +30,8 @@ public class Student {
 
     private String studentName;
     private String studentDepartment;
-    private int studentAge;
+    private String studentFaculty;
+    private String studentAge;
     private String studentEmail;
     private String studentGender;
     private String studentPhone;
