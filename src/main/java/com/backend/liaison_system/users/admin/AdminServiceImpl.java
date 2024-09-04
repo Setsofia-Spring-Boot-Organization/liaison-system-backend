@@ -84,7 +84,6 @@ public class AdminServiceImpl implements AdminService{
         admin.setPassword(encodedPass);
 
         try {
-            System.out.println(admin);
             return adminRepository.save(admin);
 
         } catch (Exception exception) {
