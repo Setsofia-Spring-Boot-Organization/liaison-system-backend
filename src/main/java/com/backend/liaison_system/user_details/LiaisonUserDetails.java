@@ -37,7 +37,7 @@ public class LiaisonUserDetails implements UserDetails {
     }
 
     // the liaison operative details
-    LiaisonUserDetails(Admin admin) {
+    public LiaisonUserDetails(Admin admin) {
         this.id = admin.getId();
         this.firstName = admin.getFirstName();
         this.lastName = admin.getLastName();
