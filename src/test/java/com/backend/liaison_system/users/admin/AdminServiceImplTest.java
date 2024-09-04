@@ -179,4 +179,19 @@ class AdminServiceImplTest {
         assertEquals(Error.REQUIRED_FIELDS_ARE_EMPTY.label, response.getMessage());
         assertEquals(Cause.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[email, firstname, lastname, password]", response.getCause().getMessage());
     }
+
+    @Test
+    void whenDataSavingFail_Throw_ERROR_SAVING_DATA_exception() {
+        Admin admin = admin();
+        NewUserRequest newUserRequest = newUserRequest(admin);
+
+        when(adminRepository.save(any(Admin.class))).thenThrow(LiaisonException.class);
+
+        // operation:
+        LiaisonException response = assertThrows(LiaisonException.class, () -> adminService.creatNewAdmin(newUserRequest));
+
+        // assertions:
+        assertNotNull(response);
+        assertEquals(Error.ERROR_SAVING_DATA.label, response.getMessage());
+    }
 }
