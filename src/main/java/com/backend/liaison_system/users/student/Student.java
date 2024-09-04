@@ -28,6 +28,14 @@ public class Student {
     private String email;
     private String password;
 
+    private String studentName;
+    private String studentDepartment;
+    private int studentAge;
+    private String studentEmail;
+    private String studentGender;
+    private String studentPhone;
+    private String studentAbout;
+
     private UserRoles role;
 
     @Override
