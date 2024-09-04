@@ -13,10 +13,10 @@ import java.util.List;
 
 public class LiaisonUserDetails implements UserDetails {
     @Getter
-    private String id;
-    private String email;
-    private String password;
-    private UserRoles role;
+    private final String id;
+    private final String email;
+    private final String password;
+    private final UserRoles role;
 
     // the student details
     LiaisonUserDetails(Student student) {
