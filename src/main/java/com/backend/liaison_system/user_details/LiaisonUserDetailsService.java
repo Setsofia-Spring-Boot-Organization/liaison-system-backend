@@ -2,8 +2,8 @@ package com.backend.liaison_system.user_details;
 
 import com.backend.liaison_system.users.lecturer.Lecturer;
 import com.backend.liaison_system.users.lecturer.LecturerRepository;
-import com.backend.liaison_system.users.liaison.LiaisonOperative;
-import com.backend.liaison_system.users.liaison.LiaisonOperativeRepository;
+import com.backend.liaison_system.users.admin.Admin;
+import com.backend.liaison_system.users.admin.AdminRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class LiaisonUserDetailsService implements UserDetailsService {
     private final StudentRepository studentRepository;
     private final LecturerRepository lecturerRepository;
-    private final LiaisonOperativeRepository liaisonOperativeRepository;
+    private final AdminRepository adminRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -32,9 +32,9 @@ public class LiaisonUserDetailsService implements UserDetailsService {
             return new LiaisonUserDetails(lecturer.get());
         }
 
-        Optional<LiaisonOperative> liaisonOperative = liaisonOperativeRepository.findByEmail(email);
-        if (liaisonOperative.isPresent()) {
-            return new LiaisonUserDetails(liaisonOperative.get());
+        Optional<Admin> admin = adminRepository.findByEmail(email);
+        if (admin.isPresent()) {
+            return new LiaisonUserDetails(admin.get());
         }
 
         throw new UsernameNotFoundException("user email not found");

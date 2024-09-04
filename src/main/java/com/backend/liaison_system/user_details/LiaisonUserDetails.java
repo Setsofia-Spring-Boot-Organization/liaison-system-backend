@@ -2,7 +2,7 @@ package com.backend.liaison_system.user_details;
 
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.lecturer.Lecturer;
-import com.backend.liaison_system.users.liaison.LiaisonOperative;
+import com.backend.liaison_system.users.admin.Admin;
 import com.backend.liaison_system.users.student.Student;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,10 +13,12 @@ import java.util.List;
 
 public class LiaisonUserDetails implements UserDetails {
     @Getter
-    private String id;
-    private String email;
-    private String password;
-    private UserRoles role;
+    private final String id;
+    private String firstName;
+    private String lastName;
+    private final String email;
+    private final String password;
+    private final UserRoles role;
 
     // the student details
     LiaisonUserDetails(Student student) {
@@ -35,11 +37,13 @@ public class LiaisonUserDetails implements UserDetails {
     }
 
     // the liaison operative details
-    LiaisonUserDetails(LiaisonOperative liaisonOperative) {
-        this.id = liaisonOperative.getId();
-        this.email = liaisonOperative.getEmail();
-        this.password = liaisonOperative.getPassword();
-        this.role = liaisonOperative.getRole();
+    LiaisonUserDetails(Admin admin) {
+        this.id = admin.getId();
+        this.firstName = admin.getFirstName();
+        this.lastName = admin.getLastName();
+        this.email = admin.getEmail();
+        this.password = admin.getPassword();
+        this.role = admin.getRole();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.backend.liaison_system.users.liaison;
+package com.backend.liaison_system.users.admin;
 
 import com.backend.liaison_system.enums.UserRoles;
 import jakarta.persistence.Entity;
@@ -17,7 +17,7 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class LiaisonOperative {
+public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -26,8 +26,11 @@ public class LiaisonOperative {
     private LocalDateTime updatedAt;
 
     private String email;
-    private String password;
+    private String firstName;
+    private String lastName;
+    private String otherName;
 
+    private String password;
     private UserRoles role;
 
     @Override
@@ -37,7 +40,7 @@ public class LiaisonOperative {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        LiaisonOperative student = (LiaisonOperative) o;
+        Admin student = (Admin) o;
         return getId() != null && Objects.equals(getId(), student.getId());
     }
 
