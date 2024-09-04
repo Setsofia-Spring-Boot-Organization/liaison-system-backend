@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
             token = authHeader.substring(7);
-            email = jwtServiceImpl.extractUsername(token);
+            email = jwtServiceImpl.extractUserEmail(token);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails user = liaisonUserDetailsService.loadUserByUsername(email);

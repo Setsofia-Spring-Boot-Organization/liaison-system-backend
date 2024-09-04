@@ -32,9 +32,9 @@ public class LiaisonUserDetailsService implements UserDetailsService {
             return new LiaisonUserDetails(lecturer.get());
         }
 
-        Optional<Admin> liaisonOperative = adminRepository.findByEmail(email);
-        if (liaisonOperative.isPresent()) {
-            return new LiaisonUserDetails(liaisonOperative.get());
+        Optional<Admin> admin = adminRepository.findByEmail(email);
+        if (admin.isPresent()) {
+            return new LiaisonUserDetails(admin.get());
         }
 
         throw new UsernameNotFoundException("user email not found");

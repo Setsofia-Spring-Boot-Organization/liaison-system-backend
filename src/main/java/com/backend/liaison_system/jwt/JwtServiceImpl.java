@@ -61,7 +61,7 @@ public class JwtServiceImpl {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    public String extractUsername(String token) {
+    public String extractUserEmail(String token) {
         return extractClaimsFromToken(token, Claims::getSubject);
     }
 }
