@@ -19,7 +19,7 @@ public class AuthenticationController {
     public ResponseEntity<Response<LoginData>> loginUser() {
         return new ResponseEntity<>(Response.<LoginData>builder()
                 .status(HttpStatus.OK.value())
-                .message("success")
+                .message("login successful")
                 .data(new LoginData(
                         "1234567",
                         "Nusetor",
