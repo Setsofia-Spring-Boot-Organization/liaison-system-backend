@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         authRequest -> {
-                            authRequest.requestMatchers("/liaison/api/v1/auth/**").permitAll();
+                            authRequest.requestMatchers("/liaison/api/v1/auth/**", "/liaison/api/v1/admin/**").permitAll();
                             authRequest.anyRequest().authenticated();
                         }
                 )

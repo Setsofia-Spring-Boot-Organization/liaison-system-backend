@@ -15,7 +15,10 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.OK; // set the default http status
         String path = ((ServletWebRequest) request).getRequest().getRequestURI();
         Error error = exception.error;
-        String cause = exception.getCause().getMessage();
+        String cause = null;
+        if (exception.getCause() != null) {
+            cause = exception.getCause().getMessage();
+        }
 
         switch (error) {
             case USER_NOT_FOUND -> status = HttpStatus.NOT_FOUND;
