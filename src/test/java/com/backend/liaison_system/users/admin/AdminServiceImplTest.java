@@ -3,6 +3,7 @@ package com.backend.liaison_system.users.admin;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dto.NewUserRequest;
 import com.backend.liaison_system.enums.UserRoles;
+import com.backend.liaison_system.exception.Cause;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import org.junit.jupiter.api.AfterEach;
@@ -109,5 +110,73 @@ class AdminServiceImplTest {
         // assertions:
         assertNotNull(response);
         assertEquals(Error.EMAIL_ALREADY_EXISTS.label, response.getMessage());
+    }
+
+    @Test
+    void whenSomeFieldsAreEmpty_Throw_REQUIRED_FIELDS_ARE_EMPTY_and_THE_FOLLOWING_FIELDS_ARE_EMPTY_exception() {
+        Admin admin = admin();
+        admin.setEmail("");
+        admin.setPassword("");
+        NewUserRequest newUserRequest = newUserRequest(admin);
+
+        // operation:
+        LiaisonException response = assertThrows(LiaisonException.class, () -> adminService.validateRequestFields(newUserRequest));
+
+        // assertions:
+        assertNotNull(response);
+        assertEquals(Error.REQUIRED_FIELDS_ARE_EMPTY.label, response.getMessage());
+        assertEquals(Cause.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[email, password]", response.getCause().getMessage());
+    }
+
+    @Test
+    void whenAllFieldsAreEmpty_Throw_REQUIRED_FIELDS_ARE_EMPTY_and_THE_FOLLOWING_FIELDS_ARE_EMPTY_exception() {
+        Admin admin = admin();
+        admin.setEmail("");
+        admin.setFirstName("");
+        admin.setLastName("");
+        admin.setPassword("");
+        NewUserRequest newUserRequest = newUserRequest(admin);
+
+        // operation:
+        LiaisonException response = assertThrows(LiaisonException.class, () -> adminService.validateRequestFields(newUserRequest));
+
+        // assertions:
+        assertNotNull(response);
+        assertEquals(Error.REQUIRED_FIELDS_ARE_EMPTY.label, response.getMessage());
+        assertEquals(Cause.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[email, firstname, lastname, password]", response.getCause().getMessage());
+    }
+
+    @Test
+    void whenSomeFieldsAreNull_Throw_REQUIRED_FIELDS_ARE_EMPTY_and_THE_FOLLOWING_FIELDS_ARE_EMPTY_exception() {
+        Admin admin = admin();
+        admin.setFirstName(null);
+        admin.setLastName(null);
+        NewUserRequest newUserRequest = newUserRequest(admin);
+
+        // operation:
+        LiaisonException response = assertThrows(LiaisonException.class, () -> adminService.validateRequestFields(newUserRequest));
+
+        // assertions:
+        assertNotNull(response);
+        assertEquals(Error.REQUIRED_FIELDS_ARE_EMPTY.label, response.getMessage());
+        assertEquals(Cause.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[firstname, lastname]", response.getCause().getMessage());
+    }
+
+    @Test
+    void whenAllFieldsAreNull_Throw_REQUIRED_FIELDS_ARE_EMPTY_and_THE_FOLLOWING_FIELDS_ARE_EMPTY_exception() {
+        Admin admin = admin();
+        admin.setEmail(null);
+        admin.setFirstName(null);
+        admin.setLastName(null);
+        admin.setPassword(null);
+        NewUserRequest newUserRequest = newUserRequest(admin);
+
+        // operation:
+        LiaisonException response = assertThrows(LiaisonException.class, () -> adminService.validateRequestFields(newUserRequest));
+
+        // assertions:
+        assertNotNull(response);
+        assertEquals(Error.REQUIRED_FIELDS_ARE_EMPTY.label, response.getMessage());
+        assertEquals(Cause.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[email, firstname, lastname, password]", response.getCause().getMessage());
     }
 }
