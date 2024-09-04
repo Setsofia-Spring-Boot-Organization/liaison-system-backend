@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import static com.backend.liaison_system.exception.Cause.THE_FOLLOWING_FIELDS_ARE_EMPTY;
+import static com.backend.liaison_system.exception.Cause.THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM;
 import static com.backend.liaison_system.exception.Error.*;
 
 @Service
@@ -27,7 +28,9 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public ResponseEntity<Response<Admin>> creatNewAdmin(NewUserRequest request) {
         Optional<Admin> admin = adminRepository.findByEmail(request.getEmail());
-        if (admin.isPresent()) throw new LiaisonException(EMAIL_ALREADY_EXISTS);
+        if (admin.isPresent()) {
+            throw new LiaisonException(EMAIL_ALREADY_EXISTS, new Throwable(THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM.label));
+        };
 
         //create the admin
         Admin createdAdmin = createNewAdmin(request);
