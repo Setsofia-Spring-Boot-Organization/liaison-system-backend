@@ -40,8 +40,8 @@ public class Admin {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Admin student = (Admin) o;
-        return getId() != null && Objects.equals(getId(), student.getId());
+        Admin admin = (Admin) o;
+        return getId() != null && Objects.equals(getId(), admin.getId());
     }
 
     @Override

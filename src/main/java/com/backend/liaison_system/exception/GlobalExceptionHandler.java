@@ -19,6 +19,9 @@ public class GlobalExceptionHandler {
 
         switch (error) {
             case USER_NOT_FOUND -> status = HttpStatus.NOT_FOUND;
+            case EMAIL_ALREADY_EXISTS -> status = HttpStatus.CONFLICT;
+            case REQUIRED_FIELDS_ARE_EMPTY,
+                 ERROR_SAVING_DATA-> status = HttpStatus.BAD_REQUEST;
         }
 
         ExceptionResponse response = new ExceptionResponse(
