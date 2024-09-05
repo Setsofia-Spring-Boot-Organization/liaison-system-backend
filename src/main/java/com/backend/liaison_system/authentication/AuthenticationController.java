@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final AuthenticationServiceImpl authenticationServiceImpl;
+    private final AuthenticationService authenticationService;
 
     @PostMapping(path = "login")
     public ResponseEntity<Response<LoginData>> loginUser(
             @RequestBody LoginRequest loginRequest
     ) throws LiaisonException {
-        return authenticationServiceImpl.loginUser(loginRequest);
+        return authenticationService.loginUser(loginRequest);
     }
 }
