@@ -36,4 +36,3 @@ build/
 
 ############
 .env
-compose.yaml
