@@ -23,6 +23,7 @@ public class GlobalExceptionHandler {
         switch (error) {
             case USER_NOT_FOUND -> status = HttpStatus.NOT_FOUND;
             case EMAIL_ALREADY_EXISTS -> status = HttpStatus.CONFLICT;
+            case INVALID_USERNAME_OR_PASSWORD -> status= HttpStatus.UNAUTHORIZED;
             case REQUIRED_FIELDS_ARE_EMPTY,
                  ERROR_SAVING_DATA-> status = HttpStatus.BAD_REQUEST;
         }
