@@ -30,7 +30,7 @@ public class AdminServiceImpl implements AdminService{
         Optional<Admin> admin = adminRepository.findByEmail(request.getEmail());
         if (admin.isPresent()) {
             throw new LiaisonException(EMAIL_ALREADY_EXISTS, new Throwable(THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM.label));
-        };
+        }
 
         //create the admin
         Admin createdAdmin = createNewAdmin(request);
