@@ -2,7 +2,7 @@
 FROM maven:3.8.1-openjdk-17 AS BUILD
 WORKDIR /app
 COPY . .
-RUN mvm clean package -Dskip-Tests
+RUN mvn clean package -Dskip-Tests
 
 #create the final image
 FROM openjdk:17.0.1-slim
