@@ -35,8 +35,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final StudentRepository studentRepository;
     private final LecturerRepository lecturerRepository;
 
-    LiaisonUserDetails getLiaisonUserDetails(String email) {
-        Optional<? extends LiaisonUserDetails> userDetails = Optional.empty();
+    /**
+     * This method retrieves the LiaisonUserDetails for a user based on their email.
+     * It checks if the user is an Admin, Lecturer, or Student, and returns the corresponding
+     * LiaisonUserDetails if found. If the user is not found in any repository, a LiaisonException is thrown.
+     *
+     * @param email the email of the user whose details are to be retrieved
+     * @return the LiaisonUserDetails of the user corresponding to the provided email
+     * @throws LiaisonException if the user is not found in any of the repositories
+     */
+    private LiaisonUserDetails getLiaisonUserDetails(String email) {
+        Optional<? extends LiaisonUserDetails> userDetails;
 
         Optional<Admin> admin = adminRepository.findByEmail(email);
         if (admin.isPresent()) {
