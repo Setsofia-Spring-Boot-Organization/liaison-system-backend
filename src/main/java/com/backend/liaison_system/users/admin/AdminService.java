@@ -6,7 +6,6 @@ import com.backend.liaison_system.dto.NewUserRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface AdminService {
-    public String uploadStudents(MultipartFile file);
     /**
      * This method creates a new admin user based on the provided NewUser data.
      *
@@ -14,4 +13,6 @@ public interface AdminService {
      * @return a ResponseEntity containing another ResponseEntity with the created Admin entity
      */
     ResponseEntity<Response<Admin>> creatNewAdmin(NewUserRequest newUserRequest);
+
+    Response<?> uploadStudents(MultipartFile file);
 }

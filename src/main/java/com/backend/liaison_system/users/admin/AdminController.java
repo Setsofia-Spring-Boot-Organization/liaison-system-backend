@@ -24,8 +24,9 @@ public class AdminController {
     ) throws LiaisonException {
         return adminServiceImpl.creatNewAdmin(newUserRequest);
     }
+
     @PostMapping("students_upload")
-    public ResponseEntity<String> uploadStudents(@RequestPart("file") MultipartFile file) {
-        return new ResponseEntity<>(adminService.uploadStudents(file), HttpStatus.OK);
+    public ResponseEntity<Response<?>> uploadStudents(@RequestPart("file") MultipartFile file) {
+        return new ResponseEntity<>(adminService.uploadStudents(file), HttpStatus.CREATED);
     }
 }
