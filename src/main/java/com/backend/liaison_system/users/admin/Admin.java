@@ -1,10 +1,7 @@
 package com.backend.liaison_system.users.admin;
 
 import com.backend.liaison_system.enums.UserRoles;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -31,6 +28,7 @@ public class Admin {
     private String otherName;
 
     private String password;
+    @Enumerated(EnumType.STRING)
     private UserRoles role;
 
     @Override

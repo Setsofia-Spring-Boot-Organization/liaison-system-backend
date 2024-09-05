@@ -16,13 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class AdminController {
     private final AdminService adminService;
 
-    private final AdminServiceImpl adminServiceImpl;
-
     @PostMapping
     public ResponseEntity<Response<Admin>> createNewAdmin(
             @Validated @RequestBody NewUserRequest newUserRequest
     ) throws LiaisonException {
-        return adminServiceImpl.creatNewAdmin(newUserRequest);
+        return adminService.creatNewAdmin(newUserRequest);
     }
 
     @PostMapping("students_upload")

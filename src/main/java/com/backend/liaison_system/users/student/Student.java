@@ -1,10 +1,7 @@
 package com.backend.liaison_system.users.student;
 
 import com.backend.liaison_system.enums.UserRoles;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -21,14 +18,12 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
     private String email;
     private String password;
 
-    private String studentName;
+    private String studentFirstName;
+    private String studentLastName;
+    private String studentOtherName;
     private String studentDepartment;
     private String studentFaculty;
     private String studentAge;
@@ -36,8 +31,14 @@ public class Student {
     private String studentGender;
     private String studentPhone;
     private String studentAbout;
+    private String studentCourse;
 
+    @Enumerated(EnumType.STRING)
     private UserRoles role;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
 
     @Override
     public final boolean equals(Object o) {

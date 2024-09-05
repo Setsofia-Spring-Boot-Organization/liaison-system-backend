@@ -2,6 +2,7 @@ package com.backend.liaison_system.users.admin;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dto.NewUserRequest;
+import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,16 +132,8 @@ public class AdminServiceImpl implements AdminService{
             Sheet sheet = workbook.getSheetAt(0);
             for(Row row : sheet) {
                 if(row.getRowNum() == 0) continue;
-                String password = getCellValueAsString(row.getCell(7));
-                Student student = new Student();
-                student.setEmail(getCellValueAsString(row.getCell(0)));
-                student.setStudentName(getCellValueAsString(row.getCell(1)));
-                student.setStudentFaculty(getCellValueAsString(row.getCell(2)));
-                student.setStudentDepartment(getCellValueAsString(row.getCell(3)));
-                student.setStudentAge(getCellValueAsString(row.getCell(4)));
-                student.setStudentGender(getCellValueAsString(row.getCell(5)));
-                student.setPassword(passwordEncoder.encode(password));
-                students.add(student);
+                Student currentStudent = buildStudentFromExcel(row);
+                students.add(currentStudent);
             }
             studentRepository.saveAll(students);
             log.info("Students saved to database");
@@ -154,6 +148,32 @@ public class AdminServiceImpl implements AdminService{
     }
 
     /**
+     * This is a function to extract all the information in a row and turn it into a Student Object
+     * @param row the Excel row containing all the info on the student
+     * @return a Student Object
+     */
+    private Student buildStudentFromExcel(Row row) {
+        String password = getCellValueAsString(row.getCell(9));
+        Student student = new Student();
+        student.setEmail(getCellValueAsString(row.getCell(0)));
+        student.setStudentFirstName(getCellValueAsString(row.getCell(1)));
+        student.setStudentLastName(getCellValueAsString(row.getCell(2)));
+        student.setStudentOtherName(getCellValueAsString(row.getCell(3)));
+        student.setStudentFaculty(getCellValueAsString(row.getCell(4)));
+        student.setStudentDepartment(getCellValueAsString(row.getCell(5)));
+        student.setStudentAge(getCellValueAsString(row.getCell(6)));
+        student.setStudentGender(getCellValueAsString(row.getCell(7)));
+        student.setStudentCourse(getCellValueAsString(row.getCell(10)));
+        student.setStudentEmail(getCellValueAsString(row.getCell(11)));
+        student.setStudentPhone(getCellValueAsString(row.getCell(12)));
+        student.setPassword(passwordEncoder.encode(password));
+        student.setRole(UserRoles.STUDENT);
+        student.setCreatedAt(LocalDateTime.now());
+        student.setUpdatedAt(LocalDateTime.now());
+        return student;
+    }
+
+    /**
      * This is a simple helper function that takes in each cell and returns it's value as a String
      * @param cell the Cell containing the value
      * @return a String
@@ -162,7 +182,14 @@ public class AdminServiceImpl implements AdminService{
         if (cell == null) return "";
         return switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();
-            case NUMERIC -> String.valueOf(cell.getNumericCellValue());
+            case NUMERIC -> {
+                double numericValue = cell.getNumericCellValue();
+                if (numericValue == Math.floor(numericValue)) {
+                    yield String.valueOf((long) numericValue);
+                } else {
+                    yield BigDecimal.valueOf(numericValue).toPlainString();
+                }
+            }
             case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
             case FORMULA -> cell.getCellFormula();
             default -> "";
