@@ -97,11 +97,11 @@ class AuthenticationServiceImplTest {
         when(adminRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(Mockito.mock(Authentication.class));
 
-//        ResponseEntity<Response<LoginData>> response = authenticationService.loginUser(loginRequest);
+        ResponseEntity<Response<LoginData>> response = authenticationService.loginUser(loginRequest);
 
-//        assertNotNull(response);
-//        assertNotNull(response.getBody());
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
 }
