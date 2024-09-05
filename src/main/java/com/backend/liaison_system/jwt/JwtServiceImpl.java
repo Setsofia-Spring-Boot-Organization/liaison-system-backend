@@ -57,7 +57,7 @@ public class JwtServiceImpl {
         }
     }
 
-    private String generateToken(LiaisonUserDetails userDetails) {
+    public String generateToken(LiaisonUserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
