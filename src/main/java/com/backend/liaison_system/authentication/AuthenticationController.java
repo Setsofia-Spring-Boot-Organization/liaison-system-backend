@@ -1,12 +1,13 @@
 package com.backend.liaison_system.authentication;
 
+import com.backend.liaison_system.authentication.dto.LoginRequest;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dao.data.LoginData;
-import com.backend.liaison_system.enums.UserRoles;
+import com.backend.liaison_system.exception.LiaisonException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,20 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
+    private final AuthenticationServiceImpl authenticationServiceImpl;
+
     @PostMapping(path = "login")
-    public ResponseEntity<Response<LoginData>> loginUser() {
-        return new ResponseEntity<>(Response.<LoginData>builder()
-                .status(HttpStatus.OK.value())
-                .message("login successful")
-                .data(new LoginData(
-                        "1234567",
-                        "Nusetor",
-                        "Setsofia",
-                        UserRoles.ADMIN,
-                        "qwnsavdvahskjdnaoskdn1234rfsdjnvskfdvskmadf3csdjkb"
-                ))
-                .build(),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Response<LoginData>> loginUser(
+            @RequestBody LoginRequest loginRequest
+    ) throws LiaisonException {
+        return authenticationServiceImpl.loginUser(loginRequest);
     }
 }

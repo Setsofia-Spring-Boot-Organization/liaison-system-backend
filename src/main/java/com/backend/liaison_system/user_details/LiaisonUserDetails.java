@@ -14,10 +14,14 @@ import java.util.List;
 public class LiaisonUserDetails implements UserDetails {
     @Getter
     private final String id;
+    @Getter
     private String firstName;
+    @Getter
     private String lastName;
+    @Getter
     private final String email;
     private final String password;
+    @Getter
     private final UserRoles role;
 
     // the student details
@@ -37,7 +41,7 @@ public class LiaisonUserDetails implements UserDetails {
     }
 
     // the liaison operative details
-    LiaisonUserDetails(Admin admin) {
+    public LiaisonUserDetails(Admin admin) {
         this.id = admin.getId();
         this.firstName = admin.getFirstName();
         this.lastName = admin.getLastName();
