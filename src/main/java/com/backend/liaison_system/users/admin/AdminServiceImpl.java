@@ -57,7 +57,7 @@ public class AdminServiceImpl implements AdminService{
      *
      * @param request the NewUserRequest object containing the fields to be validated
      */
-    void validateRequestFields(NewUserRequest request) {
+    private void validateRequestFields(NewUserRequest request) {
         List<String> emptyFields = new ArrayList<>();
         if (request.getEmail() == null || request.getEmail().isEmpty()) emptyFields.add("email");
         if (request.getFirstName() == null || request.getFirstName().isEmpty()) emptyFields.add("firstname");
@@ -67,7 +67,7 @@ public class AdminServiceImpl implements AdminService{
         if (!emptyFields.isEmpty()) throw new LiaisonException(REQUIRED_FIELDS_ARE_EMPTY, new Throwable(THE_FOLLOWING_FIELDS_ARE_EMPTY.label + emptyFields));
     }
 
-    Admin createNewAdmin(NewUserRequest request) {
+    private Admin createNewAdmin(NewUserRequest request) {
 
         // validate the input fields
         validateRequestFields(request);
