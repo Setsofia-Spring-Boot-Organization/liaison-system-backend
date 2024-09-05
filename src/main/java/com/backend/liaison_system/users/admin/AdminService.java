@@ -14,5 +14,10 @@ public interface AdminService {
      */
     ResponseEntity<Response<Admin>> creatNewAdmin(NewUserRequest newUserRequest);
 
+    /**
+     * This method adds multiple student users to the database extracting them from a pdf
+     * @param file an Excel sheet that contains all the students and their details
+     * @return a Response Object
+     */
     Response<?> uploadStudents(MultipartFile file);
 }

@@ -16,7 +16,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import static com.backend.liaison_system.exception.Cause.THE_FOLLOWING_FIELDS_ARE_EMPTY;
 import static com.backend.liaison_system.exception.Cause.THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM;
 import static com.backend.liaison_system.exception.Error.*;
@@ -39,7 +39,7 @@ public class AdminServiceImpl implements AdminService{
 
     private final AdminRepository adminRepository;
     private final StudentRepository studentRepository;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ResponseEntity<Response<Admin>> creatNewAdmin(NewUserRequest request) {
@@ -153,6 +153,11 @@ public class AdminServiceImpl implements AdminService{
         }
     }
 
+    /**
+     * This is a simple helper function that takes in each cell and returns it's value as a String
+     * @param cell the Cell containing the value
+     * @return a String
+     */
     private String getCellValueAsString(Cell cell) {
         if (cell == null) return "";
         return switch (cell.getCellType()) {
