@@ -10,5 +10,5 @@ WORKDIR /app
 COPY --from=BUILD /app/target/liaison_system-0.0.1-SNAPSHOT.jar liaison.jar
 
 #set the port
-EXPOSE 8040
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "liaison.jar"]
