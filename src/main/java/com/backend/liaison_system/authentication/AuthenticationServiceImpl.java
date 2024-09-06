@@ -3,7 +3,6 @@ package com.backend.liaison_system.authentication;
 import com.backend.liaison_system.authentication.dto.LoginRequest;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dao.data.LoginData;
-import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.jwt.JwtServiceImpl;
 import com.backend.liaison_system.user_details.LiaisonUserDetails;
@@ -22,7 +21,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
-import static com.backend.liaison_system.exception.Cause.THE_EMAIL_OR_PASSWORD_DO_NOT_MATCH;
+import static com.backend.liaison_system.exception.Message.THE_EMAIL_OR_PASSWORD_DO_NOT_MATCH;
 import static com.backend.liaison_system.exception.Error.INVALID_USERNAME_OR_PASSWORD;
 
 @Service
@@ -65,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return userDetails.get();
         }
 
-        throw new LiaisonException(Error.USER_NOT_FOUND);
+        throw new LiaisonException(INVALID_USERNAME_OR_PASSWORD, new Throwable(THE_EMAIL_OR_PASSWORD_DO_NOT_MATCH.label));
     }
 
 
