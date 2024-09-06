@@ -89,13 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     Response.<LoginData>builder()
                             .status(HttpStatus.OK.value())
                             .message("login successful")
-                            .data(new LoginData(
-                                    userDetails.getId(),
-                                    userDetails.getFirstName(),
-                                    userDetails.getLastName(),
-                                    userDetails.getRole(),
-                                    token
-                            ))
+                            .data(new LoginData(token))
                             .build()
             );
         } catch (AuthenticationException exception) {

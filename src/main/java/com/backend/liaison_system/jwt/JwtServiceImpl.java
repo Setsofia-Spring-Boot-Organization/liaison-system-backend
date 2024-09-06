@@ -41,6 +41,10 @@ public class JwtServiceImpl {
     }
 
     private String generateToken(Map<String, Object> claims, LiaisonUserDetails userDetails) {
+        claims.put("firstname", userDetails.getFirstName());
+        claims.put("lastname", userDetails.getLastName());
+        claims.put("role", userDetails.getRole());
+
         try {
             return Jwts
                     .builder()
