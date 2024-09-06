@@ -77,7 +77,7 @@ public class AdminServiceImpl implements AdminService{
      *
      * @param request the NewUserRequest object containing the fields to be validated
      */
-    void validateRequestFields(NewUserRequest request) {
+    private void validateRequestFields(NewUserRequest request) {
         List<String> emptyFields = new ArrayList<>();
         if (request.getEmail() == null || request.getEmail().isEmpty()) emptyFields.add("email");
         if (request.getFirstName() == null || request.getFirstName().isEmpty()) emptyFields.add("firstname");
@@ -87,7 +87,7 @@ public class AdminServiceImpl implements AdminService{
         if (!emptyFields.isEmpty()) throw new LiaisonException(REQUIRED_FIELDS_ARE_EMPTY, new Throwable(THE_FOLLOWING_FIELDS_ARE_EMPTY.label + emptyFields));
     }
 
-    Admin createNewAdmin(NewUserRequest request) {
+    private Admin createNewAdmin(NewUserRequest request) {
 
         // validate the input fields
         validateRequestFields(request);
@@ -180,7 +180,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     /**
-     * This is a simple helper function that takes in each cell and returns it's value as a String
+     * This is a simple helper function that takes in each cell and returns its value as a String
      * @param cell the Cell containing the value
      * @return a String
      */

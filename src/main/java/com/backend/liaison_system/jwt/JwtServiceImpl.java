@@ -18,11 +18,10 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 public class JwtServiceImpl {
-
     @Value("${auth-key}")
     private String SIGN_IN_KEY;
 
-    private SecretKey getSignInKey() {
+    public SecretKey getSignInKey() {
         byte[] bytes = Decoders.BASE64.decode(SIGN_IN_KEY);
         return Keys.hmacShaKeyFor(bytes);
     }
