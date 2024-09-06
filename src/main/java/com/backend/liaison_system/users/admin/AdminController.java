@@ -23,8 +23,13 @@ public class AdminController {
         return adminService.creatNewAdmin(newUserRequest);
     }
 
-    @PostMapping("students_upload")
+    @PostMapping("students")
     public ResponseEntity<Response<?>> uploadStudents(@RequestPart("file") MultipartFile file) {
         return new ResponseEntity<>(adminService.uploadStudents(file), HttpStatus.CREATED);
+    }
+
+    @GetMapping("students")
+    public ResponseEntity<Response<?>> getStudents() {
+        return new ResponseEntity<>(adminService.getStudents(1L), HttpStatus.OK);
     }
 }

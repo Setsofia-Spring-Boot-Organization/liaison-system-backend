@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.student;
 
+import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.enums.UserRoles;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,6 +33,10 @@ public class Student {
     private String studentPhone;
     private String studentAbout;
     private String studentCourse;
+    private String placeOfInternship;
+    private String startDate;
+    private String endDate;
+    private Status status;
 
     @Enumerated(EnumType.STRING)
     private UserRoles role;

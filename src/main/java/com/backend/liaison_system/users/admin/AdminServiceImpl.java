@@ -2,6 +2,8 @@ package com.backend.liaison_system.users.admin;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dto.NewUserRequest;
+import com.backend.liaison_system.dto.StudentDto;
+import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.student.Student;
@@ -166,6 +168,10 @@ public class AdminServiceImpl implements AdminService{
         student.setStudentCourse(getCellValueAsString(row.getCell(10)));
         student.setStudentEmail(getCellValueAsString(row.getCell(11)));
         student.setStudentPhone(getCellValueAsString(row.getCell(12)));
+        student.setPlaceOfInternship(getCellValueAsString(row.getCell(13)));
+        student.setStartDate(getCellValueAsString(row.getCell(14)));
+        student.setEndDate(getCellValueAsString(row.getCell(15)));
+        student.setStatus(Status.IN_PROGRESS);
         student.setPassword(passwordEncoder.encode(password));
         student.setRole(UserRoles.STUDENT);
         student.setCreatedAt(LocalDateTime.now());
@@ -195,4 +201,38 @@ public class AdminServiceImpl implements AdminService{
             default -> "";
         };
     }
+
+
+    @Override
+    public Response<?> getStudents(Long adminId) {
+        List<Student> students = studentRepository.findAll();
+        List<StudentDto> studentDtos = students.stream().map(this::buildStudentDtoFromStudent).toList();
+        return Response
+                .builder()
+                .message("Students Retrieved")
+                .status(HttpStatus.OK.value())
+                .data(studentDtos)
+                .build();
+    }
+
+    private StudentDto buildStudentDtoFromStudent(Student student) {
+        return StudentDto
+                .builder()
+                .id(student.getEmail())
+                .studentFirstName(student.getStudentFirstName())
+                .studentLastName(student.getStudentLastName())
+                .studentOtherName(student.getStudentOtherName())
+                .studentDepartment(student.getStudentDepartment())
+                .studentAge(student.getStudentAge())
+                .studentGender(student.getStudentGender())
+                .studentCourse(student.getStudentCourse())
+                .studentEmail(student.getStudentEmail())
+                .studentPhone(student.getStudentPhone())
+                .placeOfInternship(student.getPlaceOfInternship())
+                .startDate(student.getStartDate())
+                .endDate(student.getEndDate())
+                .studentAbout(student.getStudentAbout())
+                .build();
+    }
+
 }
