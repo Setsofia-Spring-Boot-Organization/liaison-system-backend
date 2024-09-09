@@ -15,6 +15,6 @@ public class ExceptionResponse {
 
     private int status;
     private String error;
-    private String cause;
+    private String message;
     private String path;
 }

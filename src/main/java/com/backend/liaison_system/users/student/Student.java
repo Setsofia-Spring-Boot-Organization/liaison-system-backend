@@ -34,8 +34,8 @@ public class Student {
     private String studentAbout;
     private String studentCourse;
     private String placeOfInternship;
-    private String startDate;
-    private String endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private Status status;
 
     @Enumerated(EnumType.STRING)

@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.backend.liaison_system.exception.Cause.THE_FOLLOWING_FIELDS_ARE_EMPTY;
-import static com.backend.liaison_system.exception.Cause.THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM;
+import static com.backend.liaison_system.exception.Message.THE_FOLLOWING_FIELDS_ARE_EMPTY;
+import static com.backend.liaison_system.exception.Message.THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM;
 import static com.backend.liaison_system.exception.Error.*;
 
 @Slf4j
@@ -120,7 +120,11 @@ public class AdminServiceImpl implements AdminService{
     public Response<?> uploadStudents(MultipartFile file) {
         try {
             log.info("File received: {}", file.getOriginalFilename());
+
+            //create an arrayList of students
             List<Student> students = new ArrayList<>();
+
+            //Turn the file into an InputStream and turn into a workbook
             InputStream inputStream = new BufferedInputStream(file.getInputStream());
             Workbook workbook;
             if (FileMagic.valueOf(inputStream) == FileMagic.OOXML) {
@@ -131,7 +135,10 @@ public class AdminServiceImpl implements AdminService{
                 log.error("Unsupported file magic: {}", FileMagic.valueOf(inputStream));
                 throw new LiaisonException(ERROR_SAVING_DATA);
             }
+
             Sheet sheet = workbook.getSheetAt(0);
+
+            //For each row in the sheet extract the student details
             for(Row row : sheet) {
                 if(row.getRowNum() == 0) continue;
                 Student currentStudent = buildStudentFromExcel(row);
@@ -169,8 +176,8 @@ public class AdminServiceImpl implements AdminService{
         student.setStudentEmail(getCellValueAsString(row.getCell(11)));
         student.setStudentPhone(getCellValueAsString(row.getCell(12)));
         student.setPlaceOfInternship(getCellValueAsString(row.getCell(13)));
-        student.setStartDate(getCellValueAsString(row.getCell(14)));
-        student.setEndDate(getCellValueAsString(row.getCell(15)));
+        student.setStartDate(row.getCell(14).getLocalDateTimeCellValue());
+        student.setEndDate(row.getCell(15).getLocalDateTimeCellValue());
         student.setStatus(Status.IN_PROGRESS);
         student.setPassword(passwordEncoder.encode(password));
         student.setRole(UserRoles.STUDENT);
@@ -202,16 +209,15 @@ public class AdminServiceImpl implements AdminService{
         };
     }
 
-
     @Override
     public Response<?> getStudents(Long adminId) {
         List<Student> students = studentRepository.findAll();
-        List<StudentDto> studentDtos = students.stream().map(this::buildStudentDtoFromStudent).toList();
+        List<StudentDto> studentDtoList = students.stream().map(this::buildStudentDtoFromStudent).toList();
         return Response
                 .builder()
                 .message("Students Retrieved")
                 .status(HttpStatus.OK.value())
-                .data(studentDtos)
+                .data(studentDtoList)
                 .build();
     }
 
@@ -219,20 +225,18 @@ public class AdminServiceImpl implements AdminService{
         return StudentDto
                 .builder()
                 .id(student.getEmail())
-                .studentFirstName(student.getStudentFirstName())
-                .studentLastName(student.getStudentLastName())
-                .studentOtherName(student.getStudentOtherName())
-                .studentDepartment(student.getStudentDepartment())
-                .studentAge(student.getStudentAge())
-                .studentGender(student.getStudentGender())
-                .studentCourse(student.getStudentCourse())
-                .studentEmail(student.getStudentEmail())
-                .studentPhone(student.getStudentPhone())
+                .name(student.getStudentFirstName()+ " " + student.getStudentLastName() + " " + student.getStudentOtherName())
+                .department(student.getStudentDepartment())
+                .faculty(student.getStudentFaculty())
+                .age(student.getStudentAge())
+                .gender(student.getStudentGender())
+                .course(student.getStudentCourse())
+                .email(student.getStudentEmail())
+                .phone(student.getStudentPhone())
                 .placeOfInternship(student.getPlaceOfInternship())
                 .startDate(student.getStartDate())
                 .endDate(student.getEndDate())
-                .studentAbout(student.getStudentAbout())
+                .about(student.getStudentAbout())
                 .build();
     }
-
 }
