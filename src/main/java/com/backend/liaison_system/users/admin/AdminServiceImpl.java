@@ -2,6 +2,8 @@ package com.backend.liaison_system.users.admin;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dto.NewUserRequest;
+import com.backend.liaison_system.dto.StudentDto;
+import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.student.Student;
@@ -118,7 +120,11 @@ public class AdminServiceImpl implements AdminService{
     public Response<?> uploadStudents(MultipartFile file) {
         try {
             log.info("File received: {}", file.getOriginalFilename());
+
+            //create an arrayList of students
             List<Student> students = new ArrayList<>();
+
+            //Turn the file into an InputStream and turn into a workbook
             InputStream inputStream = new BufferedInputStream(file.getInputStream());
             Workbook workbook;
             if (FileMagic.valueOf(inputStream) == FileMagic.OOXML) {
@@ -129,7 +135,10 @@ public class AdminServiceImpl implements AdminService{
                 log.error("Unsupported file magic: {}", FileMagic.valueOf(inputStream));
                 throw new LiaisonException(ERROR_SAVING_DATA);
             }
+
             Sheet sheet = workbook.getSheetAt(0);
+
+            //For each row in the sheet extract the student details
             for(Row row : sheet) {
                 if(row.getRowNum() == 0) continue;
                 Student currentStudent = buildStudentFromExcel(row);
@@ -166,6 +175,10 @@ public class AdminServiceImpl implements AdminService{
         student.setStudentCourse(getCellValueAsString(row.getCell(10)));
         student.setStudentEmail(getCellValueAsString(row.getCell(11)));
         student.setStudentPhone(getCellValueAsString(row.getCell(12)));
+        student.setPlaceOfInternship(getCellValueAsString(row.getCell(13)));
+        student.setStartDate(row.getCell(14).getLocalDateTimeCellValue());
+        student.setEndDate(row.getCell(15).getLocalDateTimeCellValue());
+        student.setStatus(Status.IN_PROGRESS);
         student.setPassword(passwordEncoder.encode(password));
         student.setRole(UserRoles.STUDENT);
         student.setCreatedAt(LocalDateTime.now());
@@ -194,5 +207,36 @@ public class AdminServiceImpl implements AdminService{
             case FORMULA -> cell.getCellFormula();
             default -> "";
         };
+    }
+
+    @Override
+    public Response<?> getStudents(Long adminId) {
+        List<Student> students = studentRepository.findAll();
+        List<StudentDto> studentDtoList = students.stream().map(this::buildStudentDtoFromStudent).toList();
+        return Response
+                .builder()
+                .message("Students Retrieved")
+                .status(HttpStatus.OK.value())
+                .data(studentDtoList)
+                .build();
+    }
+
+    private StudentDto buildStudentDtoFromStudent(Student student) {
+        return StudentDto
+                .builder()
+                .id(student.getEmail())
+                .name(student.getStudentFirstName()+ " " + student.getStudentLastName() + " " + student.getStudentOtherName())
+                .department(student.getStudentDepartment())
+                .faculty(student.getStudentFaculty())
+                .age(student.getStudentAge())
+                .gender(student.getStudentGender())
+                .course(student.getStudentCourse())
+                .email(student.getStudentEmail())
+                .phone(student.getStudentPhone())
+                .placeOfInternship(student.getPlaceOfInternship())
+                .startDate(student.getStartDate())
+                .endDate(student.getEndDate())
+                .about(student.getStudentAbout())
+                .build();
     }
 }

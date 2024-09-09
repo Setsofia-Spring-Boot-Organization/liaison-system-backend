@@ -1,9 +1,12 @@
 package com.backend.liaison_system.users.admin;
 
+import com.backend.liaison_system.dto.StudentDto;
 import org.springframework.web.multipart.MultipartFile;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dto.NewUserRequest;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface AdminService {
     /**
@@ -20,4 +23,6 @@ public interface AdminService {
      * @return a Response Object
      */
     Response<?> uploadStudents(MultipartFile file);
+
+    Response<?> getStudents(Long adminId);
 }
