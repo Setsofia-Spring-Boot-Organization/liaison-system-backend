@@ -19,6 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
+
+import java.util.Base64;
 import java.util.Optional;
 
 import static com.backend.liaison_system.exception.Message.THE_EMAIL_OR_PASSWORD_DO_NOT_MATCH;
@@ -84,11 +86,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             String token = jwtServiceImpl.generateToken(userDetails);
 
+            String encodedToken = Base64.getEncoder().encodeToString(token.getBytes());
+
+            // decode the token
+            // byte[] bytes = Base64.getDecoder().decode(encodedToken);
+
             return ResponseEntity.status(HttpStatus.OK).body(
                     Response.<LoginData>builder()
                             .status(HttpStatus.OK.value())
                             .message("login successful")
-                            .data(new LoginData(token))
+                            .data(new LoginData(encodedToken))
                             .build()
             );
         } catch (AuthenticationException exception) {
