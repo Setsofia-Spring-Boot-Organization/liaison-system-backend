@@ -1,6 +1,7 @@
 package com.backend.liaison_system.users.admin;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.dto.NewUserRequest;
 import com.backend.liaison_system.exception.LiaisonException;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class AdminController {
     }
 
     @GetMapping("students")
-    public ResponseEntity<Response<?>> getStudents() {
-        return new ResponseEntity<>(adminService.getStudents(1L), HttpStatus.OK);
+    public ResponseEntity<Response<?>> getStudents(AdminPageRequest adminPageRequest) {
+        return new ResponseEntity<>(adminService.getStudents(adminPageRequest), HttpStatus.OK);
     }
 }

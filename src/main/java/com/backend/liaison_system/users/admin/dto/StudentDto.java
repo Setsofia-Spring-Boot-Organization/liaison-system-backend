@@ -1,4 +1,4 @@
-package com.backend.liaison_system.dto;
+package com.backend.liaison_system.users.admin.dto;
 
 import com.backend.liaison_system.enums.Status;
 import lombok.Builder;
