@@ -2,7 +2,7 @@ package com.backend.liaison_system.user_details;
 
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.lecturer.Lecturer;
-import com.backend.liaison_system.users.admin.Admin;
+import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.student.Student;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

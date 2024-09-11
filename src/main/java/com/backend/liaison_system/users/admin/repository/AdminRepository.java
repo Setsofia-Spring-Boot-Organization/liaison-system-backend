@@ -1,5 +1,6 @@
-package com.backend.liaison_system.users.admin;
+package com.backend.liaison_system.users.admin.repository;
 
+import com.backend.liaison_system.users.admin.entity.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;

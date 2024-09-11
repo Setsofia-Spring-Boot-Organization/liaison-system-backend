@@ -13,4 +13,7 @@ public class AdminPageRequest {
     @Builder.Default
     Integer pageSize = 10;
     String adminId;
+    String name;
+    String faculty;
+    String department;
 }

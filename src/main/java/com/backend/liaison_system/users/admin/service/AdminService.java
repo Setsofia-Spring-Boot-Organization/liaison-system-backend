@@ -1,6 +1,7 @@
-package com.backend.liaison_system.users.admin;
+package com.backend.liaison_system.users.admin.service;
 
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
+import com.backend.liaison_system.users.admin.entity.Admin;
 import org.springframework.web.multipart.MultipartFile;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dto.NewUserRequest;
