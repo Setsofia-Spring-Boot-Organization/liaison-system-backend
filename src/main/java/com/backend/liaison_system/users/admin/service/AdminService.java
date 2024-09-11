@@ -1,7 +1,5 @@
-package com.backend.liaison_system.users.admin.service;
+package com.backend.liaison_system.users.admin;
 
-import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
-import com.backend.liaison_system.users.admin.entity.Admin;
 import org.springframework.web.multipart.MultipartFile;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dto.NewUserRequest;
@@ -23,5 +21,5 @@ public interface AdminService {
      */
     Response<?> uploadStudents(MultipartFile file);
 
-    Response<?> getStudents(AdminPageRequest adminPageRequest);
+    Response<?> getStudents(Long adminId);
 }
