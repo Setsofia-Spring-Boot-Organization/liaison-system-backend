@@ -13,5 +13,6 @@ public class AdminStudentResponse {
     private int pageSize;
     private int currentPage;
     private int totalPages;
+    private int totalData;
     List<StudentDto> students;
 }
