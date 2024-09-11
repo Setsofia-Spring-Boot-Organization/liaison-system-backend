@@ -22,7 +22,14 @@ public class Lecturer {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private String firstName;
+    private String lastName;
+    private String otherName;
     private String email;
+    private String profile;
+
+    private String phone;
+    private String company;
     private String password;
 
     @Enumerated(EnumType.STRING)
