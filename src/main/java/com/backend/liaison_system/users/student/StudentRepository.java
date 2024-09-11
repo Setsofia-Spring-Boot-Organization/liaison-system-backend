@@ -21,6 +21,13 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
      */
     Optional<Student> findByEmail(String email);
 
+    /**
+     * This method that queries the data and returns students that match the specified specifications.
+     *
+     * @param request the AdminPageRequest Object
+     * @param pageable this is Pageable that specifies the page
+     * @return a page containing the list of matching students
+     */
     default Page<Student> findAll(AdminPageRequest request, Pageable pageable) {
         return findAll(Specification.where(hasName(request.getName()))
                 .or(Specification.where(hasLastName(request.getName()))).or(hasOtherName(request.getName()))

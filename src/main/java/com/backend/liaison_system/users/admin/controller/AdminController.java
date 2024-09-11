@@ -1,6 +1,8 @@
-package com.backend.liaison_system.users.admin;
+package com.backend.liaison_system.users.admin.controller;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.users.admin.entity.Admin;
+import com.backend.liaison_system.users.admin.service.AdminService;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.dto.NewUserRequest;
 import com.backend.liaison_system.exception.LiaisonException;

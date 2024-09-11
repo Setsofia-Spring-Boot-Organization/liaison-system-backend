@@ -1,4 +1,4 @@
-package com.backend.liaison_system.users.admin;
+package com.backend.liaison_system.users.admin.entity;
 
 import com.backend.liaison_system.enums.UserRoles;
 import jakarta.persistence.*;
