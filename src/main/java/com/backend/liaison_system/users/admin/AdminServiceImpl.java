@@ -1,8 +1,10 @@
 package com.backend.liaison_system.users.admin;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
+import com.backend.liaison_system.users.admin.dto.AdminStudentResponse;
 import com.backend.liaison_system.dto.NewUserRequest;
-import com.backend.liaison_system.dto.StudentDto;
+import com.backend.liaison_system.users.admin.dto.StudentDto;
 import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.LiaisonException;
@@ -17,6 +19,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,9 +37,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.backend.liaison_system.exception.Error.*;
 import static com.backend.liaison_system.exception.Message.THE_FOLLOWING_FIELDS_ARE_EMPTY;
 import static com.backend.liaison_system.exception.Message.THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM;
-import static com.backend.liaison_system.exception.Error.*;
 
 @Slf4j
 @Service
@@ -142,7 +147,12 @@ public class AdminServiceImpl implements AdminService{
             for(Row row : sheet) {
                 if(row.getRowNum() == 0) continue;
                 Student currentStudent = buildStudentFromExcel(row);
-                students.add(currentStudent);
+                //Ensure student does not already exist
+                Optional<Student> studentCheck = studentRepository.findByEmail(currentStudent.getEmail());
+                if(studentCheck.isEmpty()) {
+                    students.add(currentStudent);
+                    log.info("Student added: {}", currentStudent.getEmail());
+                }
             }
             studentRepository.saveAll(students);
             log.info("Students saved to database");
@@ -210,14 +220,24 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Response<?> getStudents(Long adminId) {
-        List<Student> students = studentRepository.findAll();
+    public Response<?> getStudents(AdminPageRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNumber() -1, request.getPageSize());
+        Page<Student> students = studentRepository.findAll(pageable);
+        int studentSize = studentRepository.findAll().size();
         List<StudentDto> studentDtoList = students.stream().map(this::buildStudentDtoFromStudent).toList();
+        AdminStudentResponse response = AdminStudentResponse
+                .builder()
+                .currentPage(students.getNumber()+1)
+                .pageSize(students.getSize())
+                .totalData(studentSize)
+                .totalPages(students.getTotalPages())
+                .students(studentDtoList)
+                .build();
         return Response
                 .builder()
                 .message("Students Retrieved")
                 .status(HttpStatus.OK.value())
-                .data(studentDtoList)
+                .data(response)
                 .build();
     }
 
@@ -236,6 +256,7 @@ public class AdminServiceImpl implements AdminService{
                 .placeOfInternship(student.getPlaceOfInternship())
                 .startDate(student.getStartDate())
                 .endDate(student.getEndDate())
+                .status(student.getStatus())
                 .about(student.getStudentAbout())
                 .build();
     }
