@@ -36,3 +36,6 @@ build/
 
 ############
 .env
+
+### ignore the application.properties file ###
+/src/main/resources/application.properties

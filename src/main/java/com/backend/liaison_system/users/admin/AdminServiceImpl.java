@@ -222,7 +222,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public Response<?> getStudents(AdminPageRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNumber() -1, request.getPageSize());
-        Page<Student> students = studentRepository.findAll(pageable);
+        Page<Student> students = studentRepository.findAll(request ,pageable);
         int studentSize = studentRepository.findAll().size();
         List<StudentDto> studentDtoList = students.stream().map(this::buildStudentDtoFromStudent).toList();
         AdminStudentResponse response = AdminStudentResponse
