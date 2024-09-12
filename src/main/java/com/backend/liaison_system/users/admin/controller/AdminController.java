@@ -32,7 +32,9 @@ public class AdminController {
     }
 
     @GetMapping("students")
-    public ResponseEntity<Response<?>> getStudents(AdminPageRequest adminPageRequest) {
+    public ResponseEntity<Response<?>> getStudents(
+            AdminPageRequest adminPageRequest
+    ) {
         return new ResponseEntity<>(adminService.getStudents(adminPageRequest), HttpStatus.OK);
     }
 }
