@@ -1,7 +1,6 @@
 package com.backend.liaison_system.users.admin.dao;
 
 import com.backend.liaison_system.users.admin.dto.StudentDto;
-import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import lombok.*;
 
 import java.util.List;
