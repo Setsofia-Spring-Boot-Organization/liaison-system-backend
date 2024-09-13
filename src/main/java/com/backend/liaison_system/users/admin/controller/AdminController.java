@@ -37,4 +37,12 @@ public class AdminController {
     ) {
         return new ResponseEntity<>(adminService.getStudents(adminPageRequest), HttpStatus.OK);
     }
+
+    @GetMapping("{admin-id}/lecturers")
+    public ResponseEntity<Response<?>> getLecturers(
+            @PathVariable("admin-id") String id,
+            AdminPageRequest adminPageRequest
+    ) {
+        return adminService.getLecturers(id, adminPageRequest);
+    }
 }

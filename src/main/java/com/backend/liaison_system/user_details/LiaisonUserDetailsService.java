@@ -1,7 +1,7 @@
 package com.backend.liaison_system.user_details;
 
-import com.backend.liaison_system.users.lecturer.Lecturer;
-import com.backend.liaison_system.users.lecturer.LecturerRepository;
+import com.backend.liaison_system.users.lecturer.entity.Lecturer;
+import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.student.Student;

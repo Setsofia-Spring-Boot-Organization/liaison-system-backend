@@ -1,4 +1,4 @@
-package com.backend.liaison_system.users.lecturer;
+package com.backend.liaison_system.users.lecturer.entity;
 
 import com.backend.liaison_system.enums.UserRoles;
 import jakarta.persistence.*;
@@ -18,6 +18,7 @@ public class Lecturer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+    private String lecturerId;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -26,11 +27,14 @@ public class Lecturer {
     private String lastName;
     private String otherName;
     private String email;
-    private String profile;
+    private String dp;
 
     private String phone;
     private String company;
     private String password;
+
+    private String faculty;
+    private String department;
 
     @Enumerated(EnumType.STRING)
     private UserRoles role;

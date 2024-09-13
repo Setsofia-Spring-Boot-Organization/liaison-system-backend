@@ -6,7 +6,7 @@ import com.backend.liaison_system.dao.data.LoginData;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
-import com.backend.liaison_system.users.lecturer.LecturerRepository;
+import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.StudentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

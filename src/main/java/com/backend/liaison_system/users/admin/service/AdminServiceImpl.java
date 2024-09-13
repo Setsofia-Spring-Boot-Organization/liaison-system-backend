@@ -1,14 +1,20 @@
 package com.backend.liaison_system.users.admin.service;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.enums.UserRoles;
+import com.backend.liaison_system.exception.Error;
+import com.backend.liaison_system.exception.Message;
+import com.backend.liaison_system.users.admin.dao.Lecturers;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
-import com.backend.liaison_system.users.admin.dto.AdminStudentResponse;
+import com.backend.liaison_system.users.admin.dao.TabularDataResponse;
 import com.backend.liaison_system.dto.NewUserRequest;
 import com.backend.liaison_system.users.admin.dto.StudentDto;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
+import com.backend.liaison_system.users.lecturer.entity.Lecturer;
+import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +55,7 @@ public class AdminServiceImpl implements AdminService{
     private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdminUtil adminUtil;
+    private final LecturerRepository lecturerRepository;
 
     @Override
     public ResponseEntity<Response<Admin>> creatNewAdmin(NewUserRequest request) {
@@ -173,11 +180,11 @@ public class AdminServiceImpl implements AdminService{
      */
     @Override
     public Response<?> getStudents(AdminPageRequest request) {
-        Pageable pageable = PageRequest.of(request.getPageNumber() -1, request.getPageSize());
+        Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
         Page<Student> students = studentRepository.findAll(request ,pageable);
         int studentSize = studentRepository.findAll().size();
         List<StudentDto> studentDtoList = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();
-        AdminStudentResponse response = AdminStudentResponse
+        TabularDataResponse response = TabularDataResponse
                 .builder()
                 .currentPage(students.getNumber()+1)
                 .pageSize(students.getSize())
@@ -193,4 +200,55 @@ public class AdminServiceImpl implements AdminService{
                 .build();
     }
 
+    @Override
+    public ResponseEntity<Response<?>> getLecturers(String id, AdminPageRequest request) {
+
+        // verify the user's role before proceeding with other operations
+        verifyUserIsAdmin(id);
+
+        Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
+        Page<Lecturer> lecturers = lecturerRepository.findAll(pageable);
+        int lecturerDataSize = lecturerRepository.findAll().size();
+
+        TabularDataResponse response = TabularDataResponse
+                .builder()
+                .currentPage(lecturers.getNumber()+1)
+                .pageSize(lecturers.getSize())
+                .totalData(lecturerDataSize)
+                .totalPages(lecturers.getTotalPages())
+                .lecturers(lecturers.get().map(lecturer -> new Lecturers(
+                        "#" + lecturer.getLecturerId(),
+                        lecturer.getDp(),
+                        lecturer.getLastName() + " " + lecturer.getFirstName(),
+                        lecturer.getFaculty(),
+                        lecturer.getDepartment()
+                )).toList())
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Response
+                        .builder()
+                        .message("all lecturers")
+                        .status(HttpStatus.OK.value())
+                        .data(response)
+                        .build()
+        );
+    }
+
+    /**
+     * This method verifies if the user with the given ID is an admin.
+     * It checks the user's role and throws a LiaisonException if the user is not authorized (i.e., not an admin)
+     * or if the user is not found in the admin repository.
+     *
+     * @param id the ID of the user to be verified as an admin
+     * @throws LiaisonException if the user is not authorized (not an admin) or if the user is not found
+     */
+    private void verifyUserIsAdmin(String id) {
+        adminRepository.findById(id).ifPresentOrElse((admin -> {
+                    if (!admin.getRole().equals(UserRoles.ADMIN)) {
+                        throw new LiaisonException(Error.UNAUTHORIZED_USER, new Throwable(Message.THE_USER_IS_NOT_AUTHORIZED.label));
+                    }
+                }),
+                () -> {throw new LiaisonException(USER_NOT_FOUND, new Throwable(Message.USER_NOT_FOUND_CAUSE.label));}
+        );
+    }
 }

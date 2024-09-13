@@ -1,4 +1,4 @@
-package com.backend.liaison_system.users.lecturer;
+package com.backend.liaison_system.users.lecturer.service;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
@@ -6,7 +6,10 @@ import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
+import com.backend.liaison_system.users.lecturer.entity.Lecturer;
+import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,6 @@ public class LecturerServiceImpl implements LecturerService {
 
         // verify if the emails already exist...
         verifyExistingEmails(requests);
-
 
         // save the lecturers
         List<Lecturer> lecturers = saveLecturers(requests);
@@ -87,7 +88,7 @@ public class LecturerServiceImpl implements LecturerService {
 
             Lecturer lecturer = new Lecturer();
 
-            lecturer.setId(UUID.randomUUID().toString());
+            lecturer.setLecturerId(RandomStringUtils.randomAlphanumeric(7).toUpperCase());
             lecturer.setCreatedAt(LocalDateTime.now());
             lecturer.setUpdatedAt(LocalDateTime.now());
 
@@ -95,10 +96,13 @@ public class LecturerServiceImpl implements LecturerService {
             lecturer.setOtherName(request.getOtherName());
             lecturer.setLastName(request.getLastName());
             lecturer.setEmail(request.getEmail());
-            lecturer.setProfile(request.getProfile());
+            lecturer.setDp(request.getDp());
 
             lecturer.setPhone(request.getPhone());
             lecturer.setCompany(request.getCompany());
+
+            lecturer.setFaculty(request.getFaculty());
+            lecturer.setDepartment(request.getDepartment());
 
             String pass = passwordEncoder.encode(request.getPassword());
             lecturer.setPassword(pass);

@@ -24,4 +24,14 @@ public interface AdminService {
     Response<?> uploadStudents(MultipartFile file);
 
     Response<?> getStudents(AdminPageRequest request);
+
+    /**
+     * This method retrieves a list of lecturers based on pagination and filter criteria provided in the AdminPageRequest.
+     * The request can include optional filters such as admin ID, name, faculty, and department, as well as pagination settings
+     * like the page number and page size to control the result set.
+     *
+     * @param adminPageRequest the request object containing pagination settings and optional filters to narrow down the search
+     * @return a Response object containing the list of lecturers that match the specified criteria
+     */
+    ResponseEntity<Response<?>> getLecturers(String id, AdminPageRequest adminPageRequest);
 }
