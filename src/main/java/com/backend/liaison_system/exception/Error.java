@@ -6,7 +6,8 @@ public enum Error {
     ERROR_SAVING_DATA("the data cannot be saved"),
     EMAIL_ALREADY_EXISTS("email already exist"),
     INVALID_USERNAME_OR_PASSWORD("login failed"),
-    REQUIRED_FIELDS_ARE_EMPTY("required fields are empty");
+    REQUIRED_FIELDS_ARE_EMPTY("required fields are empty"),
+    UNAUTHORIZED_USER("authorization failed");
 
     public final String label;
     Error(String label) {

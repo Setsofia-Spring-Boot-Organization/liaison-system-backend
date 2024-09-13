@@ -1,4 +1,4 @@
-package com.backend.liaison_system.users.lecturer;
+package com.backend.liaison_system.users.lecturer.entity;
 
 import com.backend.liaison_system.enums.UserRoles;
 import jakarta.persistence.*;

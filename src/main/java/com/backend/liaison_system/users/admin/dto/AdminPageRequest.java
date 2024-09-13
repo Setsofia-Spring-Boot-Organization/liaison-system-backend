@@ -9,9 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 public class AdminPageRequest {
     @Builder.Default
-    Integer pageNumber = 1;
+    Integer page = 1;
     @Builder.Default
-    Integer pageSize = 10;
+    Integer size = 10;
     String adminId;
     String name;
     String faculty;

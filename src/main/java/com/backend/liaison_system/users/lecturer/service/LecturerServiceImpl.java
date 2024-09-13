@@ -1,4 +1,4 @@
-package com.backend.liaison_system.users.lecturer;
+package com.backend.liaison_system.users.lecturer.service;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
@@ -6,6 +6,8 @@ import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
+import com.backend.liaison_system.users.lecturer.entity.Lecturer;
+import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

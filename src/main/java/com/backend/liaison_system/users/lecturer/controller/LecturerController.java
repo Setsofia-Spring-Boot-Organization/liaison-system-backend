@@ -1,7 +1,9 @@
-package com.backend.liaison_system.users.lecturer;
+package com.backend.liaison_system.users.lecturer.controller;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.exception.LiaisonException;
+import com.backend.liaison_system.users.lecturer.entity.Lecturer;
+import com.backend.liaison_system.users.lecturer.service.LecturerService;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
