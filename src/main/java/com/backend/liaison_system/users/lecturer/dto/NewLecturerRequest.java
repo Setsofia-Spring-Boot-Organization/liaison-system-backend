@@ -3,8 +3,6 @@ package com.backend.liaison_system.users.lecturer.dto;
 import com.backend.liaison_system.enums.UserRoles;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Setter
 @Getter
 @ToString
@@ -16,11 +14,14 @@ public class NewLecturerRequest {
     private String lastName;
     private String otherName;
     private String email;
-    private String profile;
+    private String dp;
 
     private String phone;
     private String company;
     private String password;
+
+    private String faculty;
+    private String department;
 
     private UserRoles role;
 }

@@ -8,6 +8,7 @@ import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.lecturer.service.LecturerServiceImpl;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,8 @@ class LecturerServiceImplTest {
         Lecturer lecturer = new Lecturer();
 
         lecturer.setId(UUID.randomUUID().toString());
+        lecturer.setLecturerId(RandomStringUtils.randomAlphanumeric(7).toUpperCase());
+
         lecturer.setCreatedAt(LocalDateTime.now());
         lecturer.setUpdatedAt(LocalDateTime.now());
 
@@ -63,7 +66,7 @@ class LecturerServiceImplTest {
         lecturer.setOtherName("Other");
         lecturer.setLastName("New");
         lecturer.setEmail("lecturer@email.com");
-        lecturer.setProfile("example-profile-image.com");
+        lecturer.setDp("example-profile-image.com");
 
         lecturer.setPhone("+233-55-159-963");
         lecturer.setCompany("Lecturer's Company");
@@ -81,10 +84,13 @@ class LecturerServiceImplTest {
         request.setOtherName("Other");
         request.setLastName("New");
         request.setEmail("request@email.com");
-        request.setProfile("example-profile-image.com");
+        request.setDp("example-profile-image.com");
 
         request.setPhone("+233-55-159-963");
         request.setCompany("Lecturer's Company");
+
+        request.setFaculty("Faculty");
+        request.setDepartment("Department");
         request.setPassword("password");
 
         request.setRole(UserRoles.LECTURER);
@@ -122,6 +128,9 @@ class LecturerServiceImplTest {
 
         assertNotNull(response);
         assertNotNull(response.getBody());
+
+        System.out.println(response.getBody().getData());
+
         assertEquals(4, response.getBody().getData().size());
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
