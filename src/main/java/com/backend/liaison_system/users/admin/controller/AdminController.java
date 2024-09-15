@@ -1,6 +1,7 @@
 package com.backend.liaison_system.users.admin.controller;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.users.admin.dao.LecturerData;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.service.AdminService;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
@@ -44,5 +45,13 @@ public class AdminController {
             AdminPageRequest adminPageRequest
     ) {
         return adminService.getLecturers(id, adminPageRequest);
+    }
+
+    @GetMapping("{admin-id}/lecturers/{lecturer-id}")
+    public ResponseEntity<Response<LecturerData>> getLecturer(
+            @PathVariable("admin-id") String id,
+            @PathVariable("lecturer-id") String lecturerId
+    ) {
+        return adminService.getLecturer(id, lecturerId);
     }
 }

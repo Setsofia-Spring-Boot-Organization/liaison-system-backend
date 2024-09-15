@@ -7,7 +7,8 @@ public enum Error {
     EMAIL_ALREADY_EXISTS("email already exist"),
     INVALID_USERNAME_OR_PASSWORD("login failed"),
     REQUIRED_FIELDS_ARE_EMPTY("required fields are empty"),
-    UNAUTHORIZED_USER("authorization failed");
+    UNAUTHORIZED_USER("authorization failed"),
+    WRONG_USER_ROLE("wrong user role");
 
     public final String label;
     Error(String label) {
