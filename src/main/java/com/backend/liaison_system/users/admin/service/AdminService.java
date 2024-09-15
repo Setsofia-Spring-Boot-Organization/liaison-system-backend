@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.admin.service;
 
+import com.backend.liaison_system.users.admin.dao.LecturerData;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,4 +35,15 @@ public interface AdminService {
      * @return a Response object containing the list of lecturers that match the specified criteria
      */
     ResponseEntity<Response<?>> getLecturers(String id, AdminPageRequest adminPageRequest);
+
+    /**
+     * This method retrieves a specific lecturer based on the provided lecturer ID, along with additional
+     * pagination and filter criteria from the AdminPageRequest. It also verifies the requesting user's admin status
+     * using their ID.
+     *
+     * @param id the ID of the admin user making the request
+     * @param lecturerId the ID of the lecturer to be retrieved
+     * @return a ResponseEntity containing a Response object with the details of the lecturer
+     */
+    ResponseEntity<Response<LecturerData>> getLecturer(String id, String lecturerId);
 }
