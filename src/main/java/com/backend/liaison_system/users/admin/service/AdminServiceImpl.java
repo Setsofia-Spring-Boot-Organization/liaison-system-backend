@@ -38,10 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.backend.liaison_system.exception.Error.*;
 import static com.backend.liaison_system.exception.Message.THE_FOLLOWING_FIELDS_ARE_EMPTY;
@@ -257,6 +254,24 @@ public class AdminServiceImpl implements AdminService{
                 .orElseThrow(() -> new LiaisonException(WRONG_USER_ROLE, new Throwable(Message.THE_USER_ROLE_IS_NOT_ALLOWED.label)));
     }
 
+    private List<String> getOthersFromSameDepartment(String department, String id) {
+        List<String> dps = new ArrayList<>();
+
+        List<Lecturer> lecturers = lecturerRepository.findAllByDepartment(department)
+                .stream()
+                .filter(lecturer -> !Objects.equals(lecturer.getLecturerId(), id))
+                .toList();
+        if (lecturers.isEmpty()) {
+            return null;
+        } else {
+            for (Lecturer lecturer : lecturers) {
+                dps.add(lecturer.getDp());
+            }
+        }
+
+        return dps;
+    }
+
     @Override
     public ResponseEntity<Response<LecturerData>> getLecturer(String id, String lecturerId) {
 
@@ -265,6 +280,9 @@ public class AdminServiceImpl implements AdminService{
 
         // find the user, make sure the user is a lecturer before proceeding
         Lecturer lecturer = verifyUserIsLecturer(lecturerId);
+
+        // get the other lectures from the same department
+        List<String> others = getOthersFromSameDepartment(lecturer.getDepartment(), lecturer.getLecturerId());
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 Response.<LecturerData>builder()
@@ -280,7 +298,7 @@ public class AdminServiceImpl implements AdminService{
                                 "lecturer.getAge()",
                                 lecturer.getFaculty(),
                                 "lecturer.getGender()",
-                                List.of()
+                                others
                         )).build()
         );
     }
