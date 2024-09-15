@@ -298,7 +298,7 @@ public class AdminServiceImpl implements AdminService{
                         .status(HttpStatus.OK.value())
                         .message("lecturer details")
                         .data(new LecturerData(
-                                lecturer.getLecturerId(),
+                                "#" + lecturer.getLecturerId(),
                                 lecturer.getDp(),
                                 lecturer.getLastName() + " " + lecturer.getFirstName(),
                                 lecturer.getDepartment(),
