@@ -254,6 +254,15 @@ public class AdminServiceImpl implements AdminService{
                 .orElseThrow(() -> new LiaisonException(WRONG_USER_ROLE, new Throwable(Message.THE_USER_ROLE_IS_NOT_ALLOWED.label)));
     }
 
+    /**
+     * This method retrieves a list of display pictures (dps) of lecturers from the same department,
+     * excluding the lecturer with the provided ID. It filters lecturers based on the department and
+     * removes the lecturer with the matching ID from the result.
+     *
+     * @param department the department to search for lecturers
+     * @param id the ID of the lecturer to be excluded from the results
+     * @return a list of display pictures (dps) of other lecturers from the same department, or null if none are found
+     */
     private List<String> getOthersFromSameDepartment(String department, String id) {
         List<String> dps = new ArrayList<>();
 
