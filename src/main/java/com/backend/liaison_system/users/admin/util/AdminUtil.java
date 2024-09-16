@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 
 import static com.backend.liaison_system.exception.Error.USER_NOT_FOUND;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class AdminUtil {
     private final PasswordEncoder passwordEncoder;
