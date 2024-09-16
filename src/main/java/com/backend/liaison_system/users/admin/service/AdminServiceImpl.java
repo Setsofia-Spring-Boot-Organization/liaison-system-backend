@@ -4,6 +4,7 @@ import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.Message;
+import com.backend.liaison_system.users.admin.dao.LecturerData;
 import com.backend.liaison_system.users.admin.dao.Lecturers;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.users.admin.dao.TabularDataResponse;
@@ -37,10 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.backend.liaison_system.exception.Error.*;
 import static com.backend.liaison_system.exception.Message.THE_FOLLOWING_FIELDS_ARE_EMPTY;
@@ -76,12 +74,6 @@ public class AdminServiceImpl implements AdminService{
         );
     }
 
-    /*
-      This section contains helper methods that provide additional utility functions
-      to support the main application logic.<br>
-      These methods typically perform common tasks such as validation, data formatting,
-      or other reusable operations that assist in the overall functionality of the application.
-     */
 
     /**
      * This method validates the fields in the NewUserRequest object to check for any empty or null values.<br>
@@ -173,11 +165,6 @@ public class AdminServiceImpl implements AdminService{
         }
     }
 
-    /**
-     * This is an implementation of the get students function to fetch all the students in the database
-     * @param request of type AdminPageRequest
-     * @return a Response Object
-     */
     @Override
     public Response<?> getStudents(AdminPageRequest request) {
         Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
@@ -198,6 +185,24 @@ public class AdminServiceImpl implements AdminService{
                 .status(HttpStatus.OK.value())
                 .data(response)
                 .build();
+    }
+
+    /**
+     * This method verifies if the user with the given ID is an admin.
+     * It checks the user's role and throws a LiaisonException if the user is not authorized (i.e., not an admin)
+     * or if the user is not found in the admin repository.
+     *
+     * @param id the ID of the user to be verified as an admin
+     * @throws LiaisonException if the user is not authorized (not an admin) or if the user is not found
+     */
+    private void verifyUserIsAdmin(String id) {
+        adminRepository.findById(id).ifPresentOrElse((admin -> {
+                    if (!admin.getRole().equals(UserRoles.ADMIN)) {
+                        throw new LiaisonException(Error.UNAUTHORIZED_USER, new Throwable(Message.THE_USER_IS_NOT_AUTHORIZED.label));
+                    }
+                }),
+                () -> {throw new LiaisonException(USER_NOT_FOUND, new Throwable(Message.USER_NOT_FOUND_CAUSE.label));}
+        );
     }
 
     @Override
@@ -235,20 +240,75 @@ public class AdminServiceImpl implements AdminService{
     }
 
     /**
-     * This method verifies if the user with the given ID is an admin.
-     * It checks the user's role and throws a LiaisonException if the user is not authorized (i.e., not an admin)
-     * or if the user is not found in the admin repository.
+     * This method verifies if the user with the given lecturer ID is a lecturer.
+     * It checks the user's role and throws a LiaisonException if the user's role is not allowed (i.e., not a lecturer)
+     * or if the user is not found in the lecturer repository.
      *
-     * @param id the ID of the user to be verified as an admin
-     * @throws LiaisonException if the user is not authorized (not an admin) or if the user is not found
+     * @param lecturerId the ID of the lecturer to be verified
+     * @throws LiaisonException if the user's role is incorrect or if the user is not found
      */
-    private void verifyUserIsAdmin(String id) {
-        adminRepository.findById(id).ifPresentOrElse((admin -> {
-                    if (!admin.getRole().equals(UserRoles.ADMIN)) {
-                        throw new LiaisonException(Error.UNAUTHORIZED_USER, new Throwable(Message.THE_USER_IS_NOT_AUTHORIZED.label));
-                    }
-                }),
-                () -> {throw new LiaisonException(USER_NOT_FOUND, new Throwable(Message.USER_NOT_FOUND_CAUSE.label));}
+    private Lecturer verifyUserIsLecturer(String lecturerId) {
+
+        return lecturerRepository.findById(lecturerId)
+                .filter(lec -> lec.getRole().equals(UserRoles.LECTURER))
+                .orElseThrow(() -> new LiaisonException(WRONG_USER_ROLE, new Throwable(Message.THE_USER_ROLE_IS_NOT_ALLOWED.label)));
+    }
+
+    /**
+     * This method retrieves a list of display pictures (dps) of lecturers from the same department,
+     * excluding the lecturer with the provided ID. It filters lecturers based on the department and
+     * removes the lecturer with the matching ID from the result.
+     *
+     * @param department the department to search for lecturers
+     * @param id the ID of the lecturer to be excluded from the results
+     * @return a list of display pictures (dps) of other lecturers from the same department, or null if none are found
+     */
+    private List<String> getOthersFromSameDepartment(String department, String id) {
+        List<String> dps = new ArrayList<>();
+
+        List<Lecturer> lecturers = lecturerRepository.findAllByDepartment(department)
+                .stream()
+                .filter(lecturer -> !Objects.equals(lecturer.getLecturerId(), id))
+                .toList();
+        if (lecturers.isEmpty()) {
+            return null;
+        } else {
+            for (Lecturer lecturer : lecturers) {
+                dps.add(lecturer.getDp());
+            }
+        }
+
+        return dps;
+    }
+
+    @Override
+    public ResponseEntity<Response<LecturerData>> getLecturer(String id, String lecturerId) {
+
+        // verify the user requesting for the lecturer details is an admin
+        verifyUserIsAdmin(id);
+
+        // find the user, make sure the user is a lecturer before proceeding
+        Lecturer lecturer = verifyUserIsLecturer(lecturerId);
+
+        // get the other lectures from the same department
+        List<String> others = getOthersFromSameDepartment(lecturer.getDepartment(), lecturer.getLecturerId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Response.<LecturerData>builder()
+                        .status(HttpStatus.OK.value())
+                        .message("lecturer details")
+                        .data(new LecturerData(
+                                "#" + lecturer.getLecturerId(),
+                                lecturer.getDp(),
+                                lecturer.getLastName() + " " + lecturer.getFirstName(),
+                                lecturer.getDepartment(),
+                                lecturer.getPhone(),
+                                lecturer.getEmail(),
+                                "lecturer.getAge()",
+                                lecturer.getFaculty(),
+                                "lecturer.getGender()",
+                                others
+                        )).build()
         );
     }
 }
