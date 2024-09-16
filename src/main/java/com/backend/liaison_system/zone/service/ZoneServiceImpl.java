@@ -27,7 +27,7 @@ public class ZoneServiceImpl implements ZoneService{
     private final LecturerRepository lecturerRepository;
     private final ZoneRepository zoneRepository;
 
-    @Transactional(rollbackOn = ZoneServiceImpl.class)
+    @Transactional(rollbackOn = { Exception.class, LiaisonException.class })
     @Override
     public ResponseEntity<Response<?>> createNewZone(String id, NewZone newZone) {
 
