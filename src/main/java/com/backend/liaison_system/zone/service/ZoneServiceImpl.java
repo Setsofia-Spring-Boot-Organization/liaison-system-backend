@@ -30,6 +30,7 @@ public class ZoneServiceImpl implements ZoneService{
     @Transactional(rollbackOn = { Exception.class, LiaisonException.class })
     @Override
     public ResponseEntity<Response<?>> createNewZone(String id, NewZone newZone) {
+        if (newZone.zoneLead() == null || newZone.zoneLead().isEmpty()) throw new LiaisonException(Error.REQUIRED_FIELDS_ARE_EMPTY, new Throwable(Message.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[zoneLead]"));
 
         // verify that the user sending the request is an admin
         adminUtil.verifyUserIsAdmin(id);
