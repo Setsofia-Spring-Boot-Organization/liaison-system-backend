@@ -187,29 +187,12 @@ public class AdminServiceImpl implements AdminService{
                 .build();
     }
 
-    /**
-     * This method verifies if the user with the given ID is an admin.
-     * It checks the user's role and throws a LiaisonException if the user is not authorized (i.e., not an admin)
-     * or if the user is not found in the admin repository.
-     *
-     * @param id the ID of the user to be verified as an admin
-     * @throws LiaisonException if the user is not authorized (not an admin) or if the user is not found
-     */
-    private void verifyUserIsAdmin(String id) {
-        adminRepository.findById(id).ifPresentOrElse((admin -> {
-                    if (!admin.getRole().equals(UserRoles.ADMIN)) {
-                        throw new LiaisonException(Error.UNAUTHORIZED_USER, new Throwable(Message.THE_USER_IS_NOT_AUTHORIZED.label));
-                    }
-                }),
-                () -> {throw new LiaisonException(USER_NOT_FOUND, new Throwable(Message.USER_NOT_FOUND_CAUSE.label));}
-        );
-    }
 
     @Override
     public ResponseEntity<Response<?>> getLecturers(String id, AdminPageRequest request) {
 
         // verify the user's role before proceeding with other operations
-        verifyUserIsAdmin(id);
+        adminUtil.verifyUserIsAdmin(id);
 
         Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
         Page<Lecturer> lecturers = lecturerRepository.findAll(pageable);
@@ -285,7 +268,7 @@ public class AdminServiceImpl implements AdminService{
     public ResponseEntity<Response<LecturerData>> getLecturer(String id, String lecturerId) {
 
         // verify the user requesting for the lecturer details is an admin
-        verifyUserIsAdmin(id);
+        adminUtil.verifyUserIsAdmin(id);
 
         // find the user, make sure the user is a lecturer before proceeding
         Lecturer lecturer = verifyUserIsLecturer(lecturerId);
