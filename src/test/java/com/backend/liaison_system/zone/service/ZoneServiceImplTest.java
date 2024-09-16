@@ -44,17 +44,9 @@ class ZoneServiceImplTest {
     private AutoCloseable autoCloseable;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    @InjectMocks
-    private AdminUtil adminUtil;
-
     @BeforeEach
     void setUp() {
         autoCloseable = MockitoAnnotations.openMocks(this);
-
-        adminUtil = new AdminUtil(
-                passwordEncoder,
-                adminRepository
-        );
     }
 
     @AfterEach
