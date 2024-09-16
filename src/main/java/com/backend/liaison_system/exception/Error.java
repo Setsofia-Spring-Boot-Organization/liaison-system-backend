@@ -8,7 +8,8 @@ public enum Error {
     INVALID_USERNAME_OR_PASSWORD("login failed"),
     REQUIRED_FIELDS_ARE_EMPTY("required fields are empty"),
     UNAUTHORIZED_USER("authorization failed"),
-    WRONG_USER_ROLE("wrong user role");
+    WRONG_USER_ROLE("wrong user role"),
+    INVALID_USER_IDS("invalid user ids");
 
     public final String label;
     Error(String label) {
