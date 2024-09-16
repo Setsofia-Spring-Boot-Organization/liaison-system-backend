@@ -33,6 +33,13 @@ public class ZoneServiceImpl implements ZoneService{
         return null;
     }
 
+    /**
+     * This method sanitizes the lecturer IDs in the provided {@code zone} by checking if any of the IDs
+     * do not exist in the system. If invalid IDs are found, it throws a {@link LiaisonException}.
+     *
+     * @param zone The {@link NewZone} object containing the lecturer IDs to be validated.
+     * @throws LiaisonException If one or more lecturer IDs do not exist in the system.
+     */
     private void sanitizeTheLecturerIds(NewZone zone) throws LiaisonException {
         List<String> invalidIds = new ArrayList<>();
 
