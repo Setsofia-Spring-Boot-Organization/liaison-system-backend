@@ -4,7 +4,6 @@ import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
-import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.zone.dto.NewZone;
 import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.entity.ZoneLecturers;
