@@ -2,21 +2,31 @@ package com.backend.liaison_system.users.admin.util;
 
 import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.enums.UserRoles;
+import com.backend.liaison_system.exception.Error;
+import com.backend.liaison_system.exception.LiaisonException;
+import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.dto.StudentDto;
+import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.student.Student;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Service
+import static com.backend.liaison_system.exception.Error.USER_NOT_FOUND;
+
+@Component
 @RequiredArgsConstructor
 public class AdminUtil {
     private final PasswordEncoder passwordEncoder;
+    private final AdminRepository adminRepository;
 
     public StudentDto buildStudentDtoFromStudent(Student student) {
         return StudentDto
@@ -89,5 +99,23 @@ public class AdminUtil {
             case FORMULA -> cell.getCellFormula();
             default -> "";
         };
+    }
+
+    /**
+     * This method verifies if the user with the given ID is an admin.
+     * It checks the user's role and throws a LiaisonException if the user is not authorized (i.e., not an admin)
+     * or if the user is not found in the admin repository.
+     *
+     * @param id the ID of the user to be verified as an admin
+     * @throws LiaisonException if the user is not authorized (not an admin) or if the user is not found
+     */
+    public void verifyUserIsAdmin(String id) {
+        adminRepository.findById(id).ifPresentOrElse((admin -> {
+                    if (!admin.getRole().equals(UserRoles.ADMIN)) {
+                        throw new LiaisonException(Error.UNAUTHORIZED_USER, new Throwable(Message.THE_USER_IS_NOT_AUTHORIZED.label));
+                    }
+                }),
+                () -> {throw new LiaisonException(USER_NOT_FOUND, new Throwable(Message.USER_NOT_FOUND_CAUSE.label));}
+        );
     }
 }
