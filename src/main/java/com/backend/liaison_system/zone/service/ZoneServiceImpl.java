@@ -7,7 +7,12 @@ import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.zone.dto.NewZone;
+import com.backend.liaison_system.zone.entity.Zone;
+import com.backend.liaison_system.zone.entity.ZoneLecturers;
+import com.backend.liaison_system.zone.repository.ZoneRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +25,37 @@ public class ZoneServiceImpl implements ZoneService{
 
     private final AdminUtil adminUtil;
     private final LecturerRepository lecturerRepository;
+    private final ZoneRepository zoneRepository;
 
+    @Transactional(rollbackOn = ZoneServiceImpl.class)
     @Override
-    public ResponseEntity<Response<?>> createNewZone(String id, NewZone zone) {
+    public ResponseEntity<Response<?>> createNewZone(String id, NewZone newZone) {
 
         // verify that the user sending the request is an admin
         adminUtil.verifyUserIsAdmin(id);
 
         // sanitize the ids, making sure that they exist
-        sanitizeTheLecturerIds(zone);
+        sanitizeTheLecturerIds(newZone);
 
-        return null;
+        // create the new zone data
+        Zone zone = new Zone();
+        zone.setName(newZone.name());
+        zone.setRegion(newZone.region());
+        zone.setZoneLead(newZone.zoneLead());
+        zone.setLecturers(new ZoneLecturers(newZone.lecturerIds()));
+
+        try {
+            zoneRepository.save(zone);
+        } catch (Exception exception) {
+            throw new LiaisonException(Error.ERROR_SAVING_DATA);
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                Response.builder()
+                        .status(HttpStatus.CREATED.value())
+                        .message("New zone created successfully")
+                        .build()
+        );
     }
 
     /**
