@@ -4,6 +4,9 @@ import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
+import com.backend.liaison_system.users.admin.entity.Admin;
+import com.backend.liaison_system.users.admin.util.AdminUtil;
+import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
@@ -18,6 +21,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,12 +37,16 @@ import static org.mockito.Mockito.when;
 class LecturerServiceImplTest {
 
     private AutoCloseable autoCloseable;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @InjectMocks
     LecturerServiceImpl lecturerService;
 
     @Mock
     LecturerRepository lecturerRepository;
+
+    @Mock
+    private AdminUtil adminUtil;
 
     @BeforeEach
     void setUp() {
@@ -164,5 +173,40 @@ class LecturerServiceImplTest {
         LiaisonException exception = assertThrows(LiaisonException.class, () -> lecturerService.createNewLecturer(requests));
 
         assertEquals(Error.EMAIL_ALREADY_EXISTS.label, exception.getMessage());
+    }
+
+    // create a dummy admin data
+    Admin admin() {
+        Admin admin = new Admin();
+
+        admin.setId(UUID.randomUUID().toString());
+        admin.setCreatedAt(LocalDateTime.now());
+        admin.setUpdatedAt(LocalDateTime.now());
+        admin.setEmail("john.doe@example.com");
+        admin.setFirstName("John");
+        admin.setLastName("Doe");
+        admin.setOtherName("Michael");
+        admin.setPassword(passwordEncoder.encode("password"));
+        admin.setRole(UserRoles.ADMIN);
+
+        return admin;
+    }
+
+    @Test
+    void getLecturers() {
+
+        List<Lecturer> lecturers = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            lecturers.add(lecturer());
+        }
+
+        when(lecturerRepository.findAll()).thenReturn(lecturers);
+
+        // operations and assertions
+        ResponseEntity<Response<List<LecturerList>>> response = lecturerService.getLecturers(admin().getId());
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
