@@ -53,7 +53,7 @@ public interface LecturerRepository extends JpaRepository<Lecturer, String> {
      *
      * <p>Results are paginated according to the {@link Pageable} parameter provided.</p>
      *
-     * @param key the search key used to filter {@link Lecturer} entities. It must not be null.
+     * @param search the search key used to filter {@link Lecturer} entities. It must not be null.
      * @param pageable the pagination information. Must not be null.
      * @return a {@link Page} of {@link Lecturer} entities that match the search criteria.
      */
