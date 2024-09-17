@@ -27,7 +27,7 @@ public class LecturerController {
     }
 
     @GetMapping(path = "{admin-id}")
-    public ResponseEntity<Response<List<LecturerList>>> getLecturers(
+    public ResponseEntity<Response<List<Lecturer>>> getLecturers(
             @PathVariable("admin-id") String id
     ) throws LiaisonException {
         return lecturerService.getLecturers(id);

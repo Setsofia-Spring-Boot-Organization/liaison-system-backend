@@ -53,31 +53,20 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
-    public ResponseEntity<Response<List<LecturerList>>> getLecturers(String id) {
+    public ResponseEntity<Response<List<Lecturer>>> getLecturers(String id) {
         adminUtil.verifyUserIsAdmin(id);
 
         List<Lecturer> lecturers = lecturerRepository.findAll();
-
-        List<LecturerList> lecturerLists = new ArrayList<>();
-
-        for (Lecturer lecturer : lecturers) {
-            lecturerLists.add(
-                    new LecturerList(
-                            lecturer.getId(),
-                            lecturer.getLastName() + " " + lecturer.getFirstName(),
-                            lecturer.getDp()
-                    )
-            );
-        }
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 Response.<List<LecturerList>>builder()
                         .status(HttpStatus.OK.value())
                         .message("lecturers")
-                        .data(lecturerLists)
+                        .data(lecturers)
                         .build()
         );
     }
+
 
 
     // helper methods
