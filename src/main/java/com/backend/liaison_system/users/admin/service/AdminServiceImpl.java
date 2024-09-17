@@ -193,7 +193,15 @@ public class AdminServiceImpl implements AdminService{
         adminUtil.verifyUserIsAdmin(id);
 
         Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
-        Page<Lecturer> lecturers = lecturerRepository.findAll(pageable);
+
+        Page<Lecturer> lecturers;
+
+        if (request.getFind() != null) {
+            lecturers = searchLecturer(request);
+        } else {
+            lecturers = lecturerRepository.findAll(pageable);
+        }
+
         int lecturerDataSize = lecturerRepository.findAll().size();
 
         TabularDataResponse response = TabularDataResponse
@@ -213,6 +221,12 @@ public class AdminServiceImpl implements AdminService{
                         .data(response)
                         .build()
         );
+    }
+
+    private Page<Lecturer> searchLecturer(AdminPageRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
+
+        return  lecturerRepository.findLecturerBySearchKey(request.getFind(), pageable);
     }
 
     /**

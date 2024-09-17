@@ -5,6 +5,8 @@ import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -38,4 +40,15 @@ public interface LecturerRepository extends JpaRepository<Lecturer, String> {
      * @return a list of lecturers who are part of the given department
      */
     List<Lecturer> findAllByDepartment(String department);
+
+    @Query("SELECT lec FROM Lecturer lec WHERE " +
+            "LOWER(lec.company) LIKE LOWER(CONCAT('%', :key, '%')) OR " +
+            "LOWER(lec.department) LIKE LOWER(CONCAT('%', :key, '%')) OR " +
+            "LOWER(lec.email) LIKE LOWER(CONCAT('%', :key, '%')) OR " +
+            "LOWER(lec.faculty) LIKE LOWER(CONCAT('%', :key, '%')) OR " +
+            "LOWER(lec.firstName) LIKE LOWER(CONCAT('%', :key, '%')) OR " +
+            "LOWER(lec.lastName) LIKE LOWER(CONCAT('%', :key, '%')) OR " +
+            "LOWER(lec.otherName) LIKE LOWER(CONCAT('%', :key, '%')) OR " +
+            "LOWER(lec.phone) LIKE LOWER(CONCAT('%', :key, '%'))")
+    Page<Lecturer> findLecturerBySearchKey(@Param("key") String search, Pageable pageable);
 }
