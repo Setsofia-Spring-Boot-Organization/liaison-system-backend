@@ -223,6 +223,22 @@ public class AdminServiceImpl implements AdminService{
         );
     }
 
+    /**
+     * Retrieves a paginated list of {@link Lecturer} entities based on the search criteria provided
+     * in the {@link AdminPageRequest}.
+     *
+     * <p>This method constructs a {@link Pageable} object using the page number and size specified
+     * in the request. It then delegates the actual search and pagination to the {@link LecturerRepository},
+     * which performs the query based on the search key provided in the request.</p>
+     *
+     * <p>The page number from the request is adjusted (decremented by 1) to conform to the zero-based
+     * index required by Spring Data's {@link PageRequest}.</p>
+     *
+     * @param request an {@link AdminPageRequest} containing the search key and pagination details.
+     *                The search key should be non-null, and the page number and size should be positive integers.
+     * @return a {@link Page} of {@link Lecturer} entities that match the search criteria and fit within
+     *         the specified pagination parameters.
+     */
     private Page<Lecturer> searchLecturer(AdminPageRequest request) {
         Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
 
