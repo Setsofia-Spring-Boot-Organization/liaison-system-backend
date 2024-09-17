@@ -2,7 +2,6 @@ package com.backend.liaison_system.users.lecturer.controller;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.exception.LiaisonException;
-import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.service.LecturerService;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
@@ -27,7 +26,7 @@ public class LecturerController {
     }
 
     @GetMapping(path = "{admin-id}")
-    public ResponseEntity<Response<List<LecturerList>>> getLecturers(
+    public ResponseEntity<Response<List<Lecturer>>> getLecturers(
             @PathVariable("admin-id") String id
     ) throws LiaisonException {
         return lecturerService.getLecturers(id);
