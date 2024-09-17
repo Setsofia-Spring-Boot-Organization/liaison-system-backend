@@ -6,6 +6,7 @@ import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
+import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
@@ -202,7 +203,7 @@ class LecturerServiceImplTest {
         when(lecturerRepository.findAll()).thenReturn(lecturers);
 
         // operations and assertions
-        ResponseEntity<Response<List<Lecturer>>> response = lecturerService.getLecturers(admin().getId());
+        ResponseEntity<Response<List<LecturerList>>> response = lecturerService.getLecturers(admin().getId());
 
         assertNotNull(response);
         assertNotNull(response.getBody());

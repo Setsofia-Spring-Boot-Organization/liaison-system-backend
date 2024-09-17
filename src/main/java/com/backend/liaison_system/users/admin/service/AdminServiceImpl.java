@@ -2,10 +2,8 @@ package com.backend.liaison_system.users.admin.service;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
-import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.dao.LecturerData;
-import com.backend.liaison_system.users.admin.dao.Lecturers;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.users.admin.dao.TabularDataResponse;
 import com.backend.liaison_system.dto.NewUserRequest;
@@ -204,14 +202,9 @@ public class AdminServiceImpl implements AdminService{
                 .pageSize(lecturers.getSize())
                 .totalData(lecturerDataSize)
                 .totalPages(lecturers.getTotalPages())
-                .lecturers(lecturers.get().map(lecturer -> new Lecturers(
-                        "#" + lecturer.getLecturerId(),
-                        lecturer.getDp(),
-                        lecturer.getLastName() + " " + lecturer.getFirstName(),
-                        lecturer.getFaculty(),
-                        lecturer.getDepartment()
-                )).toList())
+                .page(lecturers)
                 .build();
+
         return ResponseEntity.status(HttpStatus.OK).body(
                 Response
                         .builder()
