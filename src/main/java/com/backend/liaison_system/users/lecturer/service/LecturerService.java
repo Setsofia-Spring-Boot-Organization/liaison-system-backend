@@ -25,5 +25,5 @@ public interface LecturerService {
      * @param id The ID used to retrieve the list of lecturers.
      * @return A {@link ResponseEntity} containing a {@link Response} with the {@link LecturerList}.
      */
-    ResponseEntity<Response<List<LecturerList>>> getLecturers(String id);
+    ResponseEntity<Response<List<Lecturer>>> getLecturers(String id);
 }
