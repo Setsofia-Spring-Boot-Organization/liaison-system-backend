@@ -6,6 +6,7 @@ import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
+import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
@@ -52,16 +53,28 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
-    public ResponseEntity<Response<List<Lecturer>>> getLecturers(String id) {
+    public ResponseEntity<Response<List<LecturerList>>> getLecturers(String id) {
         adminUtil.verifyUserIsAdmin(id);
 
         List<Lecturer> lecturers = lecturerRepository.findAll();
 
+        List<LecturerList> lecturerLists = new ArrayList<>();
+
+        for (Lecturer lecturer : lecturers) {
+            lecturerLists.add(
+                    new LecturerList(
+                            lecturer.getId(),
+                            lecturer.getLastName() + " " + lecturer.getFirstName(),
+                            lecturer.getDp()
+                    )
+            );
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(
-                Response.<List<Lecturer>>builder()
+                Response.<List<LecturerList>>builder()
                         .status(HttpStatus.OK.value())
                         .message("lecturers")
-                        .data(lecturers)
+                        .data(lecturerLists)
                         .build()
         );
     }
