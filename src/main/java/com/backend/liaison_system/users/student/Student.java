@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.student;
 
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.enums.UserRoles;
 import jakarta.persistence.*;
@@ -37,6 +38,7 @@ public class Student {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Status status;
+    private InternshipType internshipType;
 
     @Enumerated(EnumType.STRING)
     private UserRoles role;

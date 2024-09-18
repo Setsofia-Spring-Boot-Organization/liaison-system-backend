@@ -17,4 +17,5 @@ public class AdminPageRequest {
     String name;
     String faculty;
     String department;
+    Boolean internship;
 }

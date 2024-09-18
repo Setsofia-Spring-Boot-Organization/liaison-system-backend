@@ -28,8 +28,8 @@ public class AdminController {
     }
 
     @PostMapping("students")
-    public ResponseEntity<Response<?>> uploadStudents(@RequestPart("file") MultipartFile file) {
-        return new ResponseEntity<>(adminService.uploadStudents(file), HttpStatus.CREATED);
+    public ResponseEntity<Response<?>> uploadStudents(@RequestPart("file") MultipartFile file, @RequestPart("internship")boolean internship) {
+        return new ResponseEntity<>(adminService.uploadStudents(file, internship), HttpStatus.CREATED);
     }
 
     @GetMapping("students")
