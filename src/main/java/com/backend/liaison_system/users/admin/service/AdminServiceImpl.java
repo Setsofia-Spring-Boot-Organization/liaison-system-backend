@@ -1,6 +1,7 @@
 package com.backend.liaison_system.users.admin.service;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.dao.LecturerData;
@@ -119,7 +120,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Response<?> uploadStudents(MultipartFile file) {
+    public Response<?> uploadStudents(MultipartFile file, boolean internship) {
         try {
             log.info("File received: {}", file.getOriginalFilename());
 
@@ -147,6 +148,11 @@ public class AdminServiceImpl implements AdminService{
                 //Ensure student does not already exist
                 Optional<Student> studentCheck = studentRepository.findByEmail(currentStudent.getEmail());
                 if(studentCheck.isEmpty()) {
+                    if (!internship) {
+                        currentStudent.setInternshipType(InternshipType.Semester_out);
+                    } else {
+                        currentStudent.setInternshipType(InternshipType.Internship);
+                    }
                     students.add(currentStudent);
                     log.info("Student added: {}", currentStudent.getEmail());
                 }
@@ -166,7 +172,14 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public Response<?> getStudents(AdminPageRequest request) {
         Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
-        Page<Student> students = studentRepository.findAll(request ,pageable);
+        Page<Student> students;
+        if (request.getInternship()) {
+            log.info("Retrieving all student info of type internship");
+            students = studentRepository.findAll(request ,pageable, InternshipType.Internship);
+        } else {
+            log.info("Retrieving all student info of type Semester Out");
+            students = studentRepository.findAll(request ,pageable, InternshipType.Semester_out);
+        }
         int studentSize = studentRepository.findAll().size();
         List<StudentDto> studentDtoList = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();
         TabularDataResponse response = TabularDataResponse

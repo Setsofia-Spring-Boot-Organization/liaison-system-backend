@@ -1,5 +1,6 @@
 package com.backend.liaison_system.util;
 
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.student.Student;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -25,5 +26,9 @@ public class StudentSpecifications {
 
     public static Specification<Student> sameDepartment(String department) {
         return ((root, query, criteriaBuilder) -> department == null || department.isEmpty() ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("studentDepartment")), "%" + department.toLowerCase() + "%"));
+    }
+
+    public static Specification<Student> internshipType(InternshipType internshipType) {
+        return ((root, query, criteriaBuilder) -> internshipType == null  ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("internshipType")), "%" + internshipType + "%"));
     }
 }

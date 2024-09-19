@@ -22,7 +22,7 @@ public interface AdminService {
      * @param file an Excel sheet that contains all the students and their details
      * @return a Response Object
      */
-    Response<?> uploadStudents(MultipartFile file);
+    Response<?> uploadStudents(MultipartFile file, boolean internship);
 
     Response<?> getStudents(AdminPageRequest request);
 

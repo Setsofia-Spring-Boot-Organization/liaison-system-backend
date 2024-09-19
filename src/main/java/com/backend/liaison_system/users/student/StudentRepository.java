@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.student;
 
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +29,12 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
      * @param pageable this is Pageable that specifies the page
      * @return a page containing the list of matching students
      */
-    default Page<Student> findAll(AdminPageRequest request, Pageable pageable) {
+    default Page<Student> findAll(AdminPageRequest request, Pageable pageable, InternshipType internshipType) {
         return findAll(Specification.where(hasName(request.getName()))
                 .or(Specification.where(hasLastName(request.getName()))).or(hasOtherName(request.getName()))
                         .and(sameDepartment(request.getDepartment()))
-                        .and(sameFaculty(request.getFaculty())),
+                        .and(sameFaculty(request.getFaculty()))
+                        .and(internshipType(internshipType)),
                 pageable);
     }
 }
