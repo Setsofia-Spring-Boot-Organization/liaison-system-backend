@@ -38,6 +38,8 @@ public class Student {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Status status;
+
+    @Enumerated(EnumType.STRING)
     private InternshipType internshipType;
 
     @Enumerated(EnumType.STRING)
