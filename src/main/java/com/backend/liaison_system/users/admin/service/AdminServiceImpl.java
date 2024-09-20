@@ -149,9 +149,9 @@ public class AdminServiceImpl implements AdminService{
                 Optional<Student> studentCheck = studentRepository.findByEmail(currentStudent.getEmail());
                 if(studentCheck.isEmpty()) {
                     if (!internship) {
-                        currentStudent.setInternshipType(InternshipType.Semester_out);
+                        currentStudent.setInternshipType(InternshipType.SEM_OUT);
                     } else {
-                        currentStudent.setInternshipType(InternshipType.Internship);
+                        currentStudent.setInternshipType(InternshipType.INTERNSHIP);
                     }
                     students.add(currentStudent);
                     log.info("Student added: {}", currentStudent.getEmail());
@@ -175,10 +175,10 @@ public class AdminServiceImpl implements AdminService{
         Page<Student> students;
         if (request.getInternship()) {
             log.info("Retrieving all student info of type internship");
-            students = studentRepository.findAll(request ,pageable, InternshipType.Internship);
+            students = studentRepository.findAll(request ,pageable, InternshipType.INTERNSHIP);
         } else {
             log.info("Retrieving all student info of type Semester Out");
-            students = studentRepository.findAll(request ,pageable, InternshipType.Semester_out);
+            students = studentRepository.findAll(request ,pageable, InternshipType.SEM_OUT);
         }
         int studentSize = studentRepository.findAll().size();
         List<StudentDto> studentDtoList = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();

@@ -44,6 +44,7 @@ public class AdminUtil {
                 .startDate(student.getStartDate())
                 .endDate(student.getEndDate())
                 .status(student.getStatus())
+                .type(student.getInternshipType())
                 .about(student.getStudentAbout())
                 .build();
     }

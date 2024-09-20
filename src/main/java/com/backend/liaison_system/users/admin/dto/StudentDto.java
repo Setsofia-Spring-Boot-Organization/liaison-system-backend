@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.admin.dto;
 
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.Status;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,5 +27,6 @@ public class StudentDto {
     private String placeOfInternship;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private InternshipType type;
     private Status status;
 }
