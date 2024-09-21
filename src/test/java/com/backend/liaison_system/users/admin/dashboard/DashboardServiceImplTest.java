@@ -118,7 +118,7 @@ class DashboardServiceImplTest {
         List<Lecturer> lecturers = lecturers();
         Admin admin = admin();
 
-        when(lecturerRepository.findAll().size()).thenReturn(lecturers.size());
+        when(lecturerRepository.findAll()).thenReturn(lecturers);
         when(adminRepository.findById(admin.getId())).thenReturn(Optional.of(admin));
 
         // do
