@@ -3,6 +3,7 @@ package com.backend.liaison_system.users.admin.dashboard;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.admin.dashboard.dao.Statistics;
+import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -91,16 +93,36 @@ class DashboardServiceImplTest {
         return lecturers;
     }
 
+    // create a dummy admin
+    Admin admin() {
+        Admin admin = new Admin();
+
+        admin.setId(UUID.randomUUID().toString());
+
+        admin.setCreatedAt(LocalDateTime.now());
+        admin.setUpdatedAt(LocalDateTime.now());
+
+        admin.setFirstName("Liaison");
+        admin.setLastName("Admin");
+        admin.setOtherName("");
+        admin.setEmail("admin@ttu.edu.gh");
+        admin.setPassword("password");
+        admin.setRole(UserRoles.ADMIN);
+
+        return admin;
+    }
+
     @Test
     void getStatistics() {
         // setup
         List<Lecturer> lecturers = lecturers();
+        Admin admin = admin();
 
         when(lecturerRepository.findAll().size()).thenReturn(lecturers.size());
-        when(adminRepository.findById()).thenReturn(admin);
+        when(adminRepository.findById(admin.getId())).thenReturn(Optional.of(admin));
 
         // do
-        ResponseEntity<Response<Statistics>> response = dashboardService.getStatistics();
+        ResponseEntity<Response<Statistics>> response = dashboardService.getStatistics(admin.getId());
 
         // assertions
         assertNotNull(response);
