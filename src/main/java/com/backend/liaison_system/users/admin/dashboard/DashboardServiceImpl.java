@@ -3,6 +3,7 @@ package com.backend.liaison_system.users.admin.dashboard;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.users.admin.dashboard.dao.Statistics;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
+import com.backend.liaison_system.users.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class DashboardServiceImpl implements DashboardService{
 
     private final AdminUtil adminUtil;
+    private final StudentRepository studentRepository;
 
     @Override
     public ResponseEntity<Response<Statistics>> getStatistics(String id) {
@@ -20,5 +22,9 @@ public class DashboardServiceImpl implements DashboardService{
         adminUtil.verifyUserIsAdmin(id);
 
         return null;
+    }
+
+    private long getTotalStudents() {
+        return studentRepository.countStudentsByInternshipTypeIsTrue();
     }
 }

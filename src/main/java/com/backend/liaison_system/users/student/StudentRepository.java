@@ -37,4 +37,6 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
                         .and(internshipType(internshipType)),
                 pageable);
     }
+
+    long countStudentsByInternshipTypeIsTrue();
 }
