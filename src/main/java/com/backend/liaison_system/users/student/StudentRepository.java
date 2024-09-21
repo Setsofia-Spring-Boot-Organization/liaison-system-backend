@@ -1,6 +1,5 @@
 package com.backend.liaison_system.users.student;
 
-import com.backend.liaison_system.dto.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.util.StudentSpecifications;

@@ -38,8 +38,6 @@ public class StudentSpecifications {
 
     public static Specification<Student> academicYearAndInternshipType(String start, String end, String type) {
         // format the start and end year into a LocalDateTime object
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
-
         int startYear = Integer.parseInt(start);
         int endYear = Integer.parseInt(end);
 
