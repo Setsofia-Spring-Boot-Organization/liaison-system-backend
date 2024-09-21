@@ -1,13 +1,17 @@
 package com.backend.liaison_system.users.student;
 
+import com.backend.liaison_system.dto.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
+import com.backend.liaison_system.util.StudentSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Optional;
 
 import static com.backend.liaison_system.util.StudentSpecifications.*;
@@ -38,5 +42,11 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
                 pageable);
     }
 
-    long countStudentsByInternshipTypeEquals(InternshipType internshipType);
+    default List<Student> findAllStudents(String start, String end, String type) {
+        return findAll(StudentSpecifications.academicYearAndInternshipType(
+                start,
+                end,
+                type
+        ));
+    }
 }

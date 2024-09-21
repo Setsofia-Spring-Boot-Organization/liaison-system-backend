@@ -134,5 +134,7 @@ class DashboardServiceImplTest {
         // assertions
         assertNotNull(response);
         assertNotNull(response.getBody());
+
+        System.out.println(response.getBody().getData());
     }
 }

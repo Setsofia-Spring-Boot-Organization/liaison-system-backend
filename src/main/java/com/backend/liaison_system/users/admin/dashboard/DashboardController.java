@@ -18,7 +18,7 @@ public class DashboardController {
     @GetMapping(path = "/{admin-id}")
     public ResponseEntity<Response<Statistics>> getStatistics(
             @PathVariable("admin-id") String id,
-            @RequestParam ConstantRequestParam constantRequestParam
+            ConstantRequestParam constantRequestParam
     ) throws LiaisonException {
         return dashboardService.getStatistics(id, constantRequestParam);
     }
