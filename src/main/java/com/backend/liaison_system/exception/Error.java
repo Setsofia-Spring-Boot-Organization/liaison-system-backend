@@ -9,7 +9,8 @@ public enum Error {
     REQUIRED_FIELDS_ARE_EMPTY("required fields are empty"),
     UNAUTHORIZED_USER("authorization failed"),
     WRONG_USER_ROLE("wrong user role"),
-    INVALID_USER_IDS("invalid user ids");
+    INVALID_USER_IDS("invalid user ids"),
+    INVALID_INTERNSHIP_TYPE("invalid internship type");
 
     public final String label;
     Error(String label) {

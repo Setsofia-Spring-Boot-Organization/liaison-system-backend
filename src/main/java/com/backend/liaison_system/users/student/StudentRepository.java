@@ -38,5 +38,5 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
                 pageable);
     }
 
-    long countStudentsByInternshipTypeIsTrue();
+    long countStudentsByInternshipTypeEquals(InternshipType internshipType);
 }

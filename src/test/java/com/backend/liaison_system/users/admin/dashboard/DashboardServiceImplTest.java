@@ -1,6 +1,8 @@
 package com.backend.liaison_system.users.admin.dashboard;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.dto.ConstantRequestParam;
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.admin.dashboard.dao.Statistics;
 import com.backend.liaison_system.users.admin.entity.Admin;
@@ -19,11 +21,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
+import javax.swing.text.DateFormatter;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -121,8 +121,15 @@ class DashboardServiceImplTest {
         when(lecturerRepository.findAll()).thenReturn(lecturers);
         when(adminRepository.findById(admin.getId())).thenReturn(Optional.of(admin));
 
+
+        ConstantRequestParam constantRequestParam = new ConstantRequestParam(
+                InternshipType.INTERNSHIP,
+                "2020",
+                "2024"
+        );
+
         // do
-        ResponseEntity<Response<Statistics>> response = dashboardService.getStatistics(admin.getId());
+        ResponseEntity<Response<Statistics>> response = dashboardService.getStatistics(admin.getId(), constantRequestParam);
 
         // assertions
         assertNotNull(response);

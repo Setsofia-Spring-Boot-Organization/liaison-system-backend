@@ -1,6 +1,7 @@
 package com.backend.liaison_system.users.admin.dashboard;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.dto.ConstantRequestParam;
 import com.backend.liaison_system.users.admin.dashboard.dao.Statistics;
 import org.springframework.http.ResponseEntity;
 
@@ -12,5 +13,5 @@ public interface DashboardService {
      *
      * @return A {@link ResponseEntity} containing a {@link Response} with the {@link Statistics}.
      */
-    ResponseEntity<Response<Statistics>> getStatistics(String id);
+    ResponseEntity<Response<Statistics>> getStatistics(String id, ConstantRequestParam constantRequestParam);
 }

@@ -8,7 +8,8 @@ public enum Message {
     THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM("the submitted email is already in the system"),
     THE_USER_IS_NOT_AUTHORIZED("user not authorized to perform this action"),
     THE_USER_ROLE_IS_NOT_ALLOWED("the operation cannot be performed on this role"),
-    THE_FOLLOWING_IDS_DO_NOT_EXIST("the following ids do not exist");
+    THE_FOLLOWING_IDS_DO_NOT_EXIST("the following ids do not exist"),
+    THE_INTERNSHIP_TYPE_IS_INCORRECT("the specified internship type is incorrect");
 
     public final String label;
     Message(String label) {
