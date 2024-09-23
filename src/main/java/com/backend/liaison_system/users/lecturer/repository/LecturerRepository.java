@@ -1,10 +1,12 @@
 package com.backend.liaison_system.users.lecturer.repository;
 
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
+import com.backend.liaison_system.users.lecturer.specification.LecturerSpecification;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface LecturerRepository extends JpaRepository<Lecturer, String> {
+public interface LecturerRepository extends JpaRepository<Lecturer, String>, JpaSpecificationExecutor<Lecturer> {
     /**
      * This method finds a Lecturer entity by its email address.
      *
@@ -67,4 +69,14 @@ public interface LecturerRepository extends JpaRepository<Lecturer, String> {
             "LOWER(lec.otherName) LIKE LOWER(CONCAT('%', :key, '%')) OR " +
             "LOWER(lec.phone) LIKE LOWER(CONCAT('%', :key, '%'))")
     Page<Lecturer> findLecturerBySearchKey(@Param("key") String search, Pageable pageable);
+
+
+    default List<Lecturer> findAllLectures(String start, String end) {
+        return findAll(
+                LecturerSpecification.getAllLecturers(
+                        start,
+                        end
+                )
+        );
+    }
 }
