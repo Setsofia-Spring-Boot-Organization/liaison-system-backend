@@ -38,7 +38,7 @@ public class DashboardServiceImpl implements DashboardService{
                         .message("statistics")
                         .data(new Statistics(
                                 0,
-                                students.size(),
+                                students.size(), 
                                 0
                         )).build()
         );
@@ -46,20 +46,19 @@ public class DashboardServiceImpl implements DashboardService{
 
     private List<Student> getTotalStudents(ConstantRequestParam constantRequestParam) throws LiaisonException {
 
-        if (constantRequestParam.internshipType().name().equals(InternshipType.INTERNSHIP.name())) {
+        if (InternshipType.valueOf(constantRequestParam.internshipType().name()) == InternshipType.INTERNSHIP) {
             return studentRepository.findAllStudents(
                     constantRequestParam.startYear(),
                     constantRequestParam.endYear(),
                     constantRequestParam.internshipType().name()
             );
-        } else if (constantRequestParam.internshipType().name().equals(InternshipType.SEMESTER_OUT.name())) {
+        } else if (InternshipType.valueOf(constantRequestParam.internshipType().name()) == InternshipType.SEMESTER_OUT) {
             return studentRepository.findAllStudents(
                     constantRequestParam.startYear(),
                     constantRequestParam.endYear(),
                     constantRequestParam.internshipType().name()
             );
-        }
-
-        throw new LiaisonException(Error.INVALID_INTERNSHIP_TYPE, new Throwable(Message.THE_INTERNSHIP_TYPE_IS_INCORRECT.label));
+        } else
+            throw new LiaisonException(Error.INVALID_INTERNSHIP_TYPE, new Throwable(Message.THE_INTERNSHIP_TYPE_IS_INCORRECT.label));
     }
 }
