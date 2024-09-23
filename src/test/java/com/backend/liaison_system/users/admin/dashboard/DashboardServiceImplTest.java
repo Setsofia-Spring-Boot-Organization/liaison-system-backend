@@ -122,7 +122,7 @@ class DashboardServiceImplTest {
 
 
         ConstantRequestParam constantRequestParam = new ConstantRequestParam(
-                InternshipType.INTERNSHIP,
+                InternshipType.INTERNSHIP.name(),
                 "2020",
                 "2024"
         );
