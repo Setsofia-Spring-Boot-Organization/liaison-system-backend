@@ -34,19 +34,29 @@ public class DashboardServiceImpl implements DashboardService{
         adminUtil.verifyUserIsAdmin(id);
 
         List<Student> students = getTotalStudents(constantRequestParam);
+        List<Lecturer> lecturers = getTotalLecturers(constantRequestParam);
+
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 Response.<Statistics>builder()
                         .status(HttpStatus.OK.value())
                         .message("statistics")
                         .data(new Statistics(
-                                0,
+                                lecturers.size(),
                                 students.size(), 
                                 0
                         )).build()
         );
     }
 
+    /**
+     * This method retrieves a list of students based on the internship type and year range.
+     * It throws a {@link LiaisonException} if the internship type is invalid.
+     *
+     * @param constantRequestParam an object containing request parameters such as internship type, start year, and end year
+     * @return a list of students that match the internship type and year range
+     * @throws LiaisonException if the internship type is invalid
+     */
     private List<Student> getTotalStudents(ConstantRequestParam constantRequestParam) throws LiaisonException {
 
         if (constantRequestParam.internshipType().equals(InternshipType.INTERNSHIP.name())) {
@@ -65,6 +75,14 @@ public class DashboardServiceImpl implements DashboardService{
             throw new LiaisonException(Error.INVALID_INTERNSHIP_TYPE, new Throwable(Message.THE_INTERNSHIP_TYPE_IS_INCORRECT.label));
     }
 
+    /**
+     * This method retrieves a list of lecturers based on the internship type and year range.
+     * It throws a {@link LiaisonException} if the internship type is invalid.
+     *
+     * @param constantRequestParam an object containing request parameters such as internship type, start year, and end year
+     * @return a list of lecturers that match the internship type and year range
+     * @throws LiaisonException if the internship type is invalid
+     */
     private List<Lecturer> getTotalLecturers(ConstantRequestParam constantRequestParam) throws LiaisonException {
 
         if (constantRequestParam.internshipType().equals(InternshipType.INTERNSHIP.name())) {
