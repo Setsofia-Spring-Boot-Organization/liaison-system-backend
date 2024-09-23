@@ -61,7 +61,7 @@ public class DashboardServiceImpl implements DashboardService{
 
         if (constantRequestParam.internshipType().equals(InternshipType.INTERNSHIP.name())) {
             return studentRepository.findAllStudents(
-                    constantRequestParam.startYear(), 
+                    constantRequestParam.startYear(),
                     constantRequestParam.endYear(),
                     constantRequestParam.internshipType()
             );
