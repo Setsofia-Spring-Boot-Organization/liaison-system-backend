@@ -70,7 +70,13 @@ public interface LecturerRepository extends JpaRepository<Lecturer, String>, Jpa
             "LOWER(lec.phone) LIKE LOWER(CONCAT('%', :key, '%'))")
     Page<Lecturer> findLecturerBySearchKey(@Param("key") String search, Pageable pageable);
 
-
+    /**
+     * This method retrieves a list of all lecturers based on the specified date range.
+     *
+     * @param start the start date for filtering lecturers
+     * @param end the end date for filtering lecturers
+     * @return a list of lecturers that match the specified date range
+     */
     default List<Lecturer> findAllLectures(String start, String end) {
         return findAll(
                 LecturerSpecification.getAllLecturers(
