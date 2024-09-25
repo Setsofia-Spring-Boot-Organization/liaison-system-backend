@@ -63,13 +63,13 @@ public class DashboardServiceImpl implements DashboardService{
             return studentRepository.findAllStudents(
                     constantRequestParam.startYear(),
                     constantRequestParam.endYear(),
-                    constantRequestParam.internshipType()
+                    constantRequestParam.internshipType().toUpperCase()
             );
         } else if (constantRequestParam.internshipType().equals(InternshipType.SEMESTER_OUT.name())) {
             return studentRepository.findAllStudents(
                     constantRequestParam.startYear(),
                     constantRequestParam.endYear(),
-                    constantRequestParam.internshipType()
+                    constantRequestParam.internshipType().toUpperCase()
             );
         } else
             throw new LiaisonException(Error.INVALID_INTERNSHIP_TYPE, new Throwable(Message.THE_INTERNSHIP_TYPE_IS_INCORRECT.label));
