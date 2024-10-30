@@ -5,7 +5,7 @@ import java.util.List;
 public record NewZone (
     String name,
     String region,
-    String town,
+    List<String> towns,
     String zoneLead,
     List<String> lecturerIds
 ) {}

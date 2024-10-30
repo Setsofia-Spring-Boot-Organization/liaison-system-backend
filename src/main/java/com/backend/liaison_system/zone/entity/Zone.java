@@ -19,11 +19,13 @@ public class Zone {
 
     private String name;
     private String region;
-    private String town;
     private String zoneLead;
 
     @Embedded
     private ZoneLecturers lecturers;
+
+    @Embedded
+    private Towns towns;
 
     @Override
     public final boolean equals(Object o) {

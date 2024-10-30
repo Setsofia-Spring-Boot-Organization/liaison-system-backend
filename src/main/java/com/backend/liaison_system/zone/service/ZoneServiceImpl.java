@@ -7,6 +7,7 @@ import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.zone.dto.NewZone;
+import com.backend.liaison_system.zone.entity.Towns;
 import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.entity.ZoneLecturers;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
@@ -46,7 +47,7 @@ public class ZoneServiceImpl implements ZoneService{
             Zone zone1 = new Zone();
             zone1.setName(zone.name());
             zone1.setRegion(zone.region());
-            zone1.setTown(zone.town());
+            zone1.setTowns(new Towns(zone.towns()));
             zone1.setZoneLead(zone.zoneLead());
             zone1.setLecturers(new ZoneLecturers(zone.lecturerIds()));
 
