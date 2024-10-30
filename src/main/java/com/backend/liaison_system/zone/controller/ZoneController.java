@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "liaison/api/v1/zones")
 @RequiredArgsConstructor
@@ -18,8 +20,8 @@ public class ZoneController {
     @PostMapping(path = "/{admin-id}")
     public ResponseEntity<Response<?>> createNewZone(
             @PathVariable("admin-id") String id,
-            @RequestBody NewZone zone
+            @RequestBody List<NewZone> zones
     ) throws LiaisonException {
-        return zoneService.createNewZone(id, zone);
+        return zoneService.createNewZone(id, zones);
     }
 }
