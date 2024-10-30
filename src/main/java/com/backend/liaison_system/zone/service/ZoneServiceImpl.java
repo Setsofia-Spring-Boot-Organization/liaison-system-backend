@@ -29,24 +29,31 @@ public class ZoneServiceImpl implements ZoneService{
 
     @Transactional(rollbackOn = { Exception.class, LiaisonException.class })
     @Override
-    public ResponseEntity<Response<?>> createNewZone(String id, NewZone newZone) {
-        if (newZone.zoneLead() == null || newZone.zoneLead().isEmpty()) throw new LiaisonException(Error.REQUIRED_FIELDS_ARE_EMPTY, new Throwable(Message.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[zoneLead]"));
+    public ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones) {
+        for (NewZone zone : zones) {
+            if (zone.zoneLead() == null || zone.zoneLead().isEmpty()) throw new LiaisonException(Error.REQUIRED_FIELDS_ARE_EMPTY, new Throwable(Message.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[zoneLead]"));
+        }
 
         // verify that the user sending the request is an admin
         adminUtil.verifyUserIsAdmin(id);
 
         // sanitize the ids, making sure that they exist
-        sanitizeTheLecturerIds(newZone);
+        sanitizeTheLecturerIds(zones);
 
         // create the new zone data
-        Zone zone = new Zone();
-        zone.setName(newZone.name());
-        zone.setRegion(newZone.region());
-        zone.setZoneLead(newZone.zoneLead());
-        zone.setLecturers(new ZoneLecturers(newZone.lecturerIds()));
+        List<Zone> zones1 = new ArrayList<>();
+        for (NewZone zone : zones) {
+            Zone zone1 = new Zone();
+            zone1.setName(zone.name());
+            zone1.setRegion(zone.region());
+            zone1.setZoneLead(zone.zoneLead());
+            zone1.setLecturers(new ZoneLecturers(zone.lecturerIds()));
+
+            zones1.add(zone1);
+        }
 
         try {
-            zoneRepository.save(zone);
+            zoneRepository.saveAll(zones1);
         } catch (Exception exception) {
             throw new LiaisonException(Error.ERROR_SAVING_DATA);
         }
@@ -54,7 +61,7 @@ public class ZoneServiceImpl implements ZoneService{
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Response.builder()
                         .status(HttpStatus.CREATED.value())
-                        .message("New zone created successfully")
+                        .message("New zone(s) created successfully")
                         .build()
         );
     }
@@ -63,15 +70,19 @@ public class ZoneServiceImpl implements ZoneService{
      * This method sanitizes the lecturer IDs in the provided {@code zone} by checking if any of the IDs
      * do not exist in the system. If invalid IDs are found, it throws a {@link LiaisonException}.
      *
-     * @param zone The {@link NewZone} object containing the lecturer IDs to be validated.
+     * @param zones The {@link NewZone} object containing the lecturer IDs to be validated.
      * @throws LiaisonException If one or more lecturer IDs do not exist in the system.
      */
-    private void sanitizeTheLecturerIds(NewZone zone) throws LiaisonException {
+    private void sanitizeTheLecturerIds(List<NewZone> zones) throws LiaisonException {
         List<String> invalidIds = new ArrayList<>();
 
-        for (String id : zone.lecturerIds()) {
-            boolean result = lecturerRepository.findById(id).isEmpty();
-            if (result) invalidIds.add(id);
+        List<List<String>> lecturerIds = zones.stream().map(NewZone::lecturerIds).toList();
+
+        for (List<String> ids : lecturerIds.stream().toList()) {
+            for (String id : ids) {
+                boolean result = lecturerRepository.findById(id).isEmpty();
+                if (result) invalidIds.add(id);
+            }
         }
 
         if (!invalidIds.isEmpty())

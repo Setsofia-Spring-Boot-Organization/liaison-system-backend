@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,6 +94,8 @@ class ZoneServiceImplTest {
         NewZone newZone = newZone();
         Admin admin = admin();
 
+        List<NewZone> newZones = new ArrayList<>();
+
         Zone zone = new Zone();
         zone.setName(newZone.name());
         zone.setRegion(newZone.region());
@@ -102,7 +105,7 @@ class ZoneServiceImplTest {
         when(zoneRepository.save(any(Zone.class))).thenReturn(zone);
 
         // operations & assertions
-        ResponseEntity<Response<?>> response = zoneService.createNewZone(admin.getId(), newZone);
+        ResponseEntity<Response<?>> response = zoneService.createNewZone(admin.getId(), newZones);
 
         assertNotNull(response);
         assertNotNull(response.getBody());
