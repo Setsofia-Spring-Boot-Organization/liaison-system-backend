@@ -4,6 +4,8 @@ import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.zone.dto.NewZone;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface ZoneService {
 
     /**
@@ -14,5 +16,5 @@ public interface ZoneService {
      * @param zone the NewZone object containing the details of the new zone to be created
      * @return a ResponseEntity containing a Response object with the status of the zone creation operation
      */
-    ResponseEntity<Response<?>> createNewZone(String id, NewZone zone);
+    ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones);
 }
