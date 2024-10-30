@@ -62,6 +62,7 @@ class ZoneServiceImplTest {
         return new NewZone(
                 "New zone",
                 "Western region ",
+                "Miami",
                 "zoneLeadId",
                 List.of(
                         "lecture1",
