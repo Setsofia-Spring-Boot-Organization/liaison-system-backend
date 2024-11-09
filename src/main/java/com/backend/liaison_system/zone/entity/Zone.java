@@ -23,6 +23,14 @@ public class Zone {
     private String region;
     private String zoneLead;
 
+    /**
+     * The start and end dates are the start
+     * and end of the academic years in which the ZONE
+     * was created
+     */
+    private LocalDateTime startOfAcademicYear;
+    private LocalDateTime endOfAcademicYear;
+
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
