@@ -17,7 +17,7 @@ public interface ZoneService {
      * @param zones the NewZone object containing the details of the new zone to be created
      * @return a ResponseEntity containing a Response object with the status of the zone creation operation
      */
-    ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones);
+    ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones, boolean internship);
 
     ResponseEntity<Response<Zone>> getAllZones(String adminId, boolean internship);
 }
