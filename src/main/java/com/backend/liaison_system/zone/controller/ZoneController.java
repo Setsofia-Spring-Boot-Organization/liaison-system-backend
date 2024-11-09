@@ -21,9 +21,10 @@ public class ZoneController {
     @PostMapping(path = "/{admin-id}")
     public ResponseEntity<Response<?>> createNewZone(
             @PathVariable("admin-id") String id,
-            @RequestBody List<NewZone> zones
+            @RequestBody List<NewZone> zones,
+            @RequestParam boolean internship
     ) throws LiaisonException {
-        return zoneService.createNewZone(id, zones);
+        return zoneService.createNewZone(id, zones, internship);
     }
 
     @GetMapping(path = "/{admin-id}")
