@@ -35,8 +35,15 @@ public class Student {
     private String studentAbout;
     private String studentCourse;
     private String placeOfInternship;
+
+    /**
+     * The start and end dates are the start
+     * and end of the academic years in which the student
+     * was added
+    */
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+
     private Status status;
 
     @Enumerated(EnumType.STRING)

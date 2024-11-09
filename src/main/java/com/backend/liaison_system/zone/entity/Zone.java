@@ -1,9 +1,11 @@
 package com.backend.liaison_system.zone.entity;
 
+import com.backend.liaison_system.enums.InternshipType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +22,19 @@ public class Zone {
     private String name;
     private String region;
     private String zoneLead;
+
+    /**
+     * The start and end dates are the start
+     * and end of the academic years in which the ZONE
+     * was created
+     */
+    private LocalDateTime startOfAcademicYear;
+    private LocalDateTime endOfAcademicYear;
+
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
+
+    private InternshipType internshipType;
 
     @Embedded
     private ZoneLecturers lecturers;
