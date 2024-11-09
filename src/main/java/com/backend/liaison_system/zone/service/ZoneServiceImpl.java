@@ -1,6 +1,7 @@
 package com.backend.liaison_system.zone.service;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class ZoneServiceImpl implements ZoneService{
 
     @Transactional(rollbackOn = { Exception.class, LiaisonException.class })
     @Override
-    public ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones) {
+    public ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones, boolean internship) {
         for (NewZone zone : zones) {
             if (zone.zoneLead() == null || zone.zoneLead().isEmpty()) throw new LiaisonException(Error.REQUIRED_FIELDS_ARE_EMPTY, new Throwable(Message.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[zoneLead]"));
         }
@@ -49,6 +51,12 @@ public class ZoneServiceImpl implements ZoneService{
             zone1.setRegion(zone.region());
             zone1.setTowns(new Towns(zone.towns()));
             zone1.setZoneLead(zone.zoneLead());
+
+            zone1.setDateCreated(LocalDateTime.now());
+            zone1.setDateUpdated(LocalDateTime.now());
+
+            zone1.setInternshipType((internship) ? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT);
+
             zone1.setLecturers(new ZoneLecturers(zone.lecturerIds()));
 
             zones1.add(zone1);
@@ -89,5 +97,13 @@ public class ZoneServiceImpl implements ZoneService{
 
         if (!invalidIds.isEmpty())
             throw new LiaisonException(Error.INVALID_USER_IDS, new Throwable(Message.THE_FOLLOWING_IDS_DO_NOT_EXIST.label + " " + invalidIds));
+    }
+
+    @Override
+    public ResponseEntity<Response<Zone>> getAllZones(String adminId, boolean internship) {
+
+        adminUtil.verifyUserIsAdmin(adminId); // verify that the user is an admin
+
+        return null;
     }
 }
