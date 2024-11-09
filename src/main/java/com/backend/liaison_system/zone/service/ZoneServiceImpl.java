@@ -1,5 +1,6 @@
 package com.backend.liaison_system.zone.service;
 
+import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.exception.Error;
@@ -12,12 +13,14 @@ import com.backend.liaison_system.zone.entity.Towns;
 import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.entity.ZoneLecturers;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
+import com.backend.liaison_system.zone.specification.ZoneSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +32,11 @@ public class ZoneServiceImpl implements ZoneService{
     private final AdminUtil adminUtil;
     private final LecturerRepository lecturerRepository;
     private final ZoneRepository zoneRepository;
+    private final ZoneSpecification zoneSpecification;
 
     @Transactional(rollbackOn = { Exception.class, LiaisonException.class })
     @Override
-    public ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones, boolean internship) {
+    public ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones, ConstantRequestParam param) {
         for (NewZone zone : zones) {
             if (zone.zoneLead() == null || zone.zoneLead().isEmpty()) throw new LiaisonException(Error.REQUIRED_FIELDS_ARE_EMPTY, new Throwable(Message.THE_FOLLOWING_FIELDS_ARE_EMPTY.label + "[zoneLead]"));
         }
@@ -44,6 +48,13 @@ public class ZoneServiceImpl implements ZoneService{
         sanitizeTheLecturerIds(zones);
 
         // create the new zone data
+        int startOfAcademicYear = Integer.parseInt(param.startOfAcademicYear());
+        int endOfAcademicYear = Integer.parseInt(param.endOfAcademicYear());
+
+        LocalDateTime startDate = LocalDate.of(startOfAcademicYear, 1, 1).atStartOfDay();
+        LocalDateTime endDate = LocalDate.of(endOfAcademicYear, 12, 31).atTime(23, 59, 59, 999999999);
+
+
         List<Zone> zones1 = new ArrayList<>();
         for (NewZone zone : zones) {
             Zone zone1 = new Zone();
@@ -55,7 +66,9 @@ public class ZoneServiceImpl implements ZoneService{
             zone1.setDateCreated(LocalDateTime.now());
             zone1.setDateUpdated(LocalDateTime.now());
 
-            zone1.setInternshipType((internship) ? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT);
+            zone1.setInternshipType((param.internship()) ? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT);
+            zone1.setStartOfAcademicYear(startDate);
+            zone1.setEndOfAcademicYear(endDate);
 
             zone1.setLecturers(new ZoneLecturers(zone.lecturerIds()));
 
@@ -100,10 +113,18 @@ public class ZoneServiceImpl implements ZoneService{
     }
 
     @Override
-    public ResponseEntity<Response<Zone>> getAllZones(String adminId, boolean internship) {
-
+    public ResponseEntity<Response<List<Zone>>> getAllZones(String adminId, ConstantRequestParam param) {
         adminUtil.verifyUserIsAdmin(adminId); // verify that the user is an admin
 
-        return null;
+//        zoneRepository.dropZoneTable();
+
+        List<Zone> zones = zoneSpecification.findZonesUsingZoneTypeAndAcademicDates(param);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Response.<List<Zone>>builder()
+                        .status(HttpStatus.OK.value())
+                        .message("zones")
+                        .data(zones)
+                        .build()
+        );
     }
 }
