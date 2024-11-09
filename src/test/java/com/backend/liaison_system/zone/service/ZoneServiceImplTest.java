@@ -106,7 +106,7 @@ class ZoneServiceImplTest {
         when(zoneRepository.save(any(Zone.class))).thenReturn(zone);
 
         // operations & assertions
-        ResponseEntity<Response<?>> response = zoneService.createNewZone(admin.getId(), newZones);
+        ResponseEntity<Response<?>> response = zoneService.createNewZone(admin.getId(), newZones, true);
 
         assertNotNull(response);
         assertNotNull(response.getBody());
