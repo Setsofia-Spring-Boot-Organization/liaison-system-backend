@@ -1,5 +1,6 @@
 package com.backend.liaison_system.zone.service;
 
+import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.admin.entity.Admin;
@@ -105,8 +106,14 @@ class ZoneServiceImplTest {
 
         when(zoneRepository.save(any(Zone.class))).thenReturn(zone);
 
+        ConstantRequestParam param = new ConstantRequestParam(
+                "",
+                "",
+                true
+        );
+
         // operations & assertions
-        ResponseEntity<Response<?>> response = zoneService.createNewZone(admin.getId(), newZones, true);
+        ResponseEntity<Response<?>> response = zoneService.createNewZone(admin.getId(), newZones, param);
 
         assertNotNull(response);
         assertNotNull(response.getBody());
