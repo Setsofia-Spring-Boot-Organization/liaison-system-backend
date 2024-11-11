@@ -30,6 +30,8 @@ public class RegionServiceImpl implements RegionService {
     @Override
     @Transactional(rollbackOn = {RuntimeException.class, LiaisonException.class})
     public ResponseEntity<Response<?>> creatNewRegion(String id, List<NewRegion> newRegions) {
+
+        // verify the user performing this action
         adminUtil.verifyUserIsAdmin(id);
 
         // get all the regions
