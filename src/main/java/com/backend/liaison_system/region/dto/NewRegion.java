@@ -1,9 +1,9 @@
 package com.backend.liaison_system.region.dto;
 
-import java.util.List;
+import java.util.Set;
 
 public record NewRegion(
         String region,
-        List<String> towns
+        Set<String> towns
 ) {
 }
