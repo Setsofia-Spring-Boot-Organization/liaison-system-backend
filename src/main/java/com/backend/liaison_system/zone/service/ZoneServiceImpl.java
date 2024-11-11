@@ -8,6 +8,7 @@ import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
+import com.backend.liaison_system.zone.dao.AllZones;
 import com.backend.liaison_system.zone.dto.NewZone;
 import com.backend.liaison_system.zone.entity.Towns;
 import com.backend.liaison_system.zone.entity.Zone;
@@ -53,7 +54,6 @@ public class ZoneServiceImpl implements ZoneService{
 
         LocalDateTime startDate = LocalDate.of(startOfAcademicYear, 1, 1).atStartOfDay();
         LocalDateTime endDate = LocalDate.of(endOfAcademicYear, 12, 31).atTime(23, 59, 59, 999999999);
-
 
         List<Zone> zones1 = new ArrayList<>();
         for (NewZone zone : zones) {
@@ -113,17 +113,36 @@ public class ZoneServiceImpl implements ZoneService{
     }
 
     @Override
-    public ResponseEntity<Response<List<Zone>>> getAllZones(String adminId, ConstantRequestParam param) {
+    public ResponseEntity<Response<List<AllZones>>> getAllZones(String adminId, ConstantRequestParam param) {
         adminUtil.verifyUserIsAdmin(adminId); // verify that the user is an admin
 
-//        zoneRepository.dropZoneTable();
-
         List<Zone> zones = zoneSpecification.findZonesUsingZoneTypeAndAcademicDates(param);
+
+        List<AllZones> allZones = new ArrayList<>();
+        for (Zone zone : zones) {
+            allZones.add(
+                    new AllZones(
+                            zone.getId(),
+                            zone.getName(),
+                            zone.getRegion(),
+                            zone.getZoneLead(),
+                            zone.getStartOfAcademicYear(),
+                            zone.getEndOfAcademicYear(),
+                            zone.getDateCreated(),
+                            zone.getDateUpdated(),
+                            zone.getInternshipType(),
+                            zone.getLecturers(),
+                            zone.getTowns(),
+                            zone.getLecturers().lecturers().size()
+                    )
+            );
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(
-                Response.<List<Zone>>builder()
+                Response.<List<AllZones>>builder()
                         .status(HttpStatus.OK.value())
                         .message("zones")
-                        .data(zones)
+                        .data(allZones)
                         .build()
         );
     }

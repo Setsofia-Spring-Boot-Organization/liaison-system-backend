@@ -2,8 +2,8 @@ package com.backend.liaison_system.zone.service;
 
 import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.zone.dao.AllZones;
 import com.backend.liaison_system.zone.dto.NewZone;
-import com.backend.liaison_system.zone.entity.Zone;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -20,5 +20,5 @@ public interface ZoneService {
      */
     ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones, ConstantRequestParam param);
 
-    ResponseEntity<Response<List<Zone>>> getAllZones(String adminId, ConstantRequestParam param);
+    ResponseEntity<Response<List<AllZones>>> getAllZones(String adminId, ConstantRequestParam param);
 }
