@@ -2,6 +2,7 @@ package com.backend.liaison_system.region.controller;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.region.dto.NewRegion;
+import com.backend.liaison_system.region.entities.Region;
 import com.backend.liaison_system.region.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +23,14 @@ public class RegionController {
             @RequestBody List<NewRegion> regions
     ) {
         return regionService.creatNewRegion(id, regions);
+    }
+
+
+
+    @GetMapping(path = "/{admin-id}")
+    public ResponseEntity<Response<List<Region>>> getAllRegions(
+            @PathVariable("admin-id") String id
+    ) {
+        return regionService.getAllRegions(id);
     }
 }
