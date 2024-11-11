@@ -98,4 +98,21 @@ public class RegionServiceImpl implements RegionService {
 
         return regions.stream().toList();
     }
+
+
+
+    @Override
+    public ResponseEntity<Response<List<Region>>> getAllRegions(String id) {
+
+        adminUtil.verifyUserIsAdmin(id);
+        List<Region> regions = (List<Region>) regionRepository.findAll();
+
+        Response<List<Region>> response = Response.<List<Region>>builder()
+                .status(HttpStatus.OK.value())
+                .message("regions")
+                .data(regions)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
