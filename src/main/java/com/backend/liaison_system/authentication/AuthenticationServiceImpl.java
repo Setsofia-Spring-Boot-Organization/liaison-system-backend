@@ -86,7 +86,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             String token = jwtServiceImpl.generateToken(userDetails);
 
-            String encodedToken = Base64.getEncoder().encodeToString(token.getBytes());
+//            String encodedToken = Base64.getEncoder().encodeToString(token.getBytes());
 
             // decode the token
             // byte[] bytes = Base64.getDecoder().decode(encodedToken);
@@ -95,7 +95,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     Response.<LoginData>builder()
                             .status(HttpStatus.OK.value())
                             .message("login successful")
-                            .data(new LoginData(encodedToken))
+                            .data(new LoginData(token))
                             .build()
             );
         } catch (AuthenticationException exception) {
