@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -72,18 +74,26 @@ public class RegionServiceImpl implements RegionService {
 
     private List<Region> updateExistingRegion(List<NewRegion> newRegions, List<Region> existingRegions) {
 
-        List<Region> regions = new ArrayList<>();
+        Set<Region> regions = new HashSet<>();
+        Set<NewRegion> newRegs = new HashSet<>();
 
         for (NewRegion newRegion : newRegions) {
-            for (Region existingRegion : existingRegions) {
-                if (newRegion.region().equals(existingRegion.getRegion())) {
-                    existingRegion.getTown().towns().addAll(newRegion.towns());
+            if (existingRegions.stream().anyMatch(region -> region.getRegion().equals(newRegion.region()))) {
 
-                    regions.add(existingRegion);
-                }
+                existingRegions.forEach(region -> {
+                    if (region.getRegion().equals(newRegion.region())) {
+                        region.getTown().towns().addAll(newRegion.towns());
+                        regions.add(region);
+                    }
+                });
+
+            } else {
+                newRegs.add(newRegion);
             }
         }
+        List<Region> createNewRegions = createNewRegion(newRegs.stream().toList());
+        regions.addAll(createNewRegions);
 
-        return regions;
+        return regions.stream().toList();
     }
 }
