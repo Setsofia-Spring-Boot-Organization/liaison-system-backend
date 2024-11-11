@@ -16,7 +16,7 @@ public class Region {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String name;
+    private String region;
 
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
