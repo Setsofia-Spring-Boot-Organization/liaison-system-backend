@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .cors(cors->corsConfigurationSource())
                 .authorizeHttpRequests(
                         authRequest -> {
-                            authRequest.requestMatchers("liaison/api/v1/schedule/**", "/liaison/api/v1/auth/**", "liaison/api/v1/lecturers/**", "liaison/api/v1/admin", "liaison/api/v1/regions/**").permitAll();
+                            authRequest.requestMatchers("liaison/api/v1/schedule/**", "/liaison/api/v1/auth/**").permitAll();
                             authRequest.anyRequest().authenticated();
                         }
                 )
