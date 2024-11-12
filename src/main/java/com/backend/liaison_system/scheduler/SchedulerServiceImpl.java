@@ -14,8 +14,7 @@ public class SchedulerServiceImpl {
         String url = "https://liaison-system-backend.onrender.com/liaison/api/v1/schedule";
 
         try {
-            String response = restTemplate.getForObject(url, String.class);
-            System.out.println("response = " + response);
+            restTemplate.getForObject(url, String.class);
         } catch (RestClientException e) {
             System.out.println("e = " + e.getMessage());
         }
