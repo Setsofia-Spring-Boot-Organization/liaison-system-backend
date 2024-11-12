@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.admin.service;
 
+import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.users.admin.dao.LecturerData;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.users.admin.entity.Admin;
@@ -22,7 +23,7 @@ public interface AdminService {
      * @param file an Excel sheet that contains all the students and their details
      * @return a Response Object
      */
-    Response<?> uploadStudents(MultipartFile file, boolean internship);
+    Response<?> uploadStudents(String adminID, MultipartFile file, ConstantRequestParam param);
 
     Response<?> getStudents(AdminPageRequest request);
 
