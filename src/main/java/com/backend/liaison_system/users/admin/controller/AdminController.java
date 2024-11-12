@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.admin.controller;
 
+import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.users.admin.dao.LecturerData;
 import com.backend.liaison_system.users.admin.entity.Admin;
@@ -27,10 +28,13 @@ public class AdminController {
         return adminService.creatNewAdmin(newUserRequest);
     }
 
-    @PostMapping("students")
-//    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Response<?>> uploadStudents(@RequestPart("file") MultipartFile file, @RequestPart("internship")boolean internship) {
-        return new ResponseEntity<>(adminService.uploadStudents(file, internship), HttpStatus.CREATED);
+    @PostMapping("/{admin-id}/students")
+    public ResponseEntity<Response<?>> uploadStudents(
+            @PathVariable("admin-id") String adminID,
+            @RequestPart("file") MultipartFile file,
+            ConstantRequestParam param
+    ) {
+        return new ResponseEntity<>(adminService.uploadStudents(adminID, file, param), HttpStatus.CREATED);
     }
 
     @GetMapping("students")
