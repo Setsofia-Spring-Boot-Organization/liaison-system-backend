@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.admin.service;
 
+import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.UserRoles;
@@ -120,7 +121,10 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Response<?> uploadStudents(MultipartFile file, boolean internship) {
+    public Response<?> uploadStudents(String adminID, MultipartFile file, ConstantRequestParam param) {
+        // confirm user is an admin
+        adminUtil.verifyUserIsAdmin(adminID);
+
         try {
             log.info("File received: {}", file.getOriginalFilename());
 
@@ -148,7 +152,7 @@ public class AdminServiceImpl implements AdminService{
                 //Ensure student does not already exist
                 Optional<Student> studentCheck = studentRepository.findByEmail(currentStudent.getEmail());
                 if(studentCheck.isEmpty()) {
-                    if (!internship) {
+                    if (!param.internship()) {
                         currentStudent.setInternshipType(InternshipType.SEMESTER_OUT);
                     } else {
                         currentStudent.setInternshipType(InternshipType.INTERNSHIP);
