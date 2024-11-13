@@ -121,7 +121,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Response<?> uploadStudents(String adminID, MultipartFile file, ConstantRequestParam param) {
+    public Response<?> uploadStudents(String adminID, MultipartFile file, boolean internship) {
         // confirm user is an admin
         adminUtil.verifyUserIsAdmin(adminID);
 
@@ -152,7 +152,7 @@ public class AdminServiceImpl implements AdminService{
                 //Ensure student does not already exist
                 Optional<Student> studentCheck = studentRepository.findByEmail(currentStudent.getEmail());
                 if(studentCheck.isEmpty()) {
-                    if (!param.internship()) {
+                    if (!internship) {
                         currentStudent.setInternshipType(InternshipType.SEMESTER_OUT);
                     } else {
                         currentStudent.setInternshipType(InternshipType.INTERNSHIP);
@@ -178,14 +178,14 @@ public class AdminServiceImpl implements AdminService{
         // Verify that the user is an admin
         adminUtil.verifyUserIsAdmin(adminID);
 
-        Pageable pageable = PageRequest.of(param.page() -1, param.size());
+        Pageable pageable = PageRequest.of(param.page(), param.size());
         Page<Student> students = studentRepository.findAll(param, pageable);
 
         int studentSize = studentRepository.findAll().size();
         List<StudentDto> studentDtoList = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();
         TabularDataResponse response = TabularDataResponse
                 .builder()
-                .currentPage(students.getNumber()+1)
+                .currentPage(students.getNumber())
                 .pageSize(students.getSize())
                 .totalData(studentSize)
                 .totalPages(students.getTotalPages())
