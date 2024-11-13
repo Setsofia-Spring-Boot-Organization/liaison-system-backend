@@ -1,19 +1,21 @@
 package com.backend.liaison_system.users.student;
 
+import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
-import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.util.StudentSpecifications;
+import com.backend.liaison_system.util.UAcademicYear;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-
-import static com.backend.liaison_system.util.StudentSpecifications.*;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, String>, JpaSpecificationExecutor<Student> {
@@ -28,17 +30,21 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
     /**
      * This method that queries the data and returns students that match the specified specifications.
      *
-     * @param request the AdminPageRequest Object
+     * @param param the ConstantRequestParam Object
      * @param pageable this is Pageable that specifies the page
      * @return a page containing the list of matching students
      */
-    default Page<Student> findAll(AdminPageRequest request, Pageable pageable, InternshipType internshipType) {
-        return findAll(Specification.where(hasName(request.getName()))
-                .or(Specification.where(hasLastName(request.getName()))).or(hasOtherName(request.getName()))
-                        .and(sameDepartment(request.getDepartment()))
-                        .and(sameFaculty(request.getFaculty()))
-                        .and(internshipType(internshipType)),
-                pageable);
+    default Page<Student> findAll(ConstantRequestParam param, Pageable pageable) {
+        UAcademicYear uAcademicYear = new UAcademicYear();
+
+        Specification<Student> specification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.and(
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), uAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("endDate"), uAcademicYear.endOfAcademicYear(param.startOfAcademicYear())),
+                        criteriaBuilder.equal(root.get("internshipType"), (param.internship())? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT)
+                );
+
+        return findAll(specification, pageable);
     }
 
     /**
@@ -57,4 +63,9 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
                 type
         ));
     }
+
+    @Modifying
+    @Transactional
+    @Query(value = "DROP TABLE IF EXISTS student", nativeQuery = true)
+    void dropStudentTable();
 }
