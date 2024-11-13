@@ -174,16 +174,13 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Response<?> getStudents(AdminPageRequest request) {
-        Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
-        Page<Student> students;
-        if (request.getInternship()) {
-            log.info("Retrieving all student info of type internship");
-            students = studentRepository.findAll(request ,pageable, InternshipType.INTERNSHIP);
-        } else {
-            log.info("Retrieving all student info of type Semester Out");
-            students = studentRepository.findAll(request ,pageable, InternshipType.SEMESTER_OUT);
-        }
+    public Response<?> getStudents(String adminID, ConstantRequestParam param) {
+        // Verify that the user is an admin
+        adminUtil.verifyUserIsAdmin(adminID);
+
+        Pageable pageable = PageRequest.of(param.page() -1, param.size());
+        Page<Student> students = studentRepository.findAll(param, pageable);
+
         int studentSize = studentRepository.findAll().size();
         List<StudentDto> studentDtoList = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();
         TabularDataResponse response = TabularDataResponse
