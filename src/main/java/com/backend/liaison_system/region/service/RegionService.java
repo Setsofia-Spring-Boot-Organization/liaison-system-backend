@@ -7,10 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public interface RegionService {
     ResponseEntity<Response<?>> creatNewRegion(String id, List<NewRegion> regions);
 
-    ResponseEntity<Response<List<Region>>> getAllRegions(String id);
+    ResponseEntity<Response<List<Map<String, List<String>>>>> getAllRegions(String id);
 }
