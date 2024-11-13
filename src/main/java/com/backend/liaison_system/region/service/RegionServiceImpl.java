@@ -15,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -102,15 +99,20 @@ public class RegionServiceImpl implements RegionService {
 
 
     @Override
-    public ResponseEntity<Response<List<Region>>> getAllRegions(String id) {
+    public ResponseEntity<Response<List<Map<String, List<String>>>>> getAllRegions(String id) {
 
         adminUtil.verifyUserIsAdmin(id);
         List<Region> regions = (List<Region>) regionRepository.findAll();
 
-        Response<List<Region>> response = Response.<List<Region>>builder()
+        List<Map<String, List<String>>> data = new ArrayList<>();
+        for (Region region : regions) {
+            data.add(Map.of(region.getRegion(), region.getTown().towns().stream().toList()));
+        }
+
+        Response<List<Map<String, List<String>>>> response = Response.<List<Map<String, List<String>>>>builder()
                 .status(HttpStatus.OK.value())
                 .message("regions")
-                .data(regions)
+                .data(data)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
