@@ -37,11 +37,12 @@ public class AdminController {
         return new ResponseEntity<>(adminService.uploadStudents(adminID, file, param), HttpStatus.CREATED);
     }
 
-    @GetMapping("students")
+    @GetMapping("/{admin-id}/students")
     public ResponseEntity<Response<?>> getStudents(
-            AdminPageRequest adminPageRequest
+            @PathVariable("admin-id") String adminID,
+            ConstantRequestParam param
     ) {
-        return new ResponseEntity<>(adminService.getStudents(adminPageRequest), HttpStatus.OK);
+        return new ResponseEntity<>(adminService.getStudents(adminID, param), HttpStatus.OK);
     }
 
     @GetMapping("{admin-id}/lecturers")
