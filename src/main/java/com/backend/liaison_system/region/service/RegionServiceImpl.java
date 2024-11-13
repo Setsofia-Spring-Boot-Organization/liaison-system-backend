@@ -3,6 +3,7 @@ package com.backend.liaison_system.region.service;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
+import com.backend.liaison_system.region.dao.Regions;
 import com.backend.liaison_system.region.dto.NewRegion;
 import com.backend.liaison_system.region.entities.Region;
 import com.backend.liaison_system.region.entities.Town;
@@ -99,17 +100,17 @@ public class RegionServiceImpl implements RegionService {
 
 
     @Override
-    public ResponseEntity<Response<List<Map<String, List<String>>>>> getAllRegions(String id) {
+    public ResponseEntity<Response<Regions>> getAllRegions(String id) {
 
         adminUtil.verifyUserIsAdmin(id);
         List<Region> regions = (List<Region>) regionRepository.findAll();
 
-        List<Map<String, List<String>>> data = new ArrayList<>();
+        Regions data = new Regions(new HashMap<>());
         for (Region region : regions) {
-            data.add(Map.of(region.getRegion(), region.getTown().towns().stream().toList()));
+            data.regions().put(region.getRegion(), region.getTown().towns().stream().toList());
         }
 
-        Response<List<Map<String, List<String>>>> response = Response.<List<Map<String, List<String>>>>builder()
+        Response<Regions> response = Response.<Regions>builder()
                 .status(HttpStatus.OK.value())
                 .message("regions")
                 .data(data)
