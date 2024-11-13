@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/regions")
@@ -28,7 +29,7 @@ public class RegionController {
 
 
     @GetMapping(path = "/{admin-id}")
-    public ResponseEntity<Response<List<Region>>> getAllRegions(
+    public ResponseEntity<Response<List<Map<String, List<String>>>>> getAllRegions(
             @PathVariable("admin-id") String id
     ) {
         return regionService.getAllRegions(id);
