@@ -3,6 +3,7 @@ package com.backend.liaison_system.region.service;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
+import com.backend.liaison_system.region.dao.Regions;
 import com.backend.liaison_system.region.dto.NewRegion;
 import com.backend.liaison_system.region.entities.Region;
 import com.backend.liaison_system.region.entities.Town;
@@ -15,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -102,15 +100,20 @@ public class RegionServiceImpl implements RegionService {
 
 
     @Override
-    public ResponseEntity<Response<List<Region>>> getAllRegions(String id) {
+    public ResponseEntity<Response<Regions>> getAllRegions(String id) {
 
         adminUtil.verifyUserIsAdmin(id);
         List<Region> regions = (List<Region>) regionRepository.findAll();
 
-        Response<List<Region>> response = Response.<List<Region>>builder()
+        Regions data = new Regions(new HashMap<>());
+        for (Region region : regions) {
+            data.regions().put(region.getRegion(), region.getTown().towns().stream().toList());
+        }
+
+        Response<Regions> response = Response.<Regions>builder()
                 .status(HttpStatus.OK.value())
                 .message("regions")
-                .data(regions)
+                .data(data)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

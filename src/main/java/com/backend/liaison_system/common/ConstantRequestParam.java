@@ -3,5 +3,7 @@ package com.backend.liaison_system.common;
 public record ConstantRequestParam(
     String startOfAcademicYear,
     String endOfAcademicYear,
-    boolean internship
+    boolean internship,
+    int page,
+    int size
 ) { }
