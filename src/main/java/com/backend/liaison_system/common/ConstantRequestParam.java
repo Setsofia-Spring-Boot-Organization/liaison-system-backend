@@ -6,14 +6,4 @@ public record ConstantRequestParam(
     boolean internship,
     int page,
     int size
-) {
-    @Override
-    public int page() {
-        return 1;
-    }
-
-    @Override
-    public int size() {
-        return 10;
-    }
-}
+) { }
