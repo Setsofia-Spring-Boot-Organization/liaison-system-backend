@@ -32,9 +32,9 @@ public class AdminController {
     public ResponseEntity<Response<?>> uploadStudents(
             @PathVariable("admin-id") String adminID,
             @RequestPart("file") MultipartFile file,
-            ConstantRequestParam param
+            boolean internship
     ) {
-        return new ResponseEntity<>(adminService.uploadStudents(adminID, file, param), HttpStatus.CREATED);
+        return new ResponseEntity<>(adminService.uploadStudents(adminID, file, internship), HttpStatus.CREATED);
     }
 
     @GetMapping("/{admin-id}/students")
