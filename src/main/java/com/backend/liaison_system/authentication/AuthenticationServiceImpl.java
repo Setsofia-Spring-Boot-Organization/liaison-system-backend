@@ -12,7 +12,6 @@ import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +26,6 @@ import static com.backend.liaison_system.exception.Message.THE_EMAIL_OR_PASSWORD
 import static com.backend.liaison_system.exception.Error.INVALID_USERNAME_OR_PASSWORD;
 
 @Service
-@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AdminRepository adminRepository;
@@ -35,6 +33,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final StudentRepository studentRepository;
     private final LecturerRepository lecturerRepository;
+
+    public AuthenticationServiceImpl(AdminRepository adminRepository, JwtServiceImpl jwtServiceImpl, AuthenticationManager authenticationManager, StudentRepository studentRepository, LecturerRepository lecturerRepository) {
+        this.adminRepository = adminRepository;
+        this.jwtServiceImpl = jwtServiceImpl;
+        this.authenticationManager = authenticationManager;
+        this.studentRepository = studentRepository;
+        this.lecturerRepository = lecturerRepository;
+    }
 
     /**
      * This method retrieves the LiaisonUserDetails for a user based on their email.
@@ -86,18 +92,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             String token = jwtServiceImpl.generateToken(userDetails);
 
-//            String encodedToken = Base64.getEncoder().encodeToString(token.getBytes());
+            String encodedToken = Base64.getEncoder().encodeToString(token.getBytes());
 
             // decode the token
             // byte[] bytes = Base64.getDecoder().decode(encodedToken);
 
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    Response.<LoginData>builder()
-                            .status(HttpStatus.OK.value())
-                            .message("login successful")
-                            .data(new LoginData(token))
-                            .build()
-            );
+            Response<LoginData> response = new Response.Builder<LoginData>()
+                    .status(HttpStatus.OK.value())
+                    .message("login successful")
+                    .data(new LoginData(encodedToken))
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (AuthenticationException exception) {
             throw new LiaisonException(INVALID_USERNAME_OR_PASSWORD, new Throwable(THE_EMAIL_OR_PASSWORD_DO_NOT_MATCH.label));
         }
