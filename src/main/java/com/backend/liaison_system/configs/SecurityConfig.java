@@ -1,7 +1,6 @@
 package com.backend.liaison_system.configs;
 
 import com.backend.liaison_system.jwt.JwtFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtFilter filter;
     private final AuthenticationProvider provider;
@@ -28,6 +26,11 @@ public class SecurityConfig {
     private String DEPLOYED_FRONT_END_URL;
     @Value("${local-backend-url}")
     private String LOCAL_FRONT_END_URL;
+
+    public SecurityConfig(JwtFilter filter, AuthenticationProvider provider) {
+        this.filter = filter;
+        this.provider = provider;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
