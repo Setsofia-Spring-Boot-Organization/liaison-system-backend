@@ -10,7 +10,6 @@ import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +23,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class LecturerServiceImpl implements LecturerService {
 
     private final LecturerRepository lecturerRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final AdminUtil adminUtil;
+
+    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil) {
+        this.lecturerRepository = lecturerRepository;
+        this.adminUtil = adminUtil;
+    }
 
     @Override
     public ResponseEntity<Response<List<Lecturer>>> createNewLecturer(List<NewLecturerRequest> requests) {
@@ -44,7 +47,7 @@ public class LecturerServiceImpl implements LecturerService {
         List<Lecturer> savedLectures = lecturerRepository.saveAll(lecturers);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                Response.<List<Lecturer>>builder()
+                new Response.Builder<List<Lecturer>>()
                         .status(HttpStatus.CREATED.value())
                         .message("lecturers added successfully!")
                         .data(savedLectures)
@@ -71,7 +74,7 @@ public class LecturerServiceImpl implements LecturerService {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(
-                Response.<List<LecturerList>>builder()
+                new Response.Builder<List<LecturerList>>()
                         .status(HttpStatus.OK.value())
                         .message("lecturers")
                         .data(lecturerLists)
