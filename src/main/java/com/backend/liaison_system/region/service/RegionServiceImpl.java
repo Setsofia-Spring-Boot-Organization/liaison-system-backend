@@ -10,7 +10,6 @@ import com.backend.liaison_system.region.entities.Town;
 import com.backend.liaison_system.region.repository.RegionRepository;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,11 +18,15 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 public class RegionServiceImpl implements RegionService {
 
     private final AdminUtil adminUtil;
     private final RegionRepository regionRepository;
+
+    public RegionServiceImpl(AdminUtil adminUtil, RegionRepository regionRepository) {
+        this.adminUtil = adminUtil;
+        this.regionRepository = regionRepository;
+    }
 
     @Override
     @Transactional(rollbackOn = {RuntimeException.class, LiaisonException.class})
@@ -42,7 +45,7 @@ public class RegionServiceImpl implements RegionService {
         try {
             List<Region> savedRegions = (List<Region>) regionRepository.saveAll(regions);
 
-            Response<List<Region>> response = Response.<List<Region>>builder()
+            Response<List<Region>> response = new Response.Builder<List<Region>>()
                     .status(HttpStatus.CREATED.value())
                     .message("created/updated regions")
                     .data(savedRegions)
@@ -110,7 +113,7 @@ public class RegionServiceImpl implements RegionService {
             data.regions().put(region.getRegion(), region.getTown().towns().stream().toList());
         }
 
-        Response<Regions> response = Response.<Regions>builder()
+        Response<Regions> response = new Response.Builder<Regions>()
                 .status(HttpStatus.OK.value())
                 .message("regions")
                 .data(data)
