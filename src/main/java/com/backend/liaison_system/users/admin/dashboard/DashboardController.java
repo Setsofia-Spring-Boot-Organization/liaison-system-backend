@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("liaison/api/v1/admin/dashboard")
-@RequiredArgsConstructor
 public class DashboardController {
     private final DashboardService dashboardService;
+
+    public DashboardController(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
 
     @GetMapping(path = "/{admin-id}")
     public ResponseEntity<Response<Statistics>> getStatistics(

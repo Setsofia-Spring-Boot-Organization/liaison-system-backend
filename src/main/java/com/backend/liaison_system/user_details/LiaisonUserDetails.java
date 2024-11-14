@@ -4,7 +4,6 @@ import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.student.Student;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,17 +11,32 @@ import java.util.Collection;
 import java.util.List;
 
 public class LiaisonUserDetails implements UserDetails {
-    @Getter
     private final String id;
-    @Getter
     private String firstName;
-    @Getter
     private String lastName;
-    @Getter
     private final String email;
     private final String password;
-    @Getter
     private final UserRoles role;
+
+    public String getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public UserRoles getRole() {
+        return role;
+    }
 
     // the student details
     public LiaisonUserDetails(Student student) {

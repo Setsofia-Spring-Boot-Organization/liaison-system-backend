@@ -8,7 +8,6 @@ import com.backend.liaison_system.users.admin.service.AdminService;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.dto.NewUserRequest;
 import com.backend.liaison_system.exception.LiaisonException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,9 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/admin")
-@RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
+    }
 
     @PostMapping
     public ResponseEntity<Response<Admin>> createNewAdmin(
@@ -40,9 +42,11 @@ public class AdminController {
     @GetMapping("/{admin-id}/students")
     public ResponseEntity<Response<?>> getStudents(
             @PathVariable("admin-id") String adminID,
-            ConstantRequestParam param
+            ConstantRequestParam param,
+            @RequestParam int page,
+            @RequestParam int size
     ) {
-        return new ResponseEntity<>(adminService.getStudents(adminID, param), HttpStatus.OK);
+        return new ResponseEntity<>(adminService.getStudents(adminID, param, page, size), HttpStatus.OK);
     }
 
     @GetMapping("{admin-id}/lecturers")

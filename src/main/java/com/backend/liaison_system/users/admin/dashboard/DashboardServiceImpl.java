@@ -20,12 +20,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class DashboardServiceImpl implements DashboardService{
 
     private final AdminUtil adminUtil;
     private final StudentRepository studentRepository;
     private final LecturerRepository lecturerRepository;
+
+    public DashboardServiceImpl(AdminUtil adminUtil, StudentRepository studentRepository, LecturerRepository lecturerRepository) {
+        this.adminUtil = adminUtil;
+        this.studentRepository = studentRepository;
+        this.lecturerRepository = lecturerRepository;
+    }
 
     @Override
     public ResponseEntity<Response<Statistics>> getStatistics(String id, ConstantRequestParam constantRequestParam) {
@@ -36,17 +41,16 @@ public class DashboardServiceImpl implements DashboardService{
         List<Student> students = getTotalStudents(constantRequestParam);
         List<Lecturer> lecturers = getTotalLecturers(constantRequestParam);
 
+        Response<Statistics> response = new Response.Builder<Statistics>()
+                .status(HttpStatus.OK.value())
+                .message("statistics")
+                .data(new Statistics(
+                        lecturers.size(),
+                        students.size(),
+                        0
+                )).build();
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                Response.<Statistics>builder()
-                        .status(HttpStatus.OK.value())
-                        .message("statistics")
-                        .data(new Statistics(
-                                lecturers.size(),
-                                students.size(), 
-                                0
-                        )).build()
-        );
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**

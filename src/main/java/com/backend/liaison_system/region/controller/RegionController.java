@@ -14,10 +14,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/regions")
-@RequiredArgsConstructor
 public class RegionController {
 
     private final RegionService regionService;
+
+    public RegionController(RegionService regionService) {
+        this.regionService = regionService;
+    }
 
     @PostMapping(path = "/{admin-id}")
     public ResponseEntity<Response<?>> createNewRegion(

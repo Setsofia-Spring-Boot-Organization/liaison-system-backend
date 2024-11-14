@@ -14,11 +14,16 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class LiaisonUserDetailsService implements UserDetailsService {
     private final StudentRepository studentRepository;
     private final LecturerRepository lecturerRepository;
     private final AdminRepository adminRepository;
+
+    public LiaisonUserDetailsService(StudentRepository studentRepository, LecturerRepository lecturerRepository, AdminRepository adminRepository) {
+        this.studentRepository = studentRepository;
+        this.lecturerRepository = lecturerRepository;
+        this.adminRepository = adminRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

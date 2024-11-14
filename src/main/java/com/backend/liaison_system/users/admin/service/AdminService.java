@@ -25,7 +25,7 @@ public interface AdminService {
      */
     Response<?> uploadStudents(String adminID, MultipartFile file, boolean internship);
 
-    Response<?> getStudents(String adminID, ConstantRequestParam param);
+    Response<?> getStudents(String adminID, ConstantRequestParam param, int page, int size);
 
     /**
      * This method retrieves a list of lecturers based on pagination and filter criteria provided in the AdminPageRequest.
