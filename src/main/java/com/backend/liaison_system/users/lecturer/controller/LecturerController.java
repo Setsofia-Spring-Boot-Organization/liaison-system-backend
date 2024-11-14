@@ -6,7 +6,6 @@ import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.service.LecturerService;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +13,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/lecturers")
-@RequiredArgsConstructor
 public class LecturerController {
 
     private final LecturerService lecturerService;
+
+    public LecturerController(LecturerService lecturerService) {
+        this.lecturerService = lecturerService;
+    }
 
     @PostMapping
     public ResponseEntity<Response<List<Lecturer>>> createNewLecturer(
