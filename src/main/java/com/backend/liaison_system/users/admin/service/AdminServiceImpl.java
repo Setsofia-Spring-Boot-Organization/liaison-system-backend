@@ -18,8 +18,6 @@ import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,9 +42,7 @@ import static com.backend.liaison_system.exception.Error.*;
 import static com.backend.liaison_system.exception.Message.THE_FOLLOWING_FIELDS_ARE_EMPTY;
 import static com.backend.liaison_system.exception.Message.THE_SUBMITTED_EMAIL_ALREADY_EXISTS_IN_THE_SYSTEM;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService{
 
     private final AdminRepository adminRepository;
@@ -54,6 +50,14 @@ public class AdminServiceImpl implements AdminService{
     private final PasswordEncoder passwordEncoder;
     private final AdminUtil adminUtil;
     private final LecturerRepository lecturerRepository;
+
+    public AdminServiceImpl(AdminRepository adminRepository, StudentRepository studentRepository, PasswordEncoder passwordEncoder, AdminUtil adminUtil, LecturerRepository lecturerRepository) {
+        this.adminRepository = adminRepository;
+        this.studentRepository = studentRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.adminUtil = adminUtil;
+        this.lecturerRepository = lecturerRepository;
+    }
 
     @Override
     public ResponseEntity<Response<Admin>> creatNewAdmin(NewUserRequest request) {
@@ -66,7 +70,7 @@ public class AdminServiceImpl implements AdminService{
         Admin createdAdmin = createNewAdmin(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                Response.<Admin>builder()
+                new Response.Builder<Admin>()
                         .status(HttpStatus.CREATED.value())
                         .message("admin created successfully")
                         .data(createdAdmin)
@@ -114,7 +118,6 @@ public class AdminServiceImpl implements AdminService{
             return adminRepository.save(admin);
 
         } catch (Exception exception) {
-            log.error("Unable to save Data: {}", exception.getMessage());
             throw new LiaisonException(ERROR_SAVING_DATA);
         }
 
@@ -126,7 +129,6 @@ public class AdminServiceImpl implements AdminService{
         adminUtil.verifyUserIsAdmin(adminID);
 
         try {
-            log.info("File received: {}", file.getOriginalFilename());
 
             //create an arrayList of students
             List<Student> students = new ArrayList<>();
@@ -139,7 +141,6 @@ public class AdminServiceImpl implements AdminService{
             } else if (FileMagic.valueOf(inputStream) == FileMagic.OLE2) {
                 workbook = new HSSFWorkbook(inputStream); // For `.xls` files
             } else  {
-                log.error("Unsupported file magic: {}", FileMagic.valueOf(inputStream));
                 throw new LiaisonException(ERROR_SAVING_DATA);
             }
 
@@ -158,41 +159,37 @@ public class AdminServiceImpl implements AdminService{
                         currentStudent.setInternshipType(InternshipType.INTERNSHIP);
                     }
                     students.add(currentStudent);
-                    log.info("Student added: {}", currentStudent.getEmail());
                 }
             }
             studentRepository.saveAll(students);
-            log.info("Students saved to database");
-            return Response.builder()
+            return new Response.Builder<>()
                     .status(HttpStatus.CREATED.value())
                     .message("Student accounts created successfully")
                     .build();
         } catch (Exception e) {
-            log.error(e.getMessage());
             throw new LiaisonException(ERROR_SAVING_DATA);
         }
     }
 
     @Override
-    public Response<?> getStudents(String adminID, ConstantRequestParam param) {
+    public Response<?> getStudents(String adminID, ConstantRequestParam param, int page, int size) {
         // Verify that the user is an admin
         adminUtil.verifyUserIsAdmin(adminID);
 
-        Pageable pageable = PageRequest.of(param.page(), param.size());
+        Pageable pageable = PageRequest.of(page, size);
         Page<Student> students = studentRepository.findAll(param, pageable);
 
         int studentSize = studentRepository.findAll().size();
         List<StudentDto> studentDtoList = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();
-        TabularDataResponse response = TabularDataResponse
-                .builder()
+        TabularDataResponse response = new TabularDataResponse
+                .Builder()
                 .currentPage(students.getNumber())
                 .pageSize(students.getSize())
                 .totalData(studentSize)
                 .totalPages(students.getTotalPages())
                 .students(studentDtoList)
                 .build();
-        return Response
-                .builder()
+        return new  Response.Builder<>()
                 .message("Students Retrieved")
                 .status(HttpStatus.OK.value())
                 .data(response)
@@ -206,7 +203,7 @@ public class AdminServiceImpl implements AdminService{
         // verify the user's role before proceeding with other operations
         adminUtil.verifyUserIsAdmin(id);
 
-        Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize());
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         Page<Lecturer> lecturers;
 
@@ -218,9 +215,9 @@ public class AdminServiceImpl implements AdminService{
 
         int lecturerDataSize = lecturerRepository.findAll().size();
 
-        TabularDataResponse response = TabularDataResponse
-                .builder()
-                .currentPage(lecturers.getNumber()+1)
+        TabularDataResponse response = new TabularDataResponse
+                .Builder()
+                .currentPage(lecturers.getNumber())
                 .pageSize(lecturers.getSize())
                 .totalData(lecturerDataSize)
                 .totalPages(lecturers.getTotalPages())
@@ -228,8 +225,7 @@ public class AdminServiceImpl implements AdminService{
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(
-                Response
-                        .builder()
+                new Response.Builder<>()
                         .message("all lecturers")
                         .status(HttpStatus.OK.value())
                         .data(response)
@@ -314,7 +310,7 @@ public class AdminServiceImpl implements AdminService{
         List<String> others = getOthersFromSameDepartment(lecturer.getDepartment(), lecturer.getLecturerId());
 
         return ResponseEntity.status(HttpStatus.OK).body(
-                Response.<LecturerData>builder()
+                new Response.Builder<LecturerData>()
                         .status(HttpStatus.OK.value())
                         .message("lecturer details")
                         .data(new LecturerData(
