@@ -23,14 +23,18 @@ import java.time.LocalDateTime;
 import static com.backend.liaison_system.exception.Error.USER_NOT_FOUND;
 
 @Component
-@RequiredArgsConstructor
 public class AdminUtil {
     private final PasswordEncoder passwordEncoder;
     private final AdminRepository adminRepository;
 
+    public AdminUtil(PasswordEncoder passwordEncoder, AdminRepository adminRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.adminRepository = adminRepository;
+    }
+
     public StudentDto buildStudentDtoFromStudent(Student student) {
-        return StudentDto
-                .builder()
+        return new StudentDto
+                .Builder()
                 .id(student.getEmail())
                 .name(student.getStudentFirstName()+ " " + student.getStudentLastName() + " " + student.getStudentOtherName())
                 .department(student.getStudentDepartment())
