@@ -16,7 +16,6 @@ import com.backend.liaison_system.zone.entity.ZoneLecturers;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
 import com.backend.liaison_system.zone.specification.ZoneSpecification;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,13 +26,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class ZoneServiceImpl implements ZoneService{
 
     private final AdminUtil adminUtil;
     private final LecturerRepository lecturerRepository;
     private final ZoneRepository zoneRepository;
     private final ZoneSpecification zoneSpecification;
+
+    public ZoneServiceImpl(AdminUtil adminUtil, LecturerRepository lecturerRepository, ZoneRepository zoneRepository, ZoneSpecification zoneSpecification) {
+        this.adminUtil = adminUtil;
+        this.lecturerRepository = lecturerRepository;
+        this.zoneRepository = zoneRepository;
+        this.zoneSpecification = zoneSpecification;
+    }
 
     @Transactional(rollbackOn = { Exception.class, LiaisonException.class })
     @Override
@@ -82,7 +87,7 @@ public class ZoneServiceImpl implements ZoneService{
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                Response.builder()
+                new Response.Builder<>()
                         .status(HttpStatus.CREATED.value())
                         .message("New zone(s) created successfully")
                         .build()
@@ -139,7 +144,7 @@ public class ZoneServiceImpl implements ZoneService{
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(
-                Response.<List<AllZones>>builder()
+                new Response.Builder<List<AllZones>>()
                         .status(HttpStatus.OK.value())
                         .message("zones")
                         .data(allZones)
