@@ -6,7 +6,6 @@ import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.zone.dao.AllZones;
 import com.backend.liaison_system.zone.dto.NewZone;
 import com.backend.liaison_system.zone.service.ZoneService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +13,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/zones")
-@RequiredArgsConstructor
 public class ZoneController {
 
     private final ZoneService zoneService;
+
+    public ZoneController(ZoneService zoneService) {
+        this.zoneService = zoneService;
+    }
 
     @PostMapping(path = "/{admin-id}")
     public ResponseEntity<Response<?>> createNewZone(
