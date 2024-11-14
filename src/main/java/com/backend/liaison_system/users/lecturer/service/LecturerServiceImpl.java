@@ -35,7 +35,9 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
-    public ResponseEntity<Response<List<Lecturer>>> createNewLecturer(List<NewLecturerRequest> requests) {
+    public ResponseEntity<Response<List<Lecturer>>> createNewLecturer(String adminID, List<NewLecturerRequest> requests) {
+        // verify that the user performing this action is an admin
+        adminUtil.verifyUserIsAdmin(adminID);
 
         // verify if the emails already exist...
         verifyExistingEmails(requests);
