@@ -16,7 +16,7 @@ public interface LecturerService {
      * @param request A list of {@link NewLecturerRequest} containing the details for creating new lecturers.
      * @return A {@link ResponseEntity} containing a {@link Response} with a list of created {@link Lecturer} objects.
      */
-    ResponseEntity<Response<List<Lecturer>>> createNewLecturer(List<NewLecturerRequest> request);
+    ResponseEntity<Response<List<Lecturer>>> createNewLecturer(String adminID, List<NewLecturerRequest> request);
 
     /**
      * This method retrieves a list of lecturers associated with the specified ID.
