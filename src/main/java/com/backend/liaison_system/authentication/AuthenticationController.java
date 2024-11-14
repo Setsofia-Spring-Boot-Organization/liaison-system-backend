@@ -4,7 +4,6 @@ import com.backend.liaison_system.authentication.dto.LoginRequest;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dao.data.LoginData;
 import com.backend.liaison_system.exception.LiaisonException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,10 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/auth")
-@RequiredArgsConstructor
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @PostMapping(path = "login")
     public ResponseEntity<Response<LoginData>> loginUser(
