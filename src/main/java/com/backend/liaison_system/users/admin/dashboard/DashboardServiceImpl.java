@@ -2,10 +2,6 @@ package com.backend.liaison_system.users.admin.dashboard;
 
 import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
-import com.backend.liaison_system.enums.InternshipType;
-import com.backend.liaison_system.exception.Error;
-import com.backend.liaison_system.exception.LiaisonException;
-import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.dashboard.dao.Statistics;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
