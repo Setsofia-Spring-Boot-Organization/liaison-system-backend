@@ -35,12 +35,11 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
      * @return a page containing the list of matching students
      */
     default Page<Student> findAll(ConstantRequestParam param, Pageable pageable) {
-        UAcademicYear uAcademicYear = new UAcademicYear();
 
         Specification<Student> specification = (root, query, criteriaBuilder) ->
                 criteriaBuilder.and(
-                        criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), uAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
-                        criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), uAcademicYear.endOfAcademicYear(param.startOfAcademicYear())),
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), UAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
+                        criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), UAcademicYear.endOfAcademicYear(param.startOfAcademicYear())),
                         criteriaBuilder.equal(root.get("internshipType"), (param.internship())? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT)
                 );
 
