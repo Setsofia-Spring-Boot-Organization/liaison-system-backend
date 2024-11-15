@@ -51,17 +51,11 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
      * This default method retrieves a list of students based on the provided academic year range and internship type.
      * It uses the {@link StudentSpecifications#academicYearAndInternshipType} to filter the students.
      *
-     * @param start The start year of the academic range.
-     * @param end The end year of the academic range.
-     * @param type The type of internship to filter by.
+     * @param param The start year of the academic range.
      * @return A list of {@link Student} objects that match the specified criteria.
      */
-    default List<Student> findAllStudents(String start, String end, String type) {
-        return findAll(StudentSpecifications.academicYearAndInternshipType(
-                start,
-                end,
-                type
-        ));
+    default List<Student> findAllStudents(ConstantRequestParam param) {
+        return findAll(StudentSpecifications.academicYearAndInternshipType(param));
     }
 
     @Modifying
