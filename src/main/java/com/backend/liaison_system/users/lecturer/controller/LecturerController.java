@@ -21,11 +21,12 @@ public class LecturerController {
         this.lecturerService = lecturerService;
     }
 
-    @PostMapping
+    @PostMapping(path = "{admin-id}")
     public ResponseEntity<Response<List<Lecturer>>> createNewLecturer(
-            @RequestBody List<NewLecturerRequest> requests
+            @RequestBody List<NewLecturerRequest> requests,
+            @PathVariable("admin-id") String adminID
     ) throws LiaisonException {
-        return lecturerService.createNewLecturer(requests);
+        return lecturerService.createNewLecturer(adminID, requests);
     }
 
     @GetMapping(path = "{admin-id}")

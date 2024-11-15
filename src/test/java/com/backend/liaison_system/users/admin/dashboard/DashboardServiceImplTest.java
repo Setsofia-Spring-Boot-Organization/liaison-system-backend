@@ -1,8 +1,7 @@
 package com.backend.liaison_system.users.admin.dashboard;
 
+import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
-import com.backend.liaison_system.dto.ConstantRequestParam;
-import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.users.admin.dashboard.dao.Statistics;
 import com.backend.liaison_system.users.admin.entity.Admin;
@@ -120,15 +119,14 @@ class DashboardServiceImplTest {
         when(lecturerRepository.findAll()).thenReturn(lecturers);
         when(adminRepository.findById(admin.getId())).thenReturn(Optional.of(admin));
 
-
-        ConstantRequestParam constantRequestParam = new ConstantRequestParam(
-                InternshipType.INTERNSHIP.name(),
+        ConstantRequestParam param = new ConstantRequestParam(
                 "2020",
-                "2024"
+                "2024",
+                true
         );
 
         // do
-        ResponseEntity<Response<Statistics>> response = dashboardService.getStatistics(admin.getId(), constantRequestParam);
+        ResponseEntity<Response<Statistics>> response = dashboardService.getStatistics(admin.getId(), param);
 
         // assertions
         assertNotNull(response);

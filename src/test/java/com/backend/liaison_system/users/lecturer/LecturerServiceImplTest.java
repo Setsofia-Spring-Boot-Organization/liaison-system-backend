@@ -133,7 +133,8 @@ class LecturerServiceImplTest {
         when(lecturerRepository.findByEmail("anyexisting@email.com")).thenReturn(Optional.of(lecturer));
 
         // operation and assertions:
-        ResponseEntity<Response<List<Lecturer>>> response = lecturerService.createNewLecturer(requests);
+        String adminId = "";
+        ResponseEntity<Response<List<Lecturer>>> response = lecturerService.createNewLecturer(adminId, requests);
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -170,7 +171,8 @@ class LecturerServiceImplTest {
 
 
         // operations:
-        LiaisonException exception = assertThrows(LiaisonException.class, () -> lecturerService.createNewLecturer(requests));
+        String adminID = "";
+        LiaisonException exception = assertThrows(LiaisonException.class, () -> lecturerService.createNewLecturer(adminID, requests));
 
         assertEquals(Error.EMAIL_ALREADY_EXISTS.label, exception.getMessage());
     }

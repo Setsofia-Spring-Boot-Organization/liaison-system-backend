@@ -35,12 +35,11 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
      * @return a page containing the list of matching students
      */
     default Page<Student> findAll(ConstantRequestParam param, Pageable pageable) {
-        UAcademicYear uAcademicYear = new UAcademicYear();
 
         Specification<Student> specification = (root, query, criteriaBuilder) ->
                 criteriaBuilder.and(
-                        criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), uAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
-                        criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), uAcademicYear.endOfAcademicYear(param.startOfAcademicYear())),
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), UAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
+                        criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), UAcademicYear.endOfAcademicYear(param.startOfAcademicYear())),
                         criteriaBuilder.equal(root.get("internshipType"), (param.internship())? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT)
                 );
 
@@ -51,17 +50,11 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
      * This default method retrieves a list of students based on the provided academic year range and internship type.
      * It uses the {@link StudentSpecifications#academicYearAndInternshipType} to filter the students.
      *
-     * @param start The start year of the academic range.
-     * @param end The end year of the academic range.
-     * @param type The type of internship to filter by.
+     * @param param The start year of the academic range.
      * @return A list of {@link Student} objects that match the specified criteria.
      */
-    default List<Student> findAllStudents(String start, String end, String type) {
-        return findAll(StudentSpecifications.academicYearAndInternshipType(
-                start,
-                end,
-                type
-        ));
+    default List<Student> findAllStudents(ConstantRequestParam param) {
+        return findAll(StudentSpecifications.academicYearAndInternshipType(param));
     }
 
     @Modifying
