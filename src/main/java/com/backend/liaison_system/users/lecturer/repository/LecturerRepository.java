@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.lecturer.repository;
 
+import com.backend.liaison_system.common.ConstantRequestParam;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.specification.LecturerSpecification;
 import lombok.NonNull;
@@ -73,16 +74,12 @@ public interface LecturerRepository extends JpaRepository<Lecturer, String>, Jpa
     /**
      * This method retrieves a list of all lecturers based on the specified date range.
      *
-     * @param start the start date for filtering lecturers
-     * @param end the end date for filtering lecturers
+     * @param param the start and end date for filtering lecturers
      * @return a list of lecturers that match the specified date range
      */
-    default List<Lecturer> findAllLectures(String start, String end) {
+    default List<Lecturer> findAllLectures(ConstantRequestParam param) {
         return findAll(
-                LecturerSpecification.getAllLecturers(
-                        start,
-                        end
-                )
+                LecturerSpecification.getAllLecturers(param)
         );
     }
 }
