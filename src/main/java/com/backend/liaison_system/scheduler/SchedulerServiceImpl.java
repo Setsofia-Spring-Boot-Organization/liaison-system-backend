@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 public class SchedulerServiceImpl {
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(fixedRate = 30_000)
     public void keepServerAlive() {
         String url = "https://liaison-system-backend.onrender.com/liaison/api/v1/schedule";
 
