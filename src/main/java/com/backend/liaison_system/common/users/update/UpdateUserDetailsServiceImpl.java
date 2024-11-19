@@ -6,6 +6,7 @@ import com.backend.liaison_system.common.requests.UpdateUserDetails;
 import com.backend.liaison_system.common.users.UserInfo;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
+import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
@@ -40,7 +41,7 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         this.studentRepository = studentRepository;
     }
 
-    @Transactional(rollbackOn = {LiaisonSystemApplication.class, Exception.class})
+    @Transactional(rollbackOn = {LiaisonException.class, Exception.class})
     @Override
     public ResponseEntity<Response<?>> updateUser(String userId, UpdateUserDetails updateUserDetails, MultipartFile profileImage) throws IOException {
 

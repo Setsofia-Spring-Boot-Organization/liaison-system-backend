@@ -72,7 +72,7 @@ class DashboardServiceImplTest {
         lecturer.setFirstName("Lecturer");
         lecturer.setOtherName("Other");
         lecturer.setLastName("New");
-        lecturer.setDp("example-profile-image.com");
+        lecturer.setProfilePictureUrl("example-profile-image.com");
 
         lecturer.setPhone("+233-55-159-963");
         lecturer.setCompany("Lecturer's Company");
