@@ -48,12 +48,10 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         // get the user's details
         UserRoles userRole = userInfo.getUserRole(userId);
 
-        Admin updatedAdmin = new Admin();
-
         var updatedUser = (userRole.equals(UserRoles.ADMIN)) ?
                 updateAdmin(userId, updateUserDetails) : (userRole.equals(UserRoles.LECTURER)) ?
                 updateLecturer(userId, updateUserDetails) : (userRole.equals(UserRoles.STUDENT)) ?
-                updateStudent(userId, updateUserDetails) : "";
+                updateStudent(userId, updateUserDetails) : null;
 
 
         return ResponseEntity.status(HttpStatus.OK).body(
