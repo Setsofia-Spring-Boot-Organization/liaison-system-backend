@@ -1,6 +1,6 @@
 package com.backend.liaison_system.util;
 
-import com.backend.liaison_system.common.ConstantRequestParam;
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.student.Student;
 import org.springframework.data.jpa.domain.Specification;

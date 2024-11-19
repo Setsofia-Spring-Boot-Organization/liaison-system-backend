@@ -9,7 +9,8 @@ public enum Message {
     THE_USER_IS_NOT_AUTHORIZED("user not authorized to perform this action"),
     THE_USER_ROLE_IS_NOT_ALLOWED("the operation cannot be performed on this role"),
     THE_FOLLOWING_IDS_DO_NOT_EXIST("the following ids do not exist"),
-    THE_INTERNSHIP_TYPE_IS_INCORRECT("the specified internship type is incorrect");
+    THE_INTERNSHIP_TYPE_IS_INCORRECT("the specified internship type is incorrect"),
+    THE_FILE_SIZE_IS_BIGGER_THAN_10MB("the file size is bigger than 10MB");
 
     public final String label;
     Message(String label) {

@@ -1,6 +1,6 @@
 package com.backend.liaison_system.users.admin.dashboard;
 
-import com.backend.liaison_system.common.ConstantRequestParam;
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.admin.dashboard.dao.Statistics;
