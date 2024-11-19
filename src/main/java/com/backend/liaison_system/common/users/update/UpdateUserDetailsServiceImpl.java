@@ -1,5 +1,6 @@
 package com.backend.liaison_system.common.users.update;
 
+import com.backend.liaison_system.LiaisonSystemApplication;
 import com.backend.liaison_system.cloudinary.CloudinaryService;
 import com.backend.liaison_system.common.requests.UpdateUserDetails;
 import com.backend.liaison_system.common.users.UserInfo;
@@ -11,6 +12,7 @@ import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,7 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         this.studentRepository = studentRepository;
     }
 
+    @Transactional(rollbackOn = {LiaisonSystemApplication.class, Exception.class})
     @Override
     public ResponseEntity<Response<?>> updateUser(String userId, UpdateUserDetails updateUserDetails, MultipartFile profileImage) throws IOException {
 //        String userProfileUrl = cloudinaryService.uploadProfileImage(profileImage);
@@ -56,7 +59,7 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         return ResponseEntity.status(HttpStatus.OK).body(
                 new Response<>(
                         HttpStatus.OK.value(),
-                        "update",
+                        "update successful",
                         updatedUser
                 ));
     }
