@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping(path = "liaison/api/v1/user")
 public class UpdateUserDetailsController {
@@ -18,12 +20,12 @@ public class UpdateUserDetailsController {
     }
 
 
-    @PatchMapping(path = "/{user_id}/update")
+    @PostMapping(path = "/{user_id}/update")
     public ResponseEntity<Response<?>> updateUserDetails(
             @PathVariable String user_id,
-            @RequestBody UpdateUserDetails updateUserDetails,
-            @RequestPart MultipartFile profileImage
-    ) {
+            @ModelAttribute UpdateUserDetails updateUserDetails,
+            @RequestPart(name = "profileImage", required = false) MultipartFile profileImage
+    ) throws IOException {
         return userService.updateUser(user_id, updateUserDetails, profileImage);
     }
 }
