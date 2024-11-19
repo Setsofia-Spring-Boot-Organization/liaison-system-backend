@@ -24,13 +24,18 @@ public class Student {
     private String studentFirstName;
     private String studentLastName;
     private String studentOtherName;
-    private String studentDepartment;
-    private String studentFaculty;
+
     private String studentAge;
     private String studentEmail;
     private String studentGender;
     private String studentPhone;
     private String studentAbout;
+
+    private String profilePictureUrl;
+
+    private String studentDepartment;
+    private String studentFaculty;
+
     private String studentCourse;
     private String placeOfInternship;
 
@@ -52,6 +57,14 @@ public class Student {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
 
     public String getId() {
         return id;
