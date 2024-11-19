@@ -8,14 +8,10 @@ import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.dto.StudentDto;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.student.Student;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,23 +29,23 @@ public class AdminUtil {
     }
 
     public StudentDto buildStudentDtoFromStudent(Student student) {
-        return new StudentDto
-                .Builder()
-                .id(student.getEmail())
-                .name(student.getStudentFirstName()+ " " + student.getStudentLastName() + " " + student.getStudentOtherName())
-                .department(student.getStudentDepartment())
-                .faculty(student.getStudentFaculty())
-                .age(student.getStudentAge())
-                .gender(student.getStudentGender())
-                .course(student.getStudentCourse())
-                .email(student.getStudentEmail())
-                .phone(student.getStudentPhone())
-                .placeOfInternship(student.getPlaceOfInternship())
-                .startDate(student.getStartDate())
-                .endDate(student.getEndDate())
-                .status(student.getStatus())
-                .about(student.getStudentAbout())
-                .build();
+        return new StudentDto (
+                student.getId(),
+                student.getStudentFirstName()+ " " + student.getStudentLastName() + " " + student.getStudentOtherName(),
+                student.getStudentDepartment(),
+                student.getStudentFaculty(),
+                student.getStudentAge(),
+                student.getStudentEmail(),
+                student.getStudentGender(),
+                student.getStudentPhone(),
+                student.getProfilePictureUrl(),
+                student.getStudentAbout(),
+                student.getStudentCourse(),
+                student.getPlaceOfInternship(),
+                student.getStartDate(),
+                student.getEndDate(),
+                student.getStatus()
+        );
     }
 
     /**
