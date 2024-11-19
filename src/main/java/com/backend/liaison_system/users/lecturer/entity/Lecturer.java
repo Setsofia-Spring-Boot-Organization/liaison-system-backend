@@ -25,7 +25,7 @@ public class Lecturer {
     private String lastName;
     private String otherName;
     private String email;
-    private String dp;
+    private String profilePictureUrl;
 
     private String phone;
     private String company;
@@ -36,6 +36,14 @@ public class Lecturer {
 
     @Enumerated(EnumType.STRING)
     private UserRoles role;
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
 
     public String getId() {
         return id;
@@ -99,14 +107,6 @@ public class Lecturer {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getDp() {
-        return dp;
-    }
-
-    public void setDp(String dp) {
-        this.dp = dp;
     }
 
     public String getPhone() {
