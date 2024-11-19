@@ -43,15 +43,17 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
     @Transactional(rollbackOn = {LiaisonSystemApplication.class, Exception.class})
     @Override
     public ResponseEntity<Response<?>> updateUser(String userId, UpdateUserDetails updateUserDetails, MultipartFile profileImage) throws IOException {
-//        String userProfileUrl = cloudinaryService.uploadProfileImage(profileImage);
 
         // get the user's details
         UserRoles userRole = userInfo.getUserRole(userId);
 
+        // upload the image to cloudinary and return its url
+        String userProfileUrl = profileImage.isEmpty()? "" : cloudinaryService.uploadProfileImage(profileImage);
+
         var updatedUser = (userRole.equals(UserRoles.ADMIN)) ?
-                updateAdmin(userId, updateUserDetails) : (userRole.equals(UserRoles.LECTURER)) ?
-                updateLecturer(userId, updateUserDetails) : (userRole.equals(UserRoles.STUDENT)) ?
-                updateStudent(userId, updateUserDetails) : null;
+                updateAdmin(userId, updateUserDetails, userProfileUrl) : (userRole.equals(UserRoles.LECTURER)) ?
+                updateLecturer(userId, updateUserDetails, userProfileUrl) : (userRole.equals(UserRoles.STUDENT)) ?
+                updateStudent(userId, updateUserDetails, userProfileUrl) : null;
 
 
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -62,7 +64,7 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
                 ));
     }
 
-    private Admin updateAdmin(String userId, UpdateUserDetails updateUserDetails) {
+    private Admin updateAdmin(String userId, UpdateUserDetails updateUserDetails, String userProfileUrl) {
         Optional<Admin> optionalAdmin = adminRepository.findById(userId);
 
         assert optionalAdmin.isPresent();
@@ -72,11 +74,12 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         admin.setFirstName(updateUserDetails.firstname().isEmpty() ? admin.getFirstName() : updateUserDetails.firstname());
         admin.setLastName(updateUserDetails.lastname().isEmpty() ? admin.getLastName() : updateUserDetails.lastname());
         admin.setOtherName(updateUserDetails.middleName().isEmpty() ? admin.getOtherName() : updateUserDetails.middleName());
+        admin.setProfilePictureUrl(userProfileUrl.isEmpty() ? admin.getProfilePictureUrl() : userProfileUrl);
 
         return adminRepository.save(admin);
     }
 
-    private Lecturer updateLecturer(String userId, UpdateUserDetails updateUserDetails) {
+    private Lecturer updateLecturer(String userId, UpdateUserDetails updateUserDetails, String userProfileUrl) {
         Optional<Lecturer> optionalLecturer = lecturerRepository.findById(userId);
 
         assert optionalLecturer.isPresent();
@@ -87,11 +90,12 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         lecturer.setLastName(updateUserDetails.lastname().isEmpty() ? lecturer.getLastName() : updateUserDetails.lastname());
         lecturer.setOtherName(updateUserDetails.middleName().isEmpty() ? lecturer.getOtherName() : updateUserDetails.middleName());
         lecturer.setPhone(updateUserDetails.phone().isEmpty() ? lecturer.getPhone() : updateUserDetails.phone());
+        lecturer.setProfilePictureUrl(userProfileUrl.isEmpty() ? lecturer.getProfilePictureUrl() : userProfileUrl);
 
         return lecturerRepository.save(lecturer);
     }
 
-    private Student updateStudent(String userId, UpdateUserDetails updateUserDetails) {
+    private Student updateStudent(String userId, UpdateUserDetails updateUserDetails, String userProfileUrl) {
         Optional<Student> optionalStudent = studentRepository.findById(userId);
 
         assert optionalStudent.isPresent();
@@ -102,6 +106,7 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         student.setStudentLastName(updateUserDetails.lastname().isEmpty() ? student.getStudentLastName() : updateUserDetails.lastname());
         student.setStudentOtherName(updateUserDetails.middleName().isEmpty() ? student.getStudentOtherName() : updateUserDetails.middleName());
         student.setStudentPhone(updateUserDetails.phone().isEmpty() ? student.getStudentPhone() : updateUserDetails.phone());
+        student.setProfilePictureUrl(userProfileUrl.isEmpty() ? student.getProfilePictureUrl() : userProfileUrl);
 
         return studentRepository.save(student);
     }
