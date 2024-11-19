@@ -1,6 +1,6 @@
 package com.backend.liaison_system.zone.specification;
 
-import com.backend.liaison_system.common.ConstantRequestParam;
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
