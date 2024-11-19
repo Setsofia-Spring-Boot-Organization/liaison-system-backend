@@ -27,7 +27,8 @@ public class GlobalExceptionHandler {
             case REQUIRED_FIELDS_ARE_EMPTY,
                  INVALID_USER_IDS,
                  ERROR_SAVING_DATA,
-                 INVALID_INTERNSHIP_TYPE -> status = HttpStatus.BAD_REQUEST;
+                 INVALID_INTERNSHIP_TYPE,
+                 FILE_SIZE_TOO_LARGE -> status = HttpStatus.BAD_REQUEST;
         }
 
         ExceptionResponse response = new ExceptionResponse(
