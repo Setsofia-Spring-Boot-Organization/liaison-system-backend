@@ -21,6 +21,8 @@ public class Admin {
     private String lastName;
     private String otherName;
 
+    private String profilePictureUrl;
+
     private String password;
     @Enumerated(EnumType.STRING)
     private UserRoles role;
@@ -38,6 +40,14 @@ public class Admin {
     }
 
     public Admin() {}
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
 
     public String getId() {
         return id;
