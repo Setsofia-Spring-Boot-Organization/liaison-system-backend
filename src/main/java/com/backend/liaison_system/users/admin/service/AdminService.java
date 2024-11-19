@@ -1,6 +1,6 @@
 package com.backend.liaison_system.users.admin.service;
 
-import com.backend.liaison_system.common.ConstantRequestParam;
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.users.admin.dao.LecturerData;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.users.admin.entity.Admin;

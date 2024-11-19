@@ -1,4 +1,4 @@
-package com.backend.liaison_system.common;
+package com.backend.liaison_system.common.requests;
 
 public record ConstantRequestParam(
     String startOfAcademicYear,
