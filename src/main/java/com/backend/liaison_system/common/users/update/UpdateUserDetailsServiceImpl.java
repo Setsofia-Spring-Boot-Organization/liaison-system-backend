@@ -9,6 +9,8 @@ import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
+import com.backend.liaison_system.users.student.Student;
+import com.backend.liaison_system.users.student.StudentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,14 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
     private final UserInfo userInfo;
     private final AdminRepository adminRepository;
     private final LecturerRepository lecturerRepository;
+    private final StudentRepository studentRepository;
 
-    public UpdateUserDetailsServiceImpl(CloudinaryService cloudinaryService, UserInfo userInfo, AdminRepository adminRepository, LecturerRepository lecturerRepository) {
+    public UpdateUserDetailsServiceImpl(CloudinaryService cloudinaryService, UserInfo userInfo, AdminRepository adminRepository, LecturerRepository lecturerRepository, StudentRepository studentRepository) {
         this.cloudinaryService = cloudinaryService;
         this.userInfo = userInfo;
         this.adminRepository = adminRepository;
         this.lecturerRepository = lecturerRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         var updatedUser = (userRole.equals(UserRoles.ADMIN)) ?
                 updateAdmin(userId, updateUserDetails) : (userRole.equals(UserRoles.LECTURER)) ?
                 updateLecturer(userId, updateUserDetails) : (userRole.equals(UserRoles.STUDENT)) ?
-                "updateStudent(userId, updateUserDetails)" : "";
+                updateStudent(userId, updateUserDetails) : "";
 
 
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -81,7 +85,23 @@ public class UpdateUserDetailsServiceImpl implements UpdateUserService{
         lecturer.setFirstName(updateUserDetails.firstname().isEmpty() ? lecturer.getFirstName() : updateUserDetails.firstname());
         lecturer.setLastName(updateUserDetails.lastname().isEmpty() ? lecturer.getLastName() : updateUserDetails.lastname());
         lecturer.setOtherName(updateUserDetails.middleName().isEmpty() ? lecturer.getOtherName() : updateUserDetails.middleName());
+        lecturer.setPhone(updateUserDetails.phone().isEmpty() ? lecturer.getPhone() : updateUserDetails.phone());
 
         return lecturerRepository.save(lecturer);
+    }
+
+    private Student updateStudent(String userId, UpdateUserDetails updateUserDetails) {
+        Optional<Student> optionalStudent = studentRepository.findById(userId);
+
+        assert optionalStudent.isPresent();
+        Student student = optionalStudent.get();
+
+        student.setUpdatedAt(LocalDateTime.now());
+        student.setStudentFirstName(updateUserDetails.firstname().isEmpty() ? student.getStudentFirstName() : updateUserDetails.firstname());
+        student.setStudentLastName(updateUserDetails.lastname().isEmpty() ? student.getStudentLastName() : updateUserDetails.lastname());
+        student.setStudentOtherName(updateUserDetails.middleName().isEmpty() ? student.getStudentOtherName() : updateUserDetails.middleName());
+        student.setStudentPhone(updateUserDetails.phone().isEmpty() ? student.getStudentPhone() : updateUserDetails.phone());
+
+        return studentRepository.save(student);
     }
 }
