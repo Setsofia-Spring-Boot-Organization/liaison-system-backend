@@ -1,6 +1,6 @@
 package com.backend.liaison_system.users.lecturer.repository;
 
-import com.backend.liaison_system.common.ConstantRequestParam;
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.specification.LecturerSpecification;
 import lombok.NonNull;
