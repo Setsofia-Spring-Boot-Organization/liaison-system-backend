@@ -70,7 +70,7 @@ public class LecturerServiceImpl implements LecturerService {
                     new LecturerList(
                             lecturer.getId(),
                             lecturer.getLastName() + " " + lecturer.getFirstName(),
-                            lecturer.getDp()
+                            lecturer.getProfilePictureUrl()
                     )
             );
         }
@@ -99,7 +99,7 @@ public class LecturerServiceImpl implements LecturerService {
 
         List<String> emails = new ArrayList<>();
         for (NewLecturerRequest request : requests) {
-            Optional<Lecturer> lecturer = lecturerRepository.findByEmail(request.getEmail());
+            Optional<Lecturer> lecturer = lecturerRepository.findByEmail(request.email());
 
             lecturer.ifPresent(lec -> emails.add(lec.getEmail()));
         }
@@ -129,19 +129,19 @@ public class LecturerServiceImpl implements LecturerService {
             lecturer.setCreatedAt(LocalDateTime.now());
             lecturer.setUpdatedAt(LocalDateTime.now());
 
-            lecturer.setFirstName(request.getFirstName());
-            lecturer.setOtherName(request.getOtherName());
-            lecturer.setLastName(request.getLastName());
-            lecturer.setEmail(request.getEmail());
-            lecturer.setDp(request.getDp());
+            lecturer.setFirstName(request.firstName());
+            lecturer.setOtherName(request.otherName());
+            lecturer.setLastName(request.lastName());
+            lecturer.setEmail(request.email());
+            lecturer.setProfilePictureUrl(request.userProfilePicture());
 
-            lecturer.setPhone(request.getPhone());
-            lecturer.setCompany(request.getCompany());
+            lecturer.setPhone(request.phone());
+            lecturer.setCompany(request.company());
 
-            lecturer.setFaculty(request.getFaculty());
-            lecturer.setDepartment(request.getDepartment());
+            lecturer.setFaculty(request.faculty());
+            lecturer.setDepartment(request.department());
 
-            String pass = passwordEncoder.encode(request.getPassword());
+            String pass = passwordEncoder.encode(request.password());
             lecturer.setPassword(pass);
 
             lecturer.setRole(UserRoles.LECTURER);

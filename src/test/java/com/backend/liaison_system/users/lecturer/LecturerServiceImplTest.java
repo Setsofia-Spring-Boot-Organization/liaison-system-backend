@@ -75,7 +75,7 @@ class LecturerServiceImplTest {
         lecturer.setOtherName("Other");
         lecturer.setLastName("New");
         lecturer.setEmail("lecturer@email.com");
-        lecturer.setDp("example-profile-image.com");
+        lecturer.setProfilePictureUrl("example-profile-image.com");
 
         lecturer.setPhone("+233-55-159-963");
         lecturer.setCompany("Lecturer's Company");
@@ -87,23 +87,23 @@ class LecturerServiceImplTest {
 
     // create a dummy lecturer request data
     private NewLecturerRequest request() {
-        NewLecturerRequest request = new NewLecturerRequest();
 
-        request.setFirstName("Lecturer");
-        request.setOtherName("Other");
-        request.setLastName("New");
-        request.setEmail("request@email.com");
-        request.setDp("example-profile-image.com");
+        return new NewLecturerRequest(
+            "Lecturer",
+            "Other",
+            "New",
+            "request@email.com",
+            "example-profile-image.com",
 
-        request.setPhone("+233-55-159-963");
-        request.setCompany("Lecturer's Company");
+            "+233-55-159-963",
+            "Lecturer's Company",
 
-        request.setFaculty("Faculty");
-        request.setDepartment("Department");
-        request.setPassword("password");
+            "Faculty",
+            "Department",
+            "password",
 
-        request.setRole(UserRoles.LECTURER);
-        return request;
+            UserRoles.LECTURER
+        );
     }
 
 
@@ -123,8 +123,22 @@ class LecturerServiceImplTest {
 
         List<NewLecturerRequest> requests = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
-            NewLecturerRequest req = request();
-            req.setEmail("request" + i + "@email.com");
+            NewLecturerRequest req = new NewLecturerRequest(
+                    "Lecturer",
+                    "Other",
+                    "New",
+                    "request" +i + "@email.com",
+                    "example-profile-image.com",
+
+                    "+233-55-159-963",
+                    "Lecturer's Company",
+
+                    "Faculty",
+                    "Department",
+                    "password",
+
+                    UserRoles.LECTURER
+            );
             requests.add(req);
         }
 
@@ -160,14 +174,28 @@ class LecturerServiceImplTest {
 
         List<NewLecturerRequest> requests = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
-            NewLecturerRequest req = request();
-            req.setEmail("request" + i + "@email.com");
+            NewLecturerRequest req = new NewLecturerRequest(
+                    "Lecturer",
+                    "Other",
+                    "New",
+                    "request" +i + "@email.com",
+                    "example-profile-image.com",
+
+                    "+233-55-159-963",
+                    "Lecturer's Company",
+
+                    "Faculty",
+                    "Department",
+                    "password",
+
+                    UserRoles.LECTURER
+            );
             requests.add(req);
         }
 
         // mock the save behaviour:
         when(lecturerRepository.saveAll(any(List.class))).thenReturn(lecturers);
-        when(lecturerRepository.findByEmail(requests.iterator().next().getEmail())).thenReturn(Optional.of(lecturer));
+        when(lecturerRepository.findByEmail(requests.iterator().next().email())).thenReturn(Optional.of(lecturer));
 
 
         // operations:

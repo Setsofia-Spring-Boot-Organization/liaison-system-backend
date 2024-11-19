@@ -280,7 +280,7 @@ public class AdminServiceImpl implements AdminService{
      * @return a list of display pictures (dps) of other lecturers from the same department, or null if none are found
      */
     private List<String> getOthersFromSameDepartment(String department, String id) {
-        List<String> dps = new ArrayList<>();
+        List<String> userProfilePictures = new ArrayList<>();
 
         List<Lecturer> lecturers = lecturerRepository.findAllByDepartment(department)
                 .stream()
@@ -290,11 +290,11 @@ public class AdminServiceImpl implements AdminService{
             return null;
         } else {
             for (Lecturer lecturer : lecturers) {
-                dps.add(lecturer.getDp());
+                userProfilePictures.add(lecturer.getProfilePictureUrl());
             }
         }
 
-        return dps;
+        return userProfilePictures;
     }
 
     @Override
@@ -315,7 +315,7 @@ public class AdminServiceImpl implements AdminService{
                         .message("lecturer details")
                         .data(new LecturerData(
                                 "#" + lecturer.getLecturerId(),
-                                lecturer.getDp(),
+                                lecturer.getProfilePictureUrl(),
                                 lecturer.getLastName() + " " + lecturer.getFirstName(),
                                 lecturer.getDepartment(),
                                 lecturer.getPhone(),

@@ -20,7 +20,7 @@ public class UpdateUserDetailsController {
     }
 
 
-    @PostMapping(path = "/{user_id}/update")
+    @PatchMapping(path = "/{user_id}/update")
     public ResponseEntity<Response<?>> updateUserDetails(
             @PathVariable String user_id,
             @ModelAttribute UpdateUserDetails updateUserDetails,
