@@ -11,7 +11,7 @@ public class SchedulerServiceImpl {
 
     @Scheduled(fixedRate = 100_000)
     public void keepServerAlive() {
-        String url = "https://liaison-system-backend.onrender.com/liaison/api/v1/schedule";
+        String url = "https://liaison-system-backend-m7pq.onrender.com/liaison/api/v1/schedule";
 
         try {
             restTemplate.getForObject(url, String.class);
