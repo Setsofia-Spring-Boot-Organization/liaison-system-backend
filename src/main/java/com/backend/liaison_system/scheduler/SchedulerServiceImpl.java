@@ -1,6 +1,5 @@
 package com.backend.liaison_system.scheduler;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -10,12 +9,9 @@ import org.springframework.web.client.RestTemplate;
 public class SchedulerServiceImpl {
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${scheduler.url}")
-    private String SCHEDULER_URL;
-
     @Scheduled(fixedRate = 100_000)
     public void keepServerAlive() {
-        String url = SCHEDULER_URL;
+        String url = "https://liaison-system-backend-m7pq.onrender.com/liaison/api/v1/schedule";
 
         try {
             restTemplate.getForObject(url, String.class);
