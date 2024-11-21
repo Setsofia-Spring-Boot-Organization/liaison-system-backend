@@ -6,7 +6,6 @@ import com.backend.liaison_system.users.admin.entity.Admin;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,7 +26,7 @@ public class LiaisonUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Student> student = studentRepository.findByEmail(email);
+        Optional<Student> student = studentRepository.findByEmailOrStudentEmail(email);
         if (student.isPresent()) {
             return new LiaisonUserDetails(student.get());
         }

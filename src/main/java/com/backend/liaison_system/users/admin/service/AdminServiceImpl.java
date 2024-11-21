@@ -151,7 +151,7 @@ public class AdminServiceImpl implements AdminService{
                 if(row.getRowNum() == 0) continue;
                 Student currentStudent = adminUtil.buildStudentFromExcel(row);
                 //Ensure student does not already exist
-                Optional<Student> studentCheck = studentRepository.findByEmail(currentStudent.getEmail());
+                Optional<Student> studentCheck = studentRepository.findByEmailOrStudentEmail(currentStudent.getEmail());
                 if(studentCheck.isEmpty()) {
                     if (!internship) {
                         currentStudent.setInternshipType(InternshipType.SEMESTER_OUT);
