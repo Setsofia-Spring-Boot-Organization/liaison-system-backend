@@ -66,7 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return userDetails.get();
         }
 
-        Optional<Student> student = studentRepository.findByEmail(email);
+        Optional<Student> student = studentRepository.findByEmailOrStudentEmail(email);
         if (student.isPresent()) {
             userDetails = Optional.of(new LiaisonUserDetails(student.get()));
             return userDetails.get();
