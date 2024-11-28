@@ -13,7 +13,7 @@ public class SchedulerServiceImpl {
     @Value("${scheduler.url}")
     private String SCHEDULER_URL;
 
-    @Scheduled(fixedRate = 100_000)
+    @Scheduled(fixedRate = 10_000)
     public void keepServerAlive() {
         String url = SCHEDULER_URL;
 
