@@ -2,7 +2,7 @@ package com.backend.liaison_system.users.student;
 
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
-import com.backend.liaison_system.util.StudentSpecifications;
+import com.backend.liaison_system.users.student.util.StudentSpecifications;
 import com.backend.liaison_system.util.UAcademicYear;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
