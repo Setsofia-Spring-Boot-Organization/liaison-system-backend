@@ -1,8 +1,9 @@
-package com.backend.liaison_system.util;
+package com.backend.liaison_system.users.student.util;
 
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.student.Student;
+import com.backend.liaison_system.util.UAcademicYear;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 public class StudentSpecifications {
 
     public static Specification<Student> academicYearAndInternshipType(ConstantRequestParam param) {
-        // format the start and end year into a LocalDateTime object
 
+        // format the start and end year into a LocalDateTime object
         LocalDateTime startYear = UAcademicYear.startOfAcademicYear(param.startOfAcademicYear());
         LocalDateTime endYear = UAcademicYear.endOfAcademicYear(param.endOfAcademicYear());
 
@@ -24,4 +25,6 @@ public class StudentSpecifications {
                 criteriaBuilder.equal(root.get("internshipType"), (param.internship())? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT))
         ));
     }
+
+
 }
