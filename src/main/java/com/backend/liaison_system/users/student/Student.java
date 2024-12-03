@@ -12,7 +12,6 @@ import java.util.Objects;
 
 @Entity
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
 public class Student {
     @Id
@@ -55,15 +54,39 @@ public class Student {
     @Enumerated(EnumType.STRING)
     private UserRoles role;
 
+    private boolean isSupervised;
+    private boolean isAssumeDuty;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
-    }
+    public Student() { }
 
-    public void setProfilePictureUrl(String profilePictureUrl) {
+    public Student(String email, String password, String studentFirstName, String studentLastName, String studentOtherName, String studentAge, String studentEmail, String studentGender, String studentPhone, String studentAbout, String profilePictureUrl, String studentDepartment, String studentFaculty, String studentCourse, String placeOfInternship, LocalDateTime startDate, LocalDateTime endDate, Status status, InternshipType internshipType, UserRoles role, boolean isSupervised, boolean isAssumeDuty, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.email = email;
+        this.password = password;
+        this.studentFirstName = studentFirstName;
+        this.studentLastName = studentLastName;
+        this.studentOtherName = studentOtherName;
+        this.studentAge = studentAge;
+        this.studentEmail = studentEmail;
+        this.studentGender = studentGender;
+        this.studentPhone = studentPhone;
+        this.studentAbout = studentAbout;
         this.profilePictureUrl = profilePictureUrl;
+        this.studentDepartment = studentDepartment;
+        this.studentFaculty = studentFaculty;
+        this.studentCourse = studentCourse;
+        this.placeOfInternship = placeOfInternship;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+        this.internshipType = internshipType;
+        this.role = role;
+        this.isSupervised = isSupervised;
+        this.isAssumeDuty = isAssumeDuty;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public String getId() {
@@ -114,22 +137,6 @@ public class Student {
         this.studentOtherName = studentOtherName;
     }
 
-    public String getStudentDepartment() {
-        return studentDepartment;
-    }
-
-    public void setStudentDepartment(String studentDepartment) {
-        this.studentDepartment = studentDepartment;
-    }
-
-    public String getStudentFaculty() {
-        return studentFaculty;
-    }
-
-    public void setStudentFaculty(String studentFaculty) {
-        this.studentFaculty = studentFaculty;
-    }
-
     public String getStudentAge() {
         return studentAge;
     }
@@ -168,6 +175,30 @@ public class Student {
 
     public void setStudentAbout(String studentAbout) {
         this.studentAbout = studentAbout;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public String getStudentDepartment() {
+        return studentDepartment;
+    }
+
+    public void setStudentDepartment(String studentDepartment) {
+        this.studentDepartment = studentDepartment;
+    }
+
+    public String getStudentFaculty() {
+        return studentFaculty;
+    }
+
+    public void setStudentFaculty(String studentFaculty) {
+        this.studentFaculty = studentFaculty;
     }
 
     public String getStudentCourse() {
@@ -226,6 +257,22 @@ public class Student {
         this.role = role;
     }
 
+    public boolean isSupervised() {
+        return isSupervised;
+    }
+
+    public void setSupervised(boolean supervised) {
+        isSupervised = supervised;
+    }
+
+    public boolean isAssumeDuty() {
+        return isAssumeDuty;
+    }
+
+    public void setAssumeDuty(boolean assumeDuty) {
+        isAssumeDuty = assumeDuty;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -243,18 +290,46 @@ public class Student {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return getId() != null && Objects.equals(getId(), student.getId());
+        return isSupervised == student.isSupervised && isAssumeDuty == student.isAssumeDuty && Objects.equals(id, student.id) && Objects.equals(email, student.email) && Objects.equals(password, student.password) && Objects.equals(studentFirstName, student.studentFirstName) && Objects.equals(studentLastName, student.studentLastName) && Objects.equals(studentOtherName, student.studentOtherName) && Objects.equals(studentAge, student.studentAge) && Objects.equals(studentEmail, student.studentEmail) && Objects.equals(studentGender, student.studentGender) && Objects.equals(studentPhone, student.studentPhone) && Objects.equals(studentAbout, student.studentAbout) && Objects.equals(profilePictureUrl, student.profilePictureUrl) && Objects.equals(studentDepartment, student.studentDepartment) && Objects.equals(studentFaculty, student.studentFaculty) && Objects.equals(studentCourse, student.studentCourse) && Objects.equals(placeOfInternship, student.placeOfInternship) && Objects.equals(startDate, student.startDate) && Objects.equals(endDate, student.endDate) && status == student.status && internshipType == student.internshipType && role == student.role && Objects.equals(createdAt, student.createdAt) && Objects.equals(updatedAt, student.updatedAt);
     }
 
     @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public int hashCode() {
+        return Objects.hash(id, email, password, studentFirstName, studentLastName, studentOtherName, studentAge, studentEmail, studentGender, studentPhone, studentAbout, profilePictureUrl, studentDepartment, studentFaculty, studentCourse, placeOfInternship, startDate, endDate, status, internshipType, role, isSupervised, isAssumeDuty, createdAt, updatedAt);
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id='" + id + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", studentFirstName='" + studentFirstName + '\'' +
+                ", studentLastName='" + studentLastName + '\'' +
+                ", studentOtherName='" + studentOtherName + '\'' +
+                ", studentAge='" + studentAge + '\'' +
+                ", studentEmail='" + studentEmail + '\'' +
+                ", studentGender='" + studentGender + '\'' +
+                ", studentPhone='" + studentPhone + '\'' +
+                ", studentAbout='" + studentAbout + '\'' +
+                ", profilePictureUrl='" + profilePictureUrl + '\'' +
+                ", studentDepartment='" + studentDepartment + '\'' +
+                ", studentFaculty='" + studentFaculty + '\'' +
+                ", studentCourse='" + studentCourse + '\'' +
+                ", placeOfInternship='" + placeOfInternship + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", status=" + status +
+                ", internshipType=" + internshipType +
+                ", role=" + role +
+                ", isSupervised=" + isSupervised +
+                ", isAssumeDuty=" + isAssumeDuty +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

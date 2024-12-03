@@ -42,6 +42,8 @@ public class AdminUtil {
                 student.getStudentAbout(),
                 student.getStudentCourse(),
                 student.getPlaceOfInternship(),
+                student.isAssumeDuty(),
+                student.isSupervised(),
                 student.getStartDate(),
                 student.getEndDate(),
                 student.getStatus()
@@ -73,6 +75,8 @@ public class AdminUtil {
         student.setStatus(Status.IN_PROGRESS);
         student.setPassword(passwordEncoder.encode(password));
         student.setRole(UserRoles.STUDENT);
+        student.setAssumeDuty(false);
+        student.setSupervised(false);
         student.setCreatedAt(LocalDateTime.now());
         student.setUpdatedAt(LocalDateTime.now());
         return student;

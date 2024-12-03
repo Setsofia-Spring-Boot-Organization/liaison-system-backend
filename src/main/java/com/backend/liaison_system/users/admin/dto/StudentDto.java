@@ -16,6 +16,8 @@ public record StudentDto (
         String about,
         String course,
         String placeOfInternship,
+        boolean isSupervised,
+        boolean isAssumeDuty,
         LocalDateTime startDate,
         LocalDateTime endDate,
         Status status

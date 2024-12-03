@@ -2,7 +2,7 @@ package com.backend.liaison_system.users.student;
 
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
-import com.backend.liaison_system.util.StudentSpecifications;
+import com.backend.liaison_system.users.student.util.StudentSpecifications;
 import com.backend.liaison_system.util.UAcademicYear;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,7 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
      * @param email the email address of the student to be found
      * @return an Optional containing the Student entity if found, or an empty Optional if not found
      */
-    Optional<Student> findByStudentEmail(String email);
+    Optional<Student> findStudentByStudentEmail(String email);
 
     /**
      * This method that queries the data and returns students that match the specified specifications.
