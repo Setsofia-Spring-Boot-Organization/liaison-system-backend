@@ -26,7 +26,7 @@ public class LiaisonUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Student> student = studentRepository.findByStudentEmail(email);
+        Optional<Student> student = studentRepository.findStudentByStudentEmail(email);
         if (student.isPresent()) {
             return new LiaisonUserDetails(student.get());
         }
