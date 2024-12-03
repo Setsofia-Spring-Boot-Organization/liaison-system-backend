@@ -32,7 +32,7 @@ public class StudentServiceImpl implements StudentService{
                 data -> dashboardRes.set(new StudentDashboardRes(
                         data.getId(),
                         data.getStudentFirstName(),
-                        data.getEmail(),
+                        data.getStudentEmail(),
                         data.getProfilePictureUrl(),
                         data.isSupervised(),
                         data.isAssumeDuty()
@@ -44,8 +44,6 @@ public class StudentServiceImpl implements StudentService{
                 .message("dashboard data")
                 .data(dashboardRes.get())
                 .build();
-
-        System.out.println("response = " + response);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
