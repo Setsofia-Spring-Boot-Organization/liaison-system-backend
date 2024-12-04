@@ -74,7 +74,7 @@ public class StudentServiceImpl implements StudentService{
         for (String id : lecturers) {
             lecturerRepository.findById(id).map(
                     lecturer -> assignedLecturers.add(new AssignedLecturer(
-                            lecturer.getFirstName() + " " + lecturer.getOtherName() + " " + lecturer.getLastName(),
+                            lecturer.getFirstName() + " " + (lecturer.getOtherName() == null? "" : lecturer.getOtherName()) + " " + lecturer.getLastName(),
                             lecturer.getEmail(),
                             lecturer.getPhone()
                     ))
