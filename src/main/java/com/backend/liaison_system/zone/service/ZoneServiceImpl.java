@@ -117,6 +117,8 @@ public class ZoneServiceImpl implements ZoneService{
             throw new LiaisonException(Error.INVALID_USER_IDS, new Throwable(Message.THE_FOLLOWING_IDS_DO_NOT_EXIST.label + " " + invalidIds));
     }
 
+
+
     @Override
     public ResponseEntity<Response<List<AllZones>>> getAllZones(String adminId, ConstantRequestParam param) {
         adminUtil.verifyUserIsAdmin(adminId); // verify that the user is an admin
@@ -150,5 +152,32 @@ public class ZoneServiceImpl implements ZoneService{
                         .data(allZones)
                         .build()
         );
+    }
+
+
+
+    @Override
+    public ResponseEntity<Response<?>> updateZone(String zoneId, NewZone zone) {
+
+        zoneRepository.findById(zoneId).ifPresentOrElse(
+                oldZone -> {
+                    oldZone.setName(zone.name() == null ? oldZone.getName() : zone.name());
+                    oldZone.setRegion(zone.region() == null? oldZone.getRegion() : zone.region());
+                    oldZone.setZoneLead(zone.zoneLead() == null? oldZone.getZoneLead() : zone.zoneLead());
+                    oldZone.getLecturers().lecturers().addAll(zone.lecturerIds());
+                    oldZone.getTowns().towns().addAll(zone.towns());
+                    oldZone.setDateUpdated(LocalDateTime.now());
+
+                    zoneRepository.save(oldZone);
+                },
+                () -> {throw new LiaisonException(Error.INVALID_ZONE_ID, new Throwable(Message.THE_REQUESTED_ZONE_DOES_NOT_EXIST.label));}
+        );
+
+        Response<String> response = new Response.Builder<String>()
+                .status(HttpStatus.CREATED.value())
+                .message("zone updated successfully!")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
