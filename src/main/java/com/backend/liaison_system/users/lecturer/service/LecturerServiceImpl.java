@@ -10,6 +10,8 @@ import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
+import com.backend.liaison_system.users.lecturer.util.LecturerUtil;
+import com.backend.liaison_system.zone.repository.ZoneRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +30,14 @@ public class LecturerServiceImpl implements LecturerService {
     private final LecturerRepository lecturerRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final AdminUtil adminUtil;
+    private final LecturerUtil lecturerUtil;
+    private final ZoneRepository zoneRepository;
 
-    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil) {
+    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil, LecturerUtil lecturerUtil, ZoneRepository zoneRepository) {
         this.lecturerRepository = lecturerRepository;
         this.adminUtil = adminUtil;
+        this.lecturerUtil = lecturerUtil;
+        this.zoneRepository = zoneRepository;
     }
 
     @Override
@@ -56,6 +62,8 @@ public class LecturerServiceImpl implements LecturerService {
                         .build()
         );
     }
+
+
 
     @Override
     public ResponseEntity<Response<List<LecturerList>>> getLecturers(String id) {
@@ -85,8 +93,18 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
 
+    //TODO: FINISH THE ADMIN DASHBOARD DATA
+    @Override
+    public ResponseEntity<Response<?>> getDashboardData(String id) {
+        //Verify that the user is a lecturer
+        lecturerUtil.verifyUserIsStudent(id);
 
-    // helper methods
+        var lec = zoneRepository.findByLecturerId(id);
+        System.out.println("Zone lec = " + lec);
+
+        return null;
+    }
+
     /**
      * This method verifies if any of the email addresses in the provided list of NewLecturerRequest objects
      * already exist in the system. If any email is found to be associated with an existing Lecturer,
