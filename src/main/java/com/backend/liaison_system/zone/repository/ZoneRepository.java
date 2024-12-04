@@ -28,6 +28,12 @@ public interface ZoneRepository extends CrudRepository<Zone, String>, JpaSpecifi
         return findOne(zoneSpecification);
     }
 
+    default Optional<Zone> findByLecturerId(String id) {
+        Specification<Zone> specification = (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("lecturers").get("lecturers").as(String.class), id);
+
+        return findOne(specification);
+    }
+
     @Modifying
     @Transactional
     @Query(value = "DROP TABLE IF EXISTS zone", nativeQuery = true)
