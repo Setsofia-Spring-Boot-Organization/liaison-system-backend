@@ -1,9 +1,9 @@
-package com.backend.liaison_system.assumption_of_duty.service;
+package com.backend.liaison_system.users.student.assumption_of_duty.service;
 
-import com.backend.liaison_system.assumption_of_duty.entities.AssumptionOfDuty;
-import com.backend.liaison_system.assumption_of_duty.entities.CompanyDetails;
-import com.backend.liaison_system.assumption_of_duty.repository.AssumptionOfDutyRepository;
-import com.backend.liaison_system.assumption_of_duty.requests.CreateNewAssumptionOfDuty;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.CompanyDetails;
+import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
+import com.backend.liaison_system.users.student.assumption_of_duty.requests.CreateNewAssumptionOfDuty;
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.exception.Error;
