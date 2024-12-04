@@ -30,11 +30,23 @@ public class ZoneController {
         return zoneService.createNewZone(id, zones, param);
     }
 
+
+
     @GetMapping(path = "/{admin-id}")
     public ResponseEntity<Response<List<AllZones>>> getAllZones(
             @PathVariable("admin-id") String adminId,
             ConstantRequestParam param
     ) {
         return zoneService.getAllZones(adminId, param);
+    }
+
+
+
+    @PostMapping(path = "/update/{zone-id}}")
+    public ResponseEntity<Response<?>> updateZone(
+            @PathVariable("zone-id") String zoneId,
+            @RequestBody NewZone zone
+    ) {
+        return zoneService.updateZone(zoneId, zone);
     }
 }
