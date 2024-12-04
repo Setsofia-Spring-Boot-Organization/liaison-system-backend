@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -28,11 +29,10 @@ public interface ZoneRepository extends CrudRepository<Zone, String>, JpaSpecifi
         return findOne(zoneSpecification);
     }
 
-    default Optional<Zone> findByLecturerId(String id) {
-        Specification<Zone> specification = (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("lecturers").get("lecturers").as(String.class), id);
 
-        return findOne(specification);
-    }
+    @Query("SELECT z FROM Zone z WHERE :id MEMBER OF z.lecturers.lecturers")
+    Optional<Zone> findByLecturerId(@Param("id") String id);
+
 
     @Modifying
     @Transactional
