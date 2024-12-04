@@ -1,4 +1,4 @@
-package com.backend.liaison_system.assumption_of_duty.entities;
+package com.backend.liaison_system.users.student.assumption_of_duty.entities;
 
 import jakarta.persistence.Embeddable;
 

@@ -1,4 +1,4 @@
-package com.backend.liaison_system.assumption_of_duty.requests;
+package com.backend.liaison_system.users.student.assumption_of_duty.requests;
 
 public record CreateNewAssumptionOfDuty(
         String companyName,
