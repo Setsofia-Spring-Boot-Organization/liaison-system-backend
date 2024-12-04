@@ -1,11 +1,11 @@
 package com.backend.liaison_system.zone.dto;
 
-import java.util.List;
+import java.util.Set;
 
 public record NewZone (
     String name,
     String region,
-    List<String> towns,
+    Set<String> towns,
     String zoneLead,
-    List<String> lecturerIds
+    Set<String> lecturerIds
 ) {}
