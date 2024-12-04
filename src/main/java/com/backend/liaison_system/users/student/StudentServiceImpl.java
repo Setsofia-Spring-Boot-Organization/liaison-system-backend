@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -35,7 +36,9 @@ public class StudentServiceImpl implements StudentService{
                         data.getStudentEmail(),
                         data.getProfilePictureUrl(),
                         data.isSupervised(),
-                        data.isAssumeDuty()
+                        data.isAssumeDuty(),
+                        //TODO: add the assigned lecturers here
+                        List.of()
                 ))
         );
 
