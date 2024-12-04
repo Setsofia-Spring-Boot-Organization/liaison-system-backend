@@ -28,7 +28,8 @@ public class GlobalExceptionHandler {
                  INVALID_USER_IDS,
                  ERROR_SAVING_DATA,
                  INVALID_INTERNSHIP_TYPE,
-                 FILE_SIZE_TOO_LARGE -> status = HttpStatus.BAD_REQUEST;
+                 FILE_SIZE_TOO_LARGE,
+                 INVALID_ZONE_ID -> status = HttpStatus.BAD_REQUEST;
         }
 
         ExceptionResponse response = new ExceptionResponse(
