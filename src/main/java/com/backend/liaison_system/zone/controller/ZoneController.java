@@ -42,11 +42,12 @@ public class ZoneController {
 
 
 
-    @PostMapping(path = "/update/{zone-id}}")
+    @PatchMapping(path = "/{admin-id}/update/{zone-id}")
     public ResponseEntity<Response<?>> updateZone(
+            @PathVariable("admin-id") String adminId,
             @PathVariable("zone-id") String zoneId,
             @RequestBody NewZone zone
     ) {
-        return zoneService.updateZone(zoneId, zone);
+        return zoneService.updateZone(adminId, zoneId, zone);
     }
 }
