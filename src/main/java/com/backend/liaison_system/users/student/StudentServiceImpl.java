@@ -1,12 +1,17 @@
 package com.backend.liaison_system.users.student;
 
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
+import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
+import com.backend.liaison_system.users.student.response.AssignedLecturer;
 import com.backend.liaison_system.users.student.response.StudentDashboardRes;
 import com.backend.liaison_system.users.student.util.StudentUtil;
+import com.backend.liaison_system.zone.repository.ZoneRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -15,10 +20,16 @@ public class StudentServiceImpl implements StudentService{
 
     private final StudentUtil studentUtil;
     private final StudentRepository studentRepository;
+    private final ZoneRepository zoneRepository;
+    private final LecturerRepository lecturerRepository;
+    private final AssumptionOfDutyRepository assumptionOfDutyRepository;
 
-    public StudentServiceImpl(StudentUtil studentUtil, StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentUtil studentUtil, StudentRepository studentRepository, ZoneRepository zoneRepository, LecturerRepository lecturerRepository, AssumptionOfDutyRepository assumptionOfDutyRepository) {
         this.studentUtil = studentUtil;
         this.studentRepository = studentRepository;
+        this.zoneRepository = zoneRepository;
+        this.lecturerRepository = lecturerRepository;
+        this.assumptionOfDutyRepository = assumptionOfDutyRepository;
     }
 
     @Override
@@ -37,8 +48,7 @@ public class StudentServiceImpl implements StudentService{
                         data.getProfilePictureUrl(),
                         data.isSupervised(),
                         data.isAssumeDuty(),
-                        //TODO: add the assigned lecturers here
-                        List.of()
+                        getAssignedLecturers(data.getId())
                 ))
         );
 
@@ -49,5 +59,28 @@ public class StudentServiceImpl implements StudentService{
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private List<AssignedLecturer> getAssignedLecturers(String studentId) {
+
+        // find the zone using the Region r and Town t
+        List<String> lecturers = new ArrayList<>();
+        assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(studentId)
+                .flatMap(assumptionOfDuty -> zoneRepository.findZoneByRegionAndTown(assumptionOfDuty.getCompanyDetails().getCompanyRegion(), assumptionOfDuty.getCompanyDetails().getCompanyTown()))
+                .ifPresent(zone -> lecturers.addAll(zone.getLecturers().lecturers()));
+
+
+        List<AssignedLecturer> assignedLecturers = new ArrayList<>();
+        for (String id : lecturers) {
+            lecturerRepository.findById(id).map(
+                    lecturer -> assignedLecturers.add(new AssignedLecturer(
+                            lecturer.getFirstName() + " " + lecturer.getOtherName() + " " + lecturer.getLastName(),
+                            lecturer.getEmail(),
+                            lecturer.getPhone()
+                    ))
+            );
+        }
+
+        return assignedLecturers;
     }
 }
