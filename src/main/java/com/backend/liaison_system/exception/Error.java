@@ -11,7 +11,8 @@ public enum Error {
     WRONG_USER_ROLE("wrong user role"),
     INVALID_USER_IDS("invalid user ids"),
     INVALID_INTERNSHIP_TYPE("invalid internship type"),
-    FILE_SIZE_TOO_LARGE("file size too large");
+    FILE_SIZE_TOO_LARGE("file size too large"),
+    INVALID_ZONE_ID("invalid zone id");
 
     public final String label;
     Error(String label) {

@@ -35,4 +35,11 @@ public class LecturerController {
     ) throws LiaisonException {
         return lecturerService.getLecturers(id);
     }
+
+    @GetMapping(path = "dashboard/{lecture-id}")
+    public ResponseEntity<Response<?>> dashboardStatistics(
+            @PathVariable("lecture-id") String id
+    ) {
+        return lecturerService.getDashboardData(id);
+    }
 }

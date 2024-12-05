@@ -21,4 +21,6 @@ public interface ZoneService {
     ResponseEntity<Response<?>> createNewZone(String id, List<NewZone> zones, ConstantRequestParam param);
 
     ResponseEntity<Response<List<AllZones>>> getAllZones(String adminId, ConstantRequestParam param);
+
+    ResponseEntity<Response<?>> updateZone(String adminId, String zoneId, NewZone zone);
 }

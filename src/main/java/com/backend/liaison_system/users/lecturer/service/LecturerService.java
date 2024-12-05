@@ -26,4 +26,6 @@ public interface LecturerService {
      * @return A {@link ResponseEntity} containing a {@link Response} with the {@link LecturerList}.
      */
     ResponseEntity<Response<List<LecturerList>>> getLecturers(String id);
+
+    ResponseEntity<Response<?>> getDashboardData(String id);
 }

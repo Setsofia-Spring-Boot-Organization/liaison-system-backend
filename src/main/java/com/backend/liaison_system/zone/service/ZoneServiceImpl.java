@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ZoneServiceImpl implements ZoneService{
@@ -65,7 +66,7 @@ public class ZoneServiceImpl implements ZoneService{
             Zone zone1 = new Zone();
             zone1.setName(zone.name());
             zone1.setRegion(zone.region());
-            zone1.setTowns(new Towns(zone.towns()));
+            zone1.setTowns( new Towns(zone.towns()));
             zone1.setZoneLead(zone.zoneLead());
 
             zone1.setDateCreated(LocalDateTime.now());
@@ -104,9 +105,9 @@ public class ZoneServiceImpl implements ZoneService{
     private void sanitizeTheLecturerIds(List<NewZone> zones) throws LiaisonException {
         List<String> invalidIds = new ArrayList<>();
 
-        List<List<String>> lecturerIds = zones.stream().map(NewZone::lecturerIds).toList();
+        List<Set<String>> lecturerIds = zones.stream().map(NewZone::lecturerIds).toList();
 
-        for (List<String> ids : lecturerIds.stream().toList()) {
+        for (Set<String> ids : lecturerIds.stream().toList()) {
             for (String id : ids) {
                 boolean result = lecturerRepository.findById(id).isEmpty();
                 if (result) invalidIds.add(id);
@@ -116,6 +117,8 @@ public class ZoneServiceImpl implements ZoneService{
         if (!invalidIds.isEmpty())
             throw new LiaisonException(Error.INVALID_USER_IDS, new Throwable(Message.THE_FOLLOWING_IDS_DO_NOT_EXIST.label + " " + invalidIds));
     }
+
+
 
     @Override
     public ResponseEntity<Response<List<AllZones>>> getAllZones(String adminId, ConstantRequestParam param) {
@@ -150,5 +153,35 @@ public class ZoneServiceImpl implements ZoneService{
                         .data(allZones)
                         .build()
         );
+    }
+
+
+
+    @Override
+    public ResponseEntity<Response<?>> updateZone(String adminId, String zoneId, NewZone zone) {
+
+        // Verify that user is an admin
+        adminUtil.verifyUserIsAdmin(adminId);
+
+        zoneRepository.findById(zoneId).ifPresentOrElse(
+                oldZone -> {
+                    oldZone.setName(zone.name().isEmpty() || zone.name().isBlank()? oldZone.getName() : zone.name());
+                    oldZone.setRegion(zone.region().isEmpty() || zone.region().isBlank()? oldZone.getRegion() : zone.region());
+                    oldZone.setZoneLead(zone.zoneLead().isEmpty() || zone.zoneLead().isBlank()? oldZone.getZoneLead() : zone.zoneLead());
+                    oldZone.getLecturers().lecturers().addAll(!zone.lecturerIds().isEmpty()? zone.lecturerIds() : oldZone.getLecturers().lecturers());
+                    oldZone.getTowns().towns().addAll(zone.towns().isEmpty()? oldZone.getTowns().towns() : zone.towns());
+                    oldZone.setDateUpdated(LocalDateTime.now());
+
+                    zoneRepository.save(oldZone);
+                },
+                () -> {throw new LiaisonException(Error.INVALID_ZONE_ID, new Throwable(Message.THE_REQUESTED_ZONE_DOES_NOT_EXIST.label));}
+        );
+
+        Response<String> response = new Response.Builder<String>()
+                .status(HttpStatus.CREATED.value())
+                .message("zone updated successfully!")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
