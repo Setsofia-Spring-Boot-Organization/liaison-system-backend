@@ -7,6 +7,7 @@ import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
+import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.zone.dao.AllZones;
 import com.backend.liaison_system.zone.dto.NewZone;
@@ -62,11 +63,17 @@ public class ZoneServiceImpl implements ZoneService{
         LocalDateTime endDate = LocalDate.of(endOfAcademicYear, 12, 31).atTime(23, 59, 59, 999999999);
 
         List<Zone> zones1 = new ArrayList<>();
+        List<String> zoneLeadIds = new ArrayList<>();
         for (NewZone zone : zones) {
+
+            // add the id of the zone lead
+            zoneLeadIds.add(zone.zoneLead());
+
+            // create the zone
             Zone zone1 = new Zone();
             zone1.setName(zone.name());
             zone1.setRegion(zone.region());
-            zone1.setTowns( new Towns(zone.towns()));
+            zone1.setTowns(new Towns(zone.towns()));
             zone1.setZoneLead(zone.zoneLead());
 
             zone1.setDateCreated(LocalDateTime.now());
@@ -81,7 +88,15 @@ public class ZoneServiceImpl implements ZoneService{
             zones1.add(zone1);
         }
 
+        // update all the lecturers to zone leads
+        List<Lecturer> zoneLeads = new ArrayList<>();
+        zoneLeadIds.forEach(leadId -> lecturerRepository.findById(leadId).ifPresent(lecturer -> {
+            lecturer.setZoneLead(true);
+            zoneLeads.add(lecturer);
+        }));
+
         try {
+            lecturerRepository.saveAll(zoneLeads);
             zoneRepository.saveAll(zones1);
         } catch (Exception exception) {
             throw new LiaisonException(Error.ERROR_SAVING_DATA);

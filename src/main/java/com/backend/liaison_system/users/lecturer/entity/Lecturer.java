@@ -3,14 +3,12 @@ package com.backend.liaison_system.users.lecturer.entity;
 import com.backend.liaison_system.enums.UserRoles;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
 public class Lecturer {
     @Id
@@ -34,15 +32,29 @@ public class Lecturer {
     private String faculty;
     private String department;
 
+    private boolean isZoneLead;
+
     @Enumerated(EnumType.STRING)
     private UserRoles role;
 
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
-    }
+    public Lecturer() {}
 
-    public void setProfilePictureUrl(String profilePictureUrl) {
+    public Lecturer(String lecturerId, LocalDateTime createdAt, LocalDateTime updatedAt, String firstName, String lastName, String otherName, String email, String profilePictureUrl, String phone, String company, String password, String faculty, String department, boolean isZoneLead, UserRoles role) {
+        this.lecturerId = lecturerId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.otherName = otherName;
+        this.email = email;
         this.profilePictureUrl = profilePictureUrl;
+        this.phone = phone;
+        this.company = company;
+        this.password = password;
+        this.faculty = faculty;
+        this.department = department;
+        this.isZoneLead = isZoneLead;
+        this.role = role;
     }
 
     public String getId() {
@@ -109,6 +121,14 @@ public class Lecturer {
         this.email = email;
     }
 
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -149,6 +169,14 @@ public class Lecturer {
         this.department = department;
     }
 
+    public boolean isZoneLead() {
+        return isZoneLead;
+    }
+
+    public void setZoneLead(boolean zoneLead) {
+        isZoneLead = zoneLead;
+    }
+
     public UserRoles getRole() {
         return role;
     }
@@ -158,18 +186,15 @@ public class Lecturer {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Lecturer lecturer = (Lecturer) o;
-        return getId() != null && Objects.equals(getId(), lecturer.getId());
+        return isZoneLead == lecturer.isZoneLead && Objects.equals(id, lecturer.id) && Objects.equals(lecturerId, lecturer.lecturerId) && Objects.equals(createdAt, lecturer.createdAt) && Objects.equals(updatedAt, lecturer.updatedAt) && Objects.equals(firstName, lecturer.firstName) && Objects.equals(lastName, lecturer.lastName) && Objects.equals(otherName, lecturer.otherName) && Objects.equals(email, lecturer.email) && Objects.equals(profilePictureUrl, lecturer.profilePictureUrl) && Objects.equals(phone, lecturer.phone) && Objects.equals(company, lecturer.company) && Objects.equals(password, lecturer.password) && Objects.equals(faculty, lecturer.faculty) && Objects.equals(department, lecturer.department) && role == lecturer.role;
     }
 
     @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public int hashCode() {
+        return Objects.hash(id, lecturerId, createdAt, updatedAt, firstName, lastName, otherName, email, profilePictureUrl, phone, company, password, faculty, department, isZoneLead, role);
     }
 }

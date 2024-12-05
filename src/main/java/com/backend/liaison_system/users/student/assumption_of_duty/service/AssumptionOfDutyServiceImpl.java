@@ -38,13 +38,21 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         AssumptionOfDuty assumption = createAssumption(param, newAssumptionOfDuty, student);
 
-        Response<AssumptionOfDuty> response = new Response<>(
-                HttpStatus.CREATED.value(),
-                "assumption of duty submitted successfully!",
-                assumption
-        );
+        try {
+            // update the students assumeDuty after he/she submitted it
+            student.setAssumeDuty(true);
+            studentRepository.save(student);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            Response<AssumptionOfDuty> response = new Response<>(
+                    HttpStatus.CREATED.value(),
+                    "assumption of duty submitted successfully!",
+                    assumption
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            throw new LiaisonException(Error.ERROR_SAVING_DATA);
+        }
     }
 
     private AssumptionOfDuty createAssumption(ConstantRequestParam param, CreateNewAssumptionOfDuty newAssumptionOfDuty, Student student) {

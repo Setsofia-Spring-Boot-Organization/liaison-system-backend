@@ -224,6 +224,7 @@ public class LecturerServiceImpl implements LecturerService {
             lecturer.setPassword(pass);
 
             lecturer.setRole(UserRoles.LECTURER);
+            lecturer.setZoneLead(false);
 
             // add the lecturer to the lecturers' list
             lecturers.add(lecturer);

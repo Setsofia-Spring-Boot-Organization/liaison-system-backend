@@ -9,5 +9,8 @@ public record StudentDashboardRes(
         String profilePictureUrl,
         boolean isSupervised,
         boolean isAssumeDuty,
-        List<AssignedLecturer> assignedLecturers
+        List<Colleagues> colleagues,
+        int totalColleagues,
+        List<AssignedLecturer> assignedLecturers,
+        int totalLecturers
 ) { }
