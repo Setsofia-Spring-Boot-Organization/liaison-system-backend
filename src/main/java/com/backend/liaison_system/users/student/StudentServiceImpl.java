@@ -4,6 +4,7 @@ import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.users.student.response.AssignedLecturer;
+import com.backend.liaison_system.users.student.response.Colleagues;
 import com.backend.liaison_system.users.student.response.StudentDashboardRes;
 import com.backend.liaison_system.users.student.util.StudentUtil;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
@@ -41,15 +42,39 @@ public class StudentServiceImpl implements StudentService{
         AtomicReference<StudentDashboardRes> dashboardRes = new AtomicReference<>();
 
         studentRepository.findById(studentId).ifPresent(
-                data -> dashboardRes.set(new StudentDashboardRes(
-                        data.getId(),
-                        data.getStudentFirstName(),
-                        data.getStudentEmail(),
-                        data.getProfilePictureUrl(),
-                        data.isSupervised(),
-                        data.isAssumeDuty(),
-                        getAssignedLecturers(data.getId())
-                ))
+                data -> {
+                    List<Colleagues> colleagues = new ArrayList<>();
+                    assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(data.getId()).ifPresent(assumptionOfDuty -> {
+                        assumptionOfDutyRepository.findAll().forEach(
+                                duty -> {
+                                    if (assumptionOfDuty.getCompanyDetails().getCompanyName().equals(duty.getCompanyDetails().getCompanyName())) {
+                                        studentRepository.findById(duty.getStudentId()).ifPresent(
+                                                student -> colleagues.add(new Colleagues(
+                                                        student.getId(),
+                                                        student.getStudentFirstName() + (student.getStudentOtherName() == null? "" : " " + student.getStudentOtherName()) +" "+ student.getStudentLastName(),
+                                                        student.getStudentEmail(),
+                                                        student.getProfilePictureUrl()
+                                                ))
+                                        );
+                                    }
+                                }
+                        );
+                    });
+
+                    List<AssignedLecturer> assignedLecturers = getAssignedLecturers(data.getId());
+                    dashboardRes.set(new StudentDashboardRes(
+                            data.getId(),
+                            data.getStudentFirstName(),
+                            data.getStudentEmail(),
+                            data.getProfilePictureUrl(),
+                            data.isSupervised(),
+                            data.isAssumeDuty(),
+                            colleagues,
+                            colleagues.size(),
+                            assignedLecturers,
+                            assignedLecturers.size()
+                    ));
+                }
         );
 
         Response<?> response = new Response.Builder<>()
@@ -76,7 +101,9 @@ public class StudentServiceImpl implements StudentService{
                     lecturer -> assignedLecturers.add(new AssignedLecturer(
                             lecturer.getFirstName() + " " + (lecturer.getOtherName() == null? "" : lecturer.getOtherName()) + " " + lecturer.getLastName(),
                             lecturer.getEmail(),
-                            lecturer.getPhone()
+                            lecturer.getPhone(),
+                            lecturer.isZoneLead(),
+                            lecturer.getProfilePictureUrl()
                     ))
             );
         }
