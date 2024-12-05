@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,9 +64,9 @@ class ZoneServiceImplTest {
         return new NewZone(
                 "New zone",
                 "Western region ",
-                List.of("Miami"),
+                Set.of("Miami"),
                 "zoneLeadId",
-                List.of(
+                Set.of(
                         "lecture1",
                         "lecture2",
                         "lecture3",
