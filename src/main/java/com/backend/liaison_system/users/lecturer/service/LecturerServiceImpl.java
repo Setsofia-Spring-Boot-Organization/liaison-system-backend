@@ -5,12 +5,22 @@ import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
+import com.backend.liaison_system.users.admin.dto.StudentDto;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
+import com.backend.liaison_system.users.lecturer.responses.CompaniesData;
+import com.backend.liaison_system.users.lecturer.responses.LecturerDashboardDataRes;
+import com.backend.liaison_system.users.lecturer.responses.OtherLecturersData;
+import com.backend.liaison_system.users.lecturer.responses.StudentsData;
 import com.backend.liaison_system.users.lecturer.util.LecturerUtil;
+import com.backend.liaison_system.users.student.Student;
+import com.backend.liaison_system.users.student.StudentRepository;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
+import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
+import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
@@ -20,9 +30,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class LecturerServiceImpl implements LecturerService {
@@ -32,12 +41,16 @@ public class LecturerServiceImpl implements LecturerService {
     private final AdminUtil adminUtil;
     private final LecturerUtil lecturerUtil;
     private final ZoneRepository zoneRepository;
+    private final AssumptionOfDutyRepository assumptionOfDutyRepository;
+    private final StudentRepository studentRepository;
 
-    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil, LecturerUtil lecturerUtil, ZoneRepository zoneRepository) {
+    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil, LecturerUtil lecturerUtil, ZoneRepository zoneRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, StudentRepository studentRepository) {
         this.lecturerRepository = lecturerRepository;
         this.adminUtil = adminUtil;
         this.lecturerUtil = lecturerUtil;
         this.zoneRepository = zoneRepository;
+        this.assumptionOfDutyRepository = assumptionOfDutyRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -93,16 +106,64 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
 
-    //TODO: FINISH THE ADMIN DASHBOARD DATA
+
     @Override
     public ResponseEntity<Response<?>> getDashboardData(String id) {
         //Verify that the user is a lecturer
-        lecturerUtil.verifyUserIsStudent(id);
+        lecturerUtil.verifyUserIsLecturer(id);
 
-        var lec = zoneRepository.findByLecturerId(id);
-        System.out.println("Zone lec = " + lec);
+        AtomicReference<Zone> atomicZone = new AtomicReference<>();
+        zoneRepository.findAll().forEach(
+            zone -> {
+                if (zone.getLecturers().lecturers().contains(id)) {
+                    atomicZone.set(zone);
+                }
+            }
+        );
 
-        return null;
+        List<AssumptionOfDuty> duties = new ArrayList<>();
+        assumptionOfDutyRepository.findAll().iterator().forEachRemaining(assumptionOfDuty ->
+                {
+                    if (assumptionOfDuty.getCompanyDetails().getCompanyRegion().equals(atomicZone.get().getRegion()) && atomicZone.get().getTowns().towns().contains(assumptionOfDuty.getCompanyDetails().getCompanyTown())) {
+                        duties.add(assumptionOfDuty);
+                    }
+                }
+        );
+
+        List<Student> students = new ArrayList<>();
+        Map<String, Integer> companies = new HashMap<>();
+        duties.forEach(assumptionOfDuty -> {
+            studentRepository.findById(assumptionOfDuty.getStudentId()).ifPresent(student -> {
+
+                // add the student to the students list
+                students.add(student);
+
+                // add the company to the companies list
+                String companyName = (assumptionOfDuty.getCompanyDetails().getCompanyName());
+                if (companies.containsKey(companyName)) {
+                    int count = companies.get(companyName);
+                    companies.put(companyName, count + 1);
+                } else {
+                    companies.put(companyName, 1);
+                }
+            });
+        });
+
+        // put the data together
+        List<StudentDto> studentData = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();
+        LecturerDashboardDataRes dataRes = new LecturerDashboardDataRes(
+                new StudentsData(studentData, students.size()),
+                new CompaniesData(companies, companies.size()),
+                new OtherLecturersData(atomicZone.get().getLecturers().lecturers(), atomicZone.get().getLecturers().lecturers().size())
+        );
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("dashboard data")
+                .data(dataRes)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**
