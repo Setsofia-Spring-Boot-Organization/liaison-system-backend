@@ -19,7 +19,7 @@ public class LecturerUtil {
         this.lecturerRepository = lecturerRepository;
     }
 
-    public void verifyUserIsStudent(String id) {
+    public void verifyUserIsLecturer(String id) {
         lecturerRepository.findById(id).ifPresentOrElse((lecturer -> {
                     if (!lecturer.getRole().equals(UserRoles.LECTURER)) {
                         throw new LiaisonException(Error.UNAUTHORIZED_USER, new Throwable(Message.THE_USER_IS_NOT_AUTHORIZED.label));
