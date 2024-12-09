@@ -4,5 +4,6 @@ public record Colleagues(
         String id,
         String name,
         String email,
-        String profilePictureUrl
+        String profilePictureUrl,
+        String department
 ) { }
