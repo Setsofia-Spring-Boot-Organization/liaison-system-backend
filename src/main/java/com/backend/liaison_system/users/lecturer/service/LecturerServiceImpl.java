@@ -22,6 +22,7 @@ import com.backend.liaison_system.users.student.assumption_of_duty.entities.Assu
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -164,6 +165,35 @@ public class LecturerServiceImpl implements LecturerService {
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+
+    @Transactional(rollbackOn = LiaisonException.class)
+    @Override
+    public ResponseEntity<Response<?>> superviseStudent(String lecturerId, String studentId) {
+
+        //Verify that the user is a lecturer
+        lecturerUtil.verifyUserIsLecturer(lecturerId);
+
+        AtomicReference<Boolean> isSupervised = new AtomicReference<>();
+        studentRepository.findById(studentId).ifPresent(student -> {
+            try {
+                isSupervised.set(!student.isSupervised()); // set the supervised state
+
+                student.setSupervised(!student.isSupervised()); // set the supervised state to its opposite
+                studentRepository.save(student);
+            } catch (Exception e) {
+                throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.FAILED_TO_SUPERVISE_STUDENT.label));
+            }
+        });
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.CREATED.value())
+                .message(isSupervised.get()? "student supervised successfully!" : "student unsupervised successfully!")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
