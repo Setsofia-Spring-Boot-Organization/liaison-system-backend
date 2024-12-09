@@ -1,5 +1,7 @@
 package com.backend.liaison_system.users.student.response;
 
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
+
 import java.util.List;
 
 public record StudentDashboardRes(
@@ -12,5 +14,7 @@ public record StudentDashboardRes(
         List<Colleagues> colleagues,
         int totalColleagues,
         List<AssignedLecturer> assignedLecturers,
-        int totalLecturers
+        int totalLecturers,
+        List<AssumptionOfDuty> assumptionOfDuties,
+        int totalAssumedDuties
 ) { }
