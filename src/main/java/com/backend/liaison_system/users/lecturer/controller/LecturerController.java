@@ -42,4 +42,12 @@ public class LecturerController {
     ) {
         return lecturerService.getDashboardData(id);
     }
+
+    @PatchMapping(path = "/{lecturer-id}/supervise/{student-id}")
+    public ResponseEntity<Response<?>> superviseStudent(
+            @PathVariable("lecturer-id") String lecturerId,
+            @PathVariable("student-id") String studentId
+    ) {
+        return lecturerService.superviseStudent(lecturerId, studentId);
+    }
 }

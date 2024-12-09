@@ -5,9 +5,8 @@ import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Message;
-import com.backend.liaison_system.users.admin.dao.LecturerData;
+import com.backend.liaison_system.users.admin.dao.*;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
-import com.backend.liaison_system.users.admin.dao.TabularDataResponse;
 import com.backend.liaison_system.dto.NewUserRequest;
 import com.backend.liaison_system.users.admin.dto.StudentDto;
 import com.backend.liaison_system.exception.LiaisonException;
@@ -18,6 +17,8 @@ import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
+import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.usermodel.Row;
@@ -50,13 +51,15 @@ public class AdminServiceImpl implements AdminService{
     private final PasswordEncoder passwordEncoder;
     private final AdminUtil adminUtil;
     private final LecturerRepository lecturerRepository;
+    private final AssumptionOfDutyRepository assumptionOfDutyRepository;
 
-    public AdminServiceImpl(AdminRepository adminRepository, StudentRepository studentRepository, PasswordEncoder passwordEncoder, AdminUtil adminUtil, LecturerRepository lecturerRepository) {
+    public AdminServiceImpl(AdminRepository adminRepository, StudentRepository studentRepository, PasswordEncoder passwordEncoder, AdminUtil adminUtil, LecturerRepository lecturerRepository, AssumptionOfDutyRepository assumptionOfDutyRepository) {
         this.adminRepository = adminRepository;
         this.studentRepository = studentRepository;
         this.passwordEncoder = passwordEncoder;
         this.adminUtil = adminUtil;
         this.lecturerRepository = lecturerRepository;
+        this.assumptionOfDutyRepository = assumptionOfDutyRepository;
     }
 
     @Override
@@ -233,6 +236,52 @@ public class AdminServiceImpl implements AdminService{
         );
     }
 
+
+
+    @Override
+    public ResponseEntity<Response<?>> getStudentsLocation(String adminId) {
+        // Verify that the user is an admin
+        adminUtil.verifyUserIsAdmin(adminId);
+
+        List<StudentLocationData> locationData = new ArrayList<>();
+        assumptionOfDutyRepository.findAll().forEach(assumptionOfDuty ->
+                studentRepository.findById(assumptionOfDuty.getStudentId()).ifPresent(student ->
+                        locationData.add(createStudentLocationData(student, assumptionOfDuty))
+        ));
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("students location")
+                .data(locationData)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private StudentLocationData createStudentLocationData(Student student, AssumptionOfDuty assumptionOfDuty) {
+        String studentName = student.getStudentOtherName() == null? student.getStudentFirstName() + " " + student.getStudentLastName() : student.getStudentFirstName() + " " + student.getStudentOtherName() + " " + student.getStudentLastName();
+        return new StudentLocationData(
+                new StudentDetails(
+                        student.getId(),
+                        studentName,
+                        student.getStudentEmail(),
+                        student.getStudentPhone(),
+                        student.getProfilePictureUrl(),
+                        student.isSupervised(),
+                        student.isAssumeDuty()
+                ),
+                new CompanyDetails(
+                        assumptionOfDuty.getCompanyDetails().getCompanyName(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyEmail(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyPhone(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyRegion(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyExactLocation()
+                ),
+                assumptionOfDuty.getCompanyDetails().getCompanyLatitude(),
+                assumptionOfDuty.getCompanyDetails().getCompanyLongitude()
+        );
+    }
+
     /**
      * Retrieves a paginated list of {@link Lecturer} entities based on the search criteria provided
      * in the {@link AdminPageRequest}.
@@ -327,4 +376,5 @@ public class AdminServiceImpl implements AdminService{
                         )).build()
         );
     }
+
 }

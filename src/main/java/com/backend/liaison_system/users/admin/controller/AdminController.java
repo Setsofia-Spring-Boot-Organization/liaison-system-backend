@@ -57,11 +57,18 @@ public class AdminController {
         return adminService.getLecturers(id, adminPageRequest);
     }
 
-    @GetMapping("{admin-id}/lecturers/{lecturer-id}")
+    @GetMapping("/{admin-id}/lecturers/{lecturer-id}")
     public ResponseEntity<Response<LecturerData>> getLecturer(
             @PathVariable("admin-id") String id,
             @PathVariable("lecturer-id") String lecturerId
     ) {
         return adminService.getLecturer(id, lecturerId);
+    }
+
+    @GetMapping(path = "/{admin-id}/students/location")
+    public ResponseEntity<Response<?>> getAllStudentsLocation(
+            @PathVariable("admin-id") String adminId
+    ) {
+        return adminService.getStudentsLocation(adminId);
     }
 }
