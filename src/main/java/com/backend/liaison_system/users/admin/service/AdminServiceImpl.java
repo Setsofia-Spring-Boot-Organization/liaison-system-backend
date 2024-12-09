@@ -261,8 +261,6 @@ public class AdminServiceImpl implements AdminService{
     private StudentLocationData createStudentLocationData(Student student, AssumptionOfDuty assumptionOfDuty) {
         String studentName = student.getStudentOtherName() == null? student.getStudentFirstName() + " " + student.getStudentLastName() : student.getStudentFirstName() + " " + student.getStudentOtherName() + " " + student.getStudentLastName();
         return new StudentLocationData(
-                assumptionOfDuty.getCompanyDetails().getCompanyLatitude(),
-                assumptionOfDuty.getCompanyDetails().getCompanyLongitude(),
                 new StudentDetails(
                         student.getId(),
                         studentName,
@@ -278,7 +276,9 @@ public class AdminServiceImpl implements AdminService{
                         assumptionOfDuty.getCompanyDetails().getCompanyPhone(),
                         assumptionOfDuty.getCompanyDetails().getCompanyRegion(),
                         assumptionOfDuty.getCompanyDetails().getCompanyExactLocation()
-                )
+                ),
+                assumptionOfDuty.getCompanyDetails().getCompanyLatitude(),
+                assumptionOfDuty.getCompanyDetails().getCompanyLongitude()
         );
     }
 
