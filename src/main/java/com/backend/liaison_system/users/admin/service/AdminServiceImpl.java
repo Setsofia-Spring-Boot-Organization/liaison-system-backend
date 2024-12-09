@@ -272,7 +272,7 @@ public class AdminServiceImpl implements AdminService{
                         student.isSupervised(),
                         student.isAssumeDuty()
                 ),
-                (!student.isAssumeDuty())? null : new CompanyDetails(
+                new CompanyDetails(
                         assumptionOfDuty.getCompanyDetails().getCompanyName(),
                         assumptionOfDuty.getCompanyDetails().getCompanyEmail(),
                         assumptionOfDuty.getCompanyDetails().getCompanyPhone(),
