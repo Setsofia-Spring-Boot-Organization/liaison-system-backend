@@ -2,6 +2,7 @@ package com.backend.liaison_system.users.student;
 
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.users.student.response.AssignedLecturer;
 import com.backend.liaison_system.users.student.response.Colleagues;
@@ -44,23 +45,25 @@ public class StudentServiceImpl implements StudentService{
         studentRepository.findById(studentId).ifPresent(
                 data -> {
                     List<Colleagues> colleagues = new ArrayList<>();
-                    assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(data.getId()).ifPresent(assumptionOfDuty -> {
-                        assumptionOfDutyRepository.findAll().forEach(
-                                duty -> {
-                                    if (assumptionOfDuty.getCompanyDetails().getCompanyName().equals(duty.getCompanyDetails().getCompanyName())) {
-                                        studentRepository.findById(duty.getStudentId()).ifPresent(
-                                                student -> colleagues.add(new Colleagues(
-                                                        student.getId(),
-                                                        student.getStudentFirstName() + (student.getStudentOtherName() == null? "" : " " + student.getStudentOtherName()) +" "+ student.getStudentLastName(),
-                                                        student.getStudentEmail(),
-                                                        student.getProfilePictureUrl(),
-                                                        student.getStudentDepartment()
-                                                ))
-                                        );
-                                    }
+                    assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(data.getId()).ifPresent(assumptionOfDuty -> assumptionOfDutyRepository.findAll().forEach(
+                            duty -> {
+                                if (assumptionOfDuty.getCompanyDetails().getCompanyName().equals(duty.getCompanyDetails().getCompanyName())) {
+                                    studentRepository.findById(duty.getStudentId()).ifPresent(
+                                            student -> colleagues.add(new Colleagues(
+                                                    student.getId(),
+                                                    student.getStudentOtherName() == null? student.getStudentFirstName() + " " + student.getStudentLastName() : student.getStudentFirstName() + " " + student.getStudentOtherName() + " " + student.getStudentLastName(),
+                                                    student.getStudentEmail(),
+                                                    student.getProfilePictureUrl(),
+                                                    student.getStudentDepartment()
+                                            ))
+                                    );
                                 }
-                        );
-                    });
+                            }
+                    ));
+                    colleagues.removeIf(s -> s.id().equals(data.getId())); // remove the student from the colleagues list
+
+                    // get a list of the student's duties
+                    List<AssumptionOfDuty> duties = assumptionOfDutyRepository.findAll().stream().filter(assumptionOfDuty -> assumptionOfDuty.getStudentId().equals(data.getId())).toList();
 
                     List<AssignedLecturer> assignedLecturers = getAssignedLecturers(data.getId());
                     dashboardRes.set(new StudentDashboardRes(
@@ -73,7 +76,9 @@ public class StudentServiceImpl implements StudentService{
                             colleagues,
                             colleagues.size(),
                             assignedLecturers,
-                            assignedLecturers.size()
+                            assignedLecturers.size(),
+                            duties,
+                            duties.size()
                     ));
                 }
         );
@@ -100,7 +105,7 @@ public class StudentServiceImpl implements StudentService{
         for (String id : lecturers) {
             lecturerRepository.findById(id).map(
                     lecturer -> assignedLecturers.add(new AssignedLecturer(
-                            lecturer.getFirstName() + " " + (lecturer.getOtherName() == null? "" : lecturer.getOtherName()) + " " + lecturer.getLastName(),
+                            lecturer.getOtherName() == null? lecturer.getFirstName() + " " + lecturer.getLastName() : lecturer.getFirstName() + " " + lecturer.getOtherName() + " " + lecturer.getOtherName(),
                             lecturer.getEmail(),
                             lecturer.getPhone(),
                             lecturer.isZoneLead(),
