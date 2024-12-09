@@ -47,4 +47,6 @@ public interface AdminService {
      * @return a ResponseEntity containing a Response object with the details of the lecturer
      */
     ResponseEntity<Response<LecturerData>> getLecturer(String id, String lecturerId);
+
+    ResponseEntity<Response<?>> getStudentsLocation(String adminId);
 }
