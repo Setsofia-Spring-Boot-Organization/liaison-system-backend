@@ -53,7 +53,8 @@ public class StudentServiceImpl implements StudentService{
                                                         student.getId(),
                                                         student.getStudentFirstName() + (student.getStudentOtherName() == null? "" : " " + student.getStudentOtherName()) +" "+ student.getStudentLastName(),
                                                         student.getStudentEmail(),
-                                                        student.getProfilePictureUrl()
+                                                        student.getProfilePictureUrl(),
+                                                        student.getStudentDepartment()
                                                 ))
                                         );
                                     }
