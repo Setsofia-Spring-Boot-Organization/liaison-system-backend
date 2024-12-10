@@ -21,8 +21,8 @@ public class CompanyDetails {
 
     private String letterTo;
 
-    private int companyLongitude;
-    private int companyLatitude;
+    private double companyLongitude;
+    private double companyLatitude;
 
     public CompanyDetails() { }
 
@@ -121,19 +121,19 @@ public class CompanyDetails {
         this.letterTo = letterTo;
     }
 
-    public int getCompanyLongitude() {
+    public double getCompanyLongitude() {
         return companyLongitude;
     }
 
-    public void setCompanyLongitude(int companyLongitude) {
+    public void setCompanyLongitude(double companyLongitude) {
         this.companyLongitude = companyLongitude;
     }
 
-    public int getCompanyLatitude() {
+    public double getCompanyLatitude() {
         return companyLatitude;
     }
 
-    public void setCompanyLatitude(int companyLatitude) {
+    public void setCompanyLatitude(double companyLatitude) {
         this.companyLatitude = companyLatitude;
     }
 

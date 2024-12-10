@@ -36,7 +36,6 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public ResponseEntity<Response<?>> getDashboardData(String studentId) {
-
         // Verify that the use is a student
         studentUtil.verifyUserIsStudent(studentId);
 
