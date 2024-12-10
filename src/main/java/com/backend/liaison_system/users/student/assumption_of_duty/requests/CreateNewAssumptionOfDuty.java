@@ -18,6 +18,6 @@ public record CreateNewAssumptionOfDuty(
 
         String letterTo,
 
-        int companyLongitude,
-        int companyLatitude
+        double companyLongitude,
+        double companyLatitude
 ) { }
