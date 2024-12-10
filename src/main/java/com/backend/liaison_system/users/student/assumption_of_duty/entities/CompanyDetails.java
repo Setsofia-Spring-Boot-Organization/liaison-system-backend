@@ -21,10 +21,25 @@ public class CompanyDetails {
 
     private String letterTo;
 
-    private String companyLongitude;
-    private String companyLatitude;
+    private int companyLongitude;
+    private int companyLatitude;
 
     public CompanyDetails() { }
+
+    public CompanyDetails(String companyName, String companyPhone, String companyExactLocation, String companyTown, String companyRegion, String companyAddress, String companyEmail, String companySupervisor, String supervisorPhone, String letterTo, int companyLongitude, int companyLatitude) {
+        this.companyName = companyName;
+        this.companyPhone = companyPhone;
+        this.companyExactLocation = companyExactLocation;
+        this.companyTown = companyTown;
+        this.companyRegion = companyRegion;
+        this.companyAddress = companyAddress;
+        this.companyEmail = companyEmail;
+        this.companySupervisor = companySupervisor;
+        this.supervisorPhone = supervisorPhone;
+        this.letterTo = letterTo;
+        this.companyLongitude = companyLongitude;
+        this.companyLatitude = companyLatitude;
+    }
 
     public String getCompanyName() {
         return companyName;
@@ -106,19 +121,19 @@ public class CompanyDetails {
         this.letterTo = letterTo;
     }
 
-    public String getCompanyLongitude() {
+    public int getCompanyLongitude() {
         return companyLongitude;
     }
 
-    public void setCompanyLongitude(String companyLongitude) {
+    public void setCompanyLongitude(int companyLongitude) {
         this.companyLongitude = companyLongitude;
     }
 
-    public String getCompanyLatitude() {
+    public int getCompanyLatitude() {
         return companyLatitude;
     }
 
-    public void setCompanyLatitude(String companyLatitude) {
+    public void setCompanyLatitude(int companyLatitude) {
         this.companyLatitude = companyLatitude;
     }
 
@@ -127,7 +142,7 @@ public class CompanyDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompanyDetails that = (CompanyDetails) o;
-        return Objects.equals(companyName, that.companyName) && Objects.equals(companyPhone, that.companyPhone) && Objects.equals(companyExactLocation, that.companyExactLocation) && Objects.equals(companyTown, that.companyTown) && Objects.equals(companyRegion, that.companyRegion) && Objects.equals(companyAddress, that.companyAddress) && Objects.equals(companyEmail, that.companyEmail) && Objects.equals(companySupervisor, that.companySupervisor) && Objects.equals(supervisorPhone, that.supervisorPhone) && Objects.equals(letterTo, that.letterTo) && Objects.equals(companyLongitude, that.companyLongitude) && Objects.equals(companyLatitude, that.companyLatitude);
+        return companyLongitude == that.companyLongitude && companyLatitude == that.companyLatitude && Objects.equals(companyName, that.companyName) && Objects.equals(companyPhone, that.companyPhone) && Objects.equals(companyExactLocation, that.companyExactLocation) && Objects.equals(companyTown, that.companyTown) && Objects.equals(companyRegion, that.companyRegion) && Objects.equals(companyAddress, that.companyAddress) && Objects.equals(companyEmail, that.companyEmail) && Objects.equals(companySupervisor, that.companySupervisor) && Objects.equals(supervisorPhone, that.supervisorPhone) && Objects.equals(letterTo, that.letterTo);
     }
 
     @Override
@@ -148,8 +163,8 @@ public class CompanyDetails {
                 ", companySupervisor='" + companySupervisor + '\'' +
                 ", supervisorPhone='" + supervisorPhone + '\'' +
                 ", letterTo='" + letterTo + '\'' +
-                ", companyLongitude='" + companyLongitude + '\'' +
-                ", companyLatitude='" + companyLatitude + '\'' +
+                ", companyLongitude=" + companyLongitude +
+                ", companyLatitude=" + companyLatitude +
                 '}';
     }
 }
