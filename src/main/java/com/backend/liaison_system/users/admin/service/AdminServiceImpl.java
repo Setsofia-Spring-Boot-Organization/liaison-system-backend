@@ -246,7 +246,7 @@ public class AdminServiceImpl implements AdminService{
         List<StudentLocationData> locationData = new ArrayList<>();
         assumptionOfDutyRepository.findAll().forEach(assumptionOfDuty ->
                 studentRepository.findById(assumptionOfDuty.getStudentId()).ifPresent(student ->
-                        locationData.add(createStudentLocationData(student, assumptionOfDuty))
+                        locationData.add(adminUtil.createStudentLocationData(student, assumptionOfDuty))
         ));
 
         Response<?> response = new Response.Builder<>()
@@ -258,29 +258,6 @@ public class AdminServiceImpl implements AdminService{
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    private StudentLocationData createStudentLocationData(Student student, AssumptionOfDuty assumptionOfDuty) {
-        String studentName = student.getStudentOtherName() == null? student.getStudentFirstName() + " " + student.getStudentLastName() : student.getStudentFirstName() + " " + student.getStudentOtherName() + " " + student.getStudentLastName();
-        return new StudentLocationData(
-                new StudentDetails(
-                        student.getId(),
-                        studentName,
-                        student.getStudentEmail(),
-                        student.getStudentPhone(),
-                        student.getProfilePictureUrl(),
-                        student.isSupervised(),
-                        student.isAssumeDuty()
-                ),
-                new CompanyDetails(
-                        assumptionOfDuty.getCompanyDetails().getCompanyName(),
-                        assumptionOfDuty.getCompanyDetails().getCompanyEmail(),
-                        assumptionOfDuty.getCompanyDetails().getCompanyPhone(),
-                        assumptionOfDuty.getCompanyDetails().getCompanyRegion(),
-                        assumptionOfDuty.getCompanyDetails().getCompanyExactLocation()
-                ),
-                assumptionOfDuty.getCompanyDetails().getCompanyLatitude(),
-                assumptionOfDuty.getCompanyDetails().getCompanyLongitude()
-        );
-    }
 
     /**
      * Retrieves a paginated list of {@link Lecturer} entities based on the search criteria provided
