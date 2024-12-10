@@ -30,4 +30,6 @@ public interface LecturerService {
     ResponseEntity<Response<?>> getDashboardData(String id);
 
     ResponseEntity<Response<?>> superviseStudent(String lecturerId, String studentId);
+
+    ResponseEntity<Response<?>> getStudentsLocation(String lecturerId);
 }
