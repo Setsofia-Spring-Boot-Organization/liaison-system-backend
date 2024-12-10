@@ -50,4 +50,12 @@ public class LecturerController {
     ) {
         return lecturerService.superviseStudent(lecturerId, studentId);
     }
+
+
+    @GetMapping(path = "/{lecturer-id}/students/location")
+    public ResponseEntity<Response<?>> getAllStudentsLocation(
+            @PathVariable("lecturer-id") String lecturerId
+    ) {
+        return lecturerService.getStudentsLocation(lecturerId);
+    }
 }
