@@ -63,6 +63,8 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         assumption.setDateCreated(LocalDateTime.now());
         assumption.setDateUpdated(LocalDateTime.now());
 
+        assumption.setDateCommenced(newAssumptionOfDuty.dateCommenced());
+
         assumption.setInternship(param.internship());
         assumption.setStartOfAcademicYear(param.startOfAcademicYear());
         assumption.setEndOfAcademicYear(param.endOfAcademicYear());
