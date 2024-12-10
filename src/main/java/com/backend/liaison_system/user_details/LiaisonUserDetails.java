@@ -41,6 +41,8 @@ public class LiaisonUserDetails implements UserDetails {
     // the student details
     public LiaisonUserDetails(Student student) {
         this.id = student.getId();
+        this.firstName = student.getStudentFirstName();
+        this.lastName = student.getStudentLastName();
         this.email = student.getStudentEmail();
         this.password = student.getPassword();
         this.role = student.getRole();
@@ -49,6 +51,8 @@ public class LiaisonUserDetails implements UserDetails {
     // the lecturer details
     public LiaisonUserDetails(Lecturer lecturer) {
         this.id = lecturer.getId();
+        this.firstName = lecturer.getFirstName();
+        this.lastName = lecturer.getLastName();
         this.email = lecturer.getEmail();
         this.password = lecturer.getPassword();
         this.role = lecturer.getRole();
