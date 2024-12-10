@@ -5,9 +5,13 @@ import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
+import com.backend.liaison_system.users.admin.dao.CompanyDetails;
+import com.backend.liaison_system.users.admin.dao.StudentDetails;
+import com.backend.liaison_system.users.admin.dao.StudentLocationData;
 import com.backend.liaison_system.users.admin.dto.StudentDto;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.student.Student;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -120,6 +124,31 @@ public class AdminUtil {
                     }
                 }),
                 () -> {throw new LiaisonException(USER_NOT_FOUND, new Throwable(Message.USER_NOT_FOUND_CAUSE.label));}
+        );
+    }
+
+
+    public StudentLocationData createStudentLocationData(Student student, AssumptionOfDuty assumptionOfDuty) {
+        String studentName = student.getStudentOtherName() == null? student.getStudentFirstName() + student.getStudentLastName() : student.getStudentFirstName() + student.getStudentOtherName() + student.getStudentLastName();
+        return new StudentLocationData(
+                new StudentDetails(
+                        student.getId(),
+                        studentName,
+                        student.getStudentEmail(),
+                        student.getStudentPhone(),
+                        student.getProfilePictureUrl(),
+                        student.isSupervised(),
+                        student.isAssumeDuty()
+                ),
+                new CompanyDetails(
+                        assumptionOfDuty.getCompanyDetails().getCompanyName(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyEmail(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyPhone(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyRegion(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyExactLocation()
+                ),
+                assumptionOfDuty.getCompanyDetails().getCompanyLatitude(),
+                assumptionOfDuty.getCompanyDetails().getCompanyLongitude()
         );
     }
 }
