@@ -40,5 +40,5 @@ public interface AssumptionOfDutyRepository extends CrudRepository<AssumptionOfD
     @Modifying
     @Transactional
     @Query(value = "DROP TABLE IF EXISTS assumption_of_duty", nativeQuery = true)
-    void assumptionOfDuty();
+    void dropAssumptionOfDutyTable();
 }
