@@ -62,7 +62,7 @@ public class StudentServiceImpl implements StudentService{
                     ));
                     colleagues.removeIf(s -> s.id().equals(data.getId())); // remove the student from the colleagues list
 
-                    // get a list of the student's duties
+                    // get a list of the student's previous assumption of duties
                     List<AssumptionOfDuty> duties = assumptionOfDutyRepository.findAll().stream().filter(assumptionOfDuty -> assumptionOfDuty.getStudentId().equals(data.getId())).toList();
 
                     List<AssignedLecturer> assignedLecturers = getAssignedLecturers(data.getId());

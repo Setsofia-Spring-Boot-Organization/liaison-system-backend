@@ -1,6 +1,8 @@
 package com.backend.liaison_system.users.student.assumption_of_duty.requests;
 
 public record CreateNewAssumptionOfDuty(
+        String dateCommenced,
+
         String companyName,
         String companyPhone,
 
@@ -16,6 +18,6 @@ public record CreateNewAssumptionOfDuty(
 
         String letterTo,
 
-        String companyLongitude,
-        String companyLatitude
+        int companyLongitude,
+        int companyLatitude
 ) { }
