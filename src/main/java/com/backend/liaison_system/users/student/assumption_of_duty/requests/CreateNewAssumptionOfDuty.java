@@ -16,8 +16,5 @@ public record CreateNewAssumptionOfDuty(
         String companySupervisor,
         String supervisorPhone,
 
-        String letterTo,
-
-        double companyLongitude,
-        double companyLatitude
+        String letterTo
 ) { }
