@@ -138,7 +138,9 @@ public class LecturerServiceImpl implements LecturerService {
         });
 
         // put the data together
-        List<StudentDto> studentData = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();
+        List<StudentDto> studentData = new ArrayList<>(students.stream().map(adminUtil::buildStudentDtoFromStudent).toList());
+        studentData.sort(Comparator.comparing(StudentDto::isSupervised));
+
         LecturerDashboardDataRes dataRes = new LecturerDashboardDataRes(
                 new StudentsData(studentData, students.size()),
                 new CompaniesData(companies, companies.size()),
