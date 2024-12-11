@@ -11,7 +11,9 @@ import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
+import com.backend.liaison_system.google_maps.GoogleMapServices;
 import jakarta.transaction.Transactional;
+import org.cloudinary.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -81,7 +83,27 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         }
     }
 
-    private static CompanyDetails getCompanyDetails(CreateNewAssumptionOfDuty newAssumptionOfDuty) {
+    private CompanyDetails getCompanyDetails(CreateNewAssumptionOfDuty newAssumptionOfDuty) {
+
+        GoogleMapServices googleMapServices = new GoogleMapServices();
+        JSONObject jsonObject = googleMapServices.getCoordinates(newAssumptionOfDuty.companyExactLocation());
+        if ("OK".equals(jsonObject.getString("status"))) {
+            JSONObject location = jsonObject
+                    .getJSONArray("candidates")
+                    .getJSONObject(0)
+                    .getJSONObject("geometry")
+                    .getJSONObject("location");
+
+            double lat = location.getDouble("lat");
+            double lng = location.getDouble("lng");
+
+            return getCompanyDetails(newAssumptionOfDuty, lng, lat);
+        }
+
+        throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS.label));
+    }
+
+    private static CompanyDetails getCompanyDetails(CreateNewAssumptionOfDuty newAssumptionOfDuty, double lng, double lat) {
         CompanyDetails companyDetails = new CompanyDetails();
         companyDetails.setCompanyName(newAssumptionOfDuty.companyName());
         companyDetails.setCompanyPhone(newAssumptionOfDuty.companyPhone());
@@ -96,8 +118,8 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         companyDetails.setSupervisorPhone(newAssumptionOfDuty.supervisorPhone());
 
         companyDetails.setLetterTo(newAssumptionOfDuty.letterTo());
-        companyDetails.setCompanyLongitude(newAssumptionOfDuty.companyLongitude());
-        companyDetails.setCompanyLatitude(newAssumptionOfDuty.companyLatitude());
+        companyDetails.setCompanyLongitude(lng);
+        companyDetails.setCompanyLatitude(lat);
         return companyDetails;
     }
 
