@@ -35,7 +35,7 @@ public class AdminUtil {
     public StudentDto buildStudentDtoFromStudent(Student student) {
         return new StudentDto (
                 student.getId(),
-                student.getStudentFirstName()+ " " + student.getStudentLastName() + " " + student.getStudentOtherName(),
+                student.getStudentFirstName() + student.getStudentLastName() + student.getStudentOtherName(),
                 student.getStudentDepartment(),
                 student.getStudentFaculty(),
                 student.getStudentAge(),
@@ -46,8 +46,8 @@ public class AdminUtil {
                 student.getStudentAbout(),
                 student.getStudentCourse(),
                 student.getPlaceOfInternship(),
-                student.isAssumeDuty(),
                 student.isSupervised(),
+                student.isAssumeDuty(),
                 student.getStartDate(),
                 student.getEndDate(),
                 student.getStatus()
