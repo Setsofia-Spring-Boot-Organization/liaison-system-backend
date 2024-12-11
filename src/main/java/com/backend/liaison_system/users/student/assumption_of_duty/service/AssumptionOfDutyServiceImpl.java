@@ -85,6 +85,7 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
     private CompanyDetails getCompanyDetails(CreateNewAssumptionOfDuty newAssumptionOfDuty) {
 
+        // use the Google map service to find the lng and lat of the place
         GoogleMapServices googleMapServices = new GoogleMapServices();
         JSONObject jsonObject = googleMapServices.getCoordinates(newAssumptionOfDuty.companyExactLocation());
         if ("OK".equals(jsonObject.getString("status"))) {
