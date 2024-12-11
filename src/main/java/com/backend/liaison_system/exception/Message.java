@@ -12,7 +12,8 @@ public enum Message {
     THE_INTERNSHIP_TYPE_IS_INCORRECT("The specified internship type is incorrect"),
     THE_FILE_SIZE_IS_BIGGER_THAN_10MB("The file size is bigger than 10MB"),
     THE_REQUESTED_ZONE_DOES_NOT_EXIST("The requested zone does not exist"),
-    FAILED_TO_SUPERVISE_STUDENT("Failed to supervise student. Try again");
+    FAILED_TO_SUPERVISE_STUDENT("Failed to supervise student. Try again"),
+    THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS("The exact company location cannot be found on the map");
 
     public final String label;
     Message(String label) {
