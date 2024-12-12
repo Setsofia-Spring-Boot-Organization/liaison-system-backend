@@ -26,4 +26,20 @@ public class AssumptionOfDutyController {
     ) {
         return assumptionOfDutyService.createNewAssumptionOfDuty(studentID, param, newAssumptionOfDuty);
     }
+
+    @PatchMapping(path = "/{student-id}/update/{duty-id}")
+    public ResponseEntity<Response<?>> updateAssumptionOfDuty(
+            @PathVariable("student-id") String studentId,
+            @PathVariable("duty-id") String dutyId,
+            @RequestBody CreateNewAssumptionOfDuty duty
+    ) {
+        return assumptionOfDutyService.updateAssumptionOfDuty(studentId, dutyId, duty);
+    }
+
+    @GetMapping(path = "/{student-id}")
+    public ResponseEntity<Response<?>> getStudentAssumptionOfDuties(
+            @PathVariable("student-id") String studentId
+    ) {
+        return assumptionOfDutyService.getStudentAssumptionOfDuties(studentId);
+    }
 }

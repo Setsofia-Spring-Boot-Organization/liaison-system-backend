@@ -1,5 +1,9 @@
 package com.backend.liaison_system.google_maps;
 
+import com.backend.liaison_system.exception.Error;
+import com.backend.liaison_system.exception.LiaisonException;
+import com.backend.liaison_system.exception.Message;
+import com.backend.liaison_system.google_maps.responses.GMapLocation;
 import org.cloudinary.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -9,7 +13,7 @@ public class GoogleMapServices {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public JSONObject getCoordinates(String placeName) {
+    public GMapLocation getCoordinates(String placeName) {
 
         String apiKey = System.getenv("GOOGLE_MAP_API_KEY");
 
@@ -20,6 +24,20 @@ public class GoogleMapServices {
 
         //extract the coordinates from the response
         assert response != null;
-        return new JSONObject(response);
+        JSONObject jsonObject = new JSONObject(response);
+        if ("OK".equals(jsonObject.getString("status"))) {
+            JSONObject location = jsonObject
+                    .getJSONArray("candidates")
+                    .getJSONObject(0)
+                    .getJSONObject("geometry")
+                    .getJSONObject("location");
+
+            double lat = location.getDouble("lat");
+            double lng = location.getDouble("lng");
+
+            return new GMapLocation(lat, lng);
+        }
+
+        throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS.label));
     }
 }
