@@ -8,11 +8,14 @@ import com.backend.liaison_system.users.admin.service.AdminService;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.dto.NewUserRequest;
 import com.backend.liaison_system.exception.LiaisonException;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/admin")
@@ -70,5 +73,15 @@ public class AdminController {
             @PathVariable("admin-id") String adminId
     ) {
         return adminService.getStudentsLocation(adminId);
+    }
+
+    @GetMapping(path = "/{admin-id}/assumption-of-duties/updated")
+    public ResponseEntity<Response<List<AssumptionOfDuty>>> getUpdatedAssumptionOfDuties(
+            @PathVariable("admin-id") String adminId,
+            ConstantRequestParam param,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        return adminService.getUpdatedAssumptionOfDuties(adminId, param, page, size);
     }
 }

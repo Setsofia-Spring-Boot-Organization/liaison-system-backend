@@ -4,10 +4,13 @@ import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.users.admin.dao.LecturerData;
 import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.users.admin.entity.Admin;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import org.springframework.web.multipart.MultipartFile;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.dto.NewUserRequest;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface AdminService {
     /**
@@ -49,4 +52,6 @@ public interface AdminService {
     ResponseEntity<Response<LecturerData>> getLecturer(String id, String lecturerId);
 
     ResponseEntity<Response<?>> getStudentsLocation(String adminId);
+
+    ResponseEntity<Response<List<AssumptionOfDuty>>> getUpdatedAssumptionOfDuties(String adminId, ConstantRequestParam param, int page, int size);
 }

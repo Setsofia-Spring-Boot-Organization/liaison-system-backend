@@ -15,6 +15,7 @@ import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.google_maps.GoogleMapServices;
 import com.backend.liaison_system.users.student.util.StudentUtil;
+import com.backend.liaison_system.util.UAcademicYear;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -101,8 +102,8 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         assumption.setDateCommenced(newAssumptionOfDuty.dateCommenced());
 
         assumption.setInternship(param.internship());
-        assumption.setStartOfAcademicYear(param.startOfAcademicYear());
-        assumption.setEndOfAcademicYear(param.endOfAcademicYear());
+        assumption.setStartOfAcademicYear(UAcademicYear.startOfAcademicYear(param.startOfAcademicYear()));
+        assumption.setEndOfAcademicYear(UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()));
 
         // get the company details
         CompanyDetails companyDetails = createCompanyDetails(newAssumptionOfDuty);

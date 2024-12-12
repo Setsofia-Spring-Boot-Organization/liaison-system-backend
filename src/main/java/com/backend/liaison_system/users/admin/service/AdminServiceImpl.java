@@ -354,4 +354,21 @@ public class AdminServiceImpl implements AdminService{
         );
     }
 
+
+
+    @Override
+    public ResponseEntity<Response<List<AssumptionOfDuty>>> getUpdatedAssumptionOfDuties(String adminId, ConstantRequestParam param, int page, int size) {
+        //verify that the user is an admin
+        adminUtil.verifyUserIsAdmin(adminId);
+
+        List<AssumptionOfDuty> duties = assumptionOfDutyRepository.findUpdatedDuties(param, page, size);
+
+        Response<List<AssumptionOfDuty>> response = new Response.Builder<List<AssumptionOfDuty>>()
+                .status(HttpStatus.OK.value())
+                .message("updated duties")
+                .data(duties)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }

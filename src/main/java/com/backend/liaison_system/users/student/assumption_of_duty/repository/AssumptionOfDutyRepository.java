@@ -1,8 +1,13 @@
 package com.backend.liaison_system.users.student.assumption_of_duty.repository;
 
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
+import com.backend.liaison_system.util.UAcademicYear;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -36,6 +41,23 @@ public interface AssumptionOfDutyRepository extends CrudRepository<AssumptionOfD
 
     @Override
     List<AssumptionOfDuty> findAll();
+
+    default List<AssumptionOfDuty> findUpdatedDuties(ConstantRequestParam param, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        LocalDateTime startOfYear = UAcademicYear.startOfAcademicYear(param.startOfAcademicYear());
+        LocalDateTime endOfYear = UAcademicYear.endOfAcademicYear(param.endOfAcademicYear());
+
+        Specification<AssumptionOfDuty> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
+                criteriaBuilder.greaterThanOrEqualTo(root.get("endOfAcademicYear"), startOfYear),
+                criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), endOfYear),
+                criteriaBuilder.equal(root.get("isInternship"), param.internship()),
+                criteriaBuilder.isTrue(root.get("isUpdated"))
+        );
+
+        return findAll(specification, pageable).getContent();
+    }
 
     @Modifying
     @Transactional
