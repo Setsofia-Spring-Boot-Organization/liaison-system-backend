@@ -8,4 +8,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface AssumptionOfDutyService {
     ResponseEntity<Response<AssumptionOfDuty>> createNewAssumptionOfDuty(String studentID, ConstantRequestParam param, CreateNewAssumptionOfDuty newAssumptionOfDuty);
+
+    ResponseEntity<Response<?>> updateAssumptionOfDuty(String studentId, String dutyId, CreateNewAssumptionOfDuty duty);
+
+    ResponseEntity<Response<?>> getStudentAssumptionOfDuties(String studentId);
 }
