@@ -1,6 +1,6 @@
 package com.backend.liaison_system.users.student.assumption_of_duty.service;
 
-import com.backend.liaison_system.region.repository.RegionRepository;
+import com.backend.liaison_system.google_maps.responses.GMapLocation;
 import com.backend.liaison_system.region.util.RegionUtil;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.CompanyDetails;
@@ -14,28 +14,51 @@ import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.google_maps.GoogleMapServices;
+import com.backend.liaison_system.users.student.util.StudentUtil;
 import jakarta.transaction.Transactional;
-import org.cloudinary.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
     private final StudentRepository studentRepository;
     private final AssumptionOfDutyRepository assumptionOfDutyRepository;
-    private final RegionRepository regionRepository;
     private final RegionUtil regionUtil;
+    private final StudentUtil studentUtil;
 
-    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionRepository regionRepository, RegionUtil regionUtil) {
+    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil) {
         this.studentRepository = studentRepository;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
-        this.regionRepository = regionRepository;
         this.regionUtil = regionUtil;
+        this.studentUtil = studentUtil;
     }
+
+
+    @Override
+    public ResponseEntity<Response<?>> getStudentAssumptionOfDuties(String studentId) {
+
+        // verify that the user is a students
+        studentUtil.verifyUserIsStudent(studentId);
+
+        //filtering the data by the student's id
+        List<AssumptionOfDuty> duties =  assumptionOfDutyRepository.findAll().stream().filter(assumptionOfDuty -> assumptionOfDuty.getStudentId().equals(studentId)).toList();
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("duties")
+                .data(duties)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
 
     @Transactional(rollbackOn = LiaisonException.class)
     @Override
@@ -73,6 +96,7 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         assumption.setStudentId(student.getId());
         assumption.setDateCreated(LocalDateTime.now());
         assumption.setDateUpdated(LocalDateTime.now());
+        assumption.setUpdated(false);
 
         assumption.setDateCommenced(newAssumptionOfDuty.dateCommenced());
 
@@ -96,21 +120,9 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         // use the Google map service to find the lng and lat of the place
         GoogleMapServices googleMapServices = new GoogleMapServices();
-        JSONObject jsonObject = googleMapServices.getCoordinates(newAssumptionOfDuty.companyExactLocation());
-        if ("OK".equals(jsonObject.getString("status"))) {
-            JSONObject location = jsonObject
-                    .getJSONArray("candidates")
-                    .getJSONObject(0)
-                    .getJSONObject("geometry")
-                    .getJSONObject("location");
+        GMapLocation location = googleMapServices.getCoordinates(newAssumptionOfDuty.companyExactLocation());
 
-            double lat = location.getDouble("lat");
-            double lng = location.getDouble("lng");
-
-            return createCompanyDetails(newAssumptionOfDuty, lng, lat);
-        }
-
-        throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS.label));
+        return createCompanyDetails(newAssumptionOfDuty, location.lng(), location.lat());
     }
 
     private static CompanyDetails createCompanyDetails(CreateNewAssumptionOfDuty newAssumptionOfDuty, double lng, double lat) {
@@ -134,4 +146,66 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
     }
 
 
+    @Transactional(rollbackOn = LiaisonException.class)
+    @Override
+    public ResponseEntity<Response<?>> updateAssumptionOfDuty(String studentId, String dutyId, CreateNewAssumptionOfDuty duty) {
+
+        // verify that the user is a student
+        studentUtil.verifyUserIsStudent(studentId);
+
+        assumptionOfDutyRepository.findById(dutyId).ifPresent(assumptionOfDuty -> {
+            try {
+                // update the assumption of duty
+                CompanyDetails companyDetails = updateCompanyDetails(duty, assumptionOfDuty);
+
+                assumptionOfDuty.setDateCommenced(!(duty.dateCommenced().isEmpty()) ? duty.dateCommenced() : assumptionOfDuty.getDateCommenced());
+                assumptionOfDuty.setCompanyDetails(companyDetails);
+                assumptionOfDuty.setUpdated(true);
+                assumptionOfDuty.setDateUpdated(LocalDateTime.now());
+
+                assumptionOfDutyRepository.save(assumptionOfDuty);
+            } catch (Exception e) {
+                throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_UPDATED_DATA_CANNOT_BE_SAVED.label));
+            }
+        });
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.CREATED.value())
+                .message("assumption of duty submitted successfully!")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    private CompanyDetails updateCompanyDetails(CreateNewAssumptionOfDuty duty, AssumptionOfDuty assumptionOfDuty) {
+
+        // Use the Google map service to find the lng and lat of the place
+        AtomicReference<GMapLocation> location = new AtomicReference<>();
+        if (!(duty.companyExactLocation().isEmpty())) {
+            GoogleMapServices googleMapServices = new GoogleMapServices();
+            location.set(googleMapServices.getCoordinates(duty.companyExactLocation()));
+        }
+
+        // set the company details
+        CompanyDetails companyDetails = new CompanyDetails();
+
+        companyDetails.setCompanyName(!(duty.companyName().isEmpty()) ? duty.companyName() : assumptionOfDuty.getCompanyDetails().getCompanyName());
+        companyDetails.setCompanyPhone(!(duty.companyPhone().isEmpty()) ? duty.companyPhone() : assumptionOfDuty.getCompanyDetails().getCompanyPhone());
+        companyDetails.setCompanyExactLocation(!(duty.companyExactLocation().isEmpty()) ? duty.companyExactLocation() : assumptionOfDuty.getCompanyDetails().getCompanyExactLocation());
+        companyDetails.setCompanyTown(!(duty.companyTown().isEmpty()) ? duty.companyTown() : assumptionOfDuty.getCompanyDetails().getCompanyTown());
+        companyDetails.setCompanyRegion(!(duty.companyRegion().isEmpty()) ? duty.companyRegion() : assumptionOfDuty.getCompanyDetails().getCompanyRegion());
+        companyDetails.setCompanyAddress(!(duty.companyAddress().isEmpty()) ? duty.companyAddress() : assumptionOfDuty.getCompanyDetails().getCompanyAddress());
+        companyDetails.setCompanyEmail(!(duty.companyEmail().isEmpty()) ? duty.companyEmail() : assumptionOfDuty.getCompanyDetails().getCompanyEmail());
+        companyDetails.setCompanySupervisor(!(duty.companySupervisor().isEmpty()) ? duty.companySupervisor() : assumptionOfDuty.getCompanyDetails().getCompanySupervisor());
+        companyDetails.setSupervisorPhone(!(duty.supervisorPhone().isEmpty()) ? duty.supervisorPhone() : assumptionOfDuty.getCompanyDetails().getSupervisorPhone());
+        companyDetails.setLetterTo(!(duty.letterTo().isEmpty()) ? duty.letterTo() : assumptionOfDuty.getCompanyDetails().getLetterTo());
+
+        // Handle coordinates
+        companyDetails.setCompanyLongitude(!(duty.companyExactLocation().isEmpty()) ? location.get().lng() : assumptionOfDuty.getCompanyDetails().getCompanyLongitude());
+        companyDetails.setCompanyLatitude(!(duty.companyExactLocation().isEmpty()) ? location.get().lat() : assumptionOfDuty.getCompanyDetails().getCompanyLatitude());
+
+        System.out.println("companyDetails = " + companyDetails);
+
+        return companyDetails;
+    }
 }
