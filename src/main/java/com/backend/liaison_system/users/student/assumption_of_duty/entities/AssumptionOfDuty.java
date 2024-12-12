@@ -18,8 +18,8 @@ public class AssumptionOfDuty {
 
     private  String dateCommenced;
 
-    private String startOfAcademicYear;
-    private String endOfAcademicYear;
+    private LocalDateTime startOfAcademicYear;
+    private LocalDateTime endOfAcademicYear;
 
     private boolean isInternship;
     private boolean isUpdated;
@@ -29,7 +29,7 @@ public class AssumptionOfDuty {
 
     public AssumptionOfDuty() { }
 
-    public AssumptionOfDuty(String studentId, LocalDateTime dateCreated, LocalDateTime dateUpdated, String dateCommenced, String startOfAcademicYear, String endOfAcademicYear, boolean isInternship, boolean isUpdated, CompanyDetails companyDetails) {
+    public AssumptionOfDuty(String studentId, LocalDateTime dateCreated, LocalDateTime dateUpdated, String dateCommenced, LocalDateTime startOfAcademicYear, LocalDateTime endOfAcademicYear, boolean isInternship, boolean isUpdated, CompanyDetails companyDetails) {
         this.studentId = studentId;
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
@@ -81,19 +81,19 @@ public class AssumptionOfDuty {
         this.dateCommenced = dateCommenced;
     }
 
-    public String getStartOfAcademicYear() {
+    public LocalDateTime getStartOfAcademicYear() {
         return startOfAcademicYear;
     }
 
-    public void setStartOfAcademicYear(String startOfAcademicYear) {
+    public void setStartOfAcademicYear(LocalDateTime startOfAcademicYear) {
         this.startOfAcademicYear = startOfAcademicYear;
     }
 
-    public String getEndOfAcademicYear() {
+    public LocalDateTime getEndOfAcademicYear() {
         return endOfAcademicYear;
     }
 
-    public void setEndOfAcademicYear(String endOfAcademicYear) {
+    public void setEndOfAcademicYear(LocalDateTime endOfAcademicYear) {
         this.endOfAcademicYear = endOfAcademicYear;
     }
 
