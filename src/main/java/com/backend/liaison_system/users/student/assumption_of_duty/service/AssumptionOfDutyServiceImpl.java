@@ -1,5 +1,7 @@
 package com.backend.liaison_system.users.student.assumption_of_duty.service;
 
+import com.backend.liaison_system.region.repository.RegionRepository;
+import com.backend.liaison_system.region.util.RegionUtil;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.CompanyDetails;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
@@ -25,10 +27,14 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
     private final StudentRepository studentRepository;
     private final AssumptionOfDutyRepository assumptionOfDutyRepository;
+    private final RegionRepository regionRepository;
+    private final RegionUtil regionUtil;
 
-    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository) {
+    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionRepository regionRepository, RegionUtil regionUtil) {
         this.studentRepository = studentRepository;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
+        this.regionRepository = regionRepository;
+        this.regionUtil = regionUtil;
     }
 
     @Transactional(rollbackOn = LiaisonException.class)
@@ -44,6 +50,9 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
             // update the students assumeDuty after he/she submitted it
             student.setAssumeDuty(true);
             studentRepository.save(student);
+
+            // update the region and add the student's town if it does not exist in the region
+            regionUtil.addNewTowns(assumption.getCompanyDetails().getCompanyRegion(), assumption.getCompanyDetails().getCompanyTown());
 
             Response<AssumptionOfDuty> response = new Response<>(
                     HttpStatus.CREATED.value(),
