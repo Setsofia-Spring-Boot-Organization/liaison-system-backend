@@ -139,27 +139,25 @@ public class ZoneServiceImpl implements ZoneService{
     public ResponseEntity<Response<List<AllZones>>> getAllZones(String adminId, ConstantRequestParam param) {
         adminUtil.verifyUserIsAdmin(adminId); // verify that the user is an admin
 
-        List<Zone> zones = zoneSpecification.findZonesUsingZoneTypeAndAcademicDates(param);
-
         List<AllZones> allZones = new ArrayList<>();
-        for (Zone zone : zones) {
-            allZones.add(
-                    new AllZones(
-                            zone.getId(),
-                            zone.getName(),
-                            zone.getRegion(),
-                            zone.getZoneLead(),
-                            zone.getStartOfAcademicYear(),
-                            zone.getEndOfAcademicYear(),
-                            zone.getDateCreated(),
-                            zone.getDateUpdated(),
-                            zone.getInternshipType(),
-                            zone.getLecturers(),
-                            zone.getTowns(),
-                            zone.getLecturers().lecturers().size()
-                    )
-            );
-        }
+        zoneSpecification.findZonesUsingZoneTypeAndAcademicDates(param).forEach(zone -> lecturerRepository.findById(zone.getZoneLead()).ifPresent(
+                lecturer -> allZones.add(
+                        new AllZones(
+                                zone.getId(),
+                                zone.getName(),
+                                zone.getRegion(),
+                                lecturer.getOtherName() == null? lecturer.getFirstName() +" "+ lecturer.getLastName() : lecturer.getFirstName() +" "+ lecturer.getOtherName() +" "+ lecturer.getLastName(),
+                                zone.getStartOfAcademicYear(),
+                                zone.getEndOfAcademicYear(),
+                                zone.getDateCreated(),
+                                zone.getDateUpdated(),
+                                zone.getInternshipType(),
+                                zone.getLecturers(),
+                                zone.getTowns(),
+                                zone.getLecturers().lecturers().size()
+                        )
+                )
+        ));
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new Response.Builder<List<AllZones>>()
