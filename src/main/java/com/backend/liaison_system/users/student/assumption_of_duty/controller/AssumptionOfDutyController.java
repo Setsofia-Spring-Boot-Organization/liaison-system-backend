@@ -27,7 +27,7 @@ public class AssumptionOfDutyController {
         return assumptionOfDutyService.createNewAssumptionOfDuty(studentID, param, newAssumptionOfDuty);
     }
 
-    @PatchMapping(path = "/{student-id}/update/{duty-id}")
+    @PutMapping(path = "/{student-id}/update/{duty-id}")
     public ResponseEntity<Response<?>> updateAssumptionOfDuty(
             @PathVariable("student-id") String studentId,
             @PathVariable("duty-id") String dutyId,
