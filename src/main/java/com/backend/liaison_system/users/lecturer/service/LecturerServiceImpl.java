@@ -245,8 +245,6 @@ public class LecturerServiceImpl implements LecturerService {
 
         List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone);
 
-        System.out.println("duties = " + duties);
-
         List<TopCompaniesData> topCompaniesData = new ArrayList<>();
         duties.forEach(assumptionOfDuty -> {
             String companyName = assumptionOfDuty.getCompanyDetails().getCompanyName();
