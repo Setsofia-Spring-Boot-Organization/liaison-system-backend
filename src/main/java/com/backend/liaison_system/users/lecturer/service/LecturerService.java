@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.lecturer.service;
 
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
@@ -32,4 +33,6 @@ public interface LecturerService {
     ResponseEntity<Response<?>> superviseStudent(String lecturerId, String studentId);
 
     ResponseEntity<Response<?>> getStudentsLocation(String lecturerId);
+
+    ResponseEntity<Response<?>> getTopIndustries(String lecturerId, ConstantRequestParam param);
 }

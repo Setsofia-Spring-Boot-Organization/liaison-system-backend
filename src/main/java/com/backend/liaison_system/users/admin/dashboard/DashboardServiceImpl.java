@@ -8,6 +8,8 @@ import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
+import com.backend.liaison_system.zone.entity.Zone;
+import com.backend.liaison_system.zone.repository.ZoneRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.lecturer.service;
 
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
@@ -12,10 +13,7 @@ import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
-import com.backend.liaison_system.users.lecturer.responses.CompaniesData;
-import com.backend.liaison_system.users.lecturer.responses.LecturerDashboardDataRes;
-import com.backend.liaison_system.users.lecturer.responses.OtherLecturersData;
-import com.backend.liaison_system.users.lecturer.responses.StudentsData;
+import com.backend.liaison_system.users.lecturer.responses.*;
 import com.backend.liaison_system.users.lecturer.util.LecturerUtil;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
@@ -34,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 public class LecturerServiceImpl implements LecturerService {
@@ -234,6 +233,57 @@ public class LecturerServiceImpl implements LecturerService {
         );
 
         return duties;
+    }
+
+
+    @Override
+    public ResponseEntity<Response<?>> getTopIndustries(String lecturerId, ConstantRequestParam param) {
+        // Verify that the uer is an admin
+        lecturerUtil.verifyUserIsLecturer(lecturerId);
+
+        Zone zone = getLecturerZone(lecturerId);
+
+        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone);
+
+        List<TopCompaniesData> topCompaniesData = new ArrayList<>();
+        duties.forEach(assumptionOfDuty -> {
+            String companyName = assumptionOfDuty.getCompanyDetails().getCompanyName();
+
+            topCompaniesData.forEach(comp -> {
+                if (companyName.equals(comp.getName())) {
+                    comp.setTotalStudents(comp.getTotalStudents() + 1);
+                } else {
+                    String companyTown = assumptionOfDuty.getCompanyDetails().getCompanyTown();
+                    String companyExactLocation = assumptionOfDuty.getCompanyDetails().getCompanyExactLocation();
+
+                    topCompaniesData.add(
+                            new TopCompaniesData(
+                                    companyName,
+                                    companyTown,
+                                    companyExactLocation,
+                                    1
+                            )
+                    );
+                }
+            });
+        });
+
+        topCompaniesData.sort(Comparator.comparing(TopCompaniesData::getTotalStudents));
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("top companies")
+                .data(topCompaniesData)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private HashMap<String, Integer> sortMap(HashMap<String, Integer> map) {
+        return map.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (e1, e2) -> e1, LinkedHashMap::new
+        ));
     }
 
     /**
