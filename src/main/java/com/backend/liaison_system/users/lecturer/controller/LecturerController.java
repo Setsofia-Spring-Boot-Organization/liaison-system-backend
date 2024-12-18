@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.lecturer.controller;
 
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.dao.LecturerList;
@@ -57,5 +58,14 @@ public class LecturerController {
             @PathVariable("lecturer-id") String lecturerId
     ) {
         return lecturerService.getStudentsLocation(lecturerId);
+    }
+
+
+    @GetMapping(path = "/{lecturer-id}/get-top-industries")
+    public ResponseEntity<Response<?>> getTopIndustries(
+            @PathVariable("lecturer-id") String lecturerId,
+            ConstantRequestParam param
+    ) {
+        return lecturerService.getTopIndustries(lecturerId, param);
     }
 }
