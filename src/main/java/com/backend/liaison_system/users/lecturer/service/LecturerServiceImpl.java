@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Service
 public class LecturerServiceImpl implements LecturerService {
@@ -248,24 +247,22 @@ public class LecturerServiceImpl implements LecturerService {
         List<TopCompaniesData> topCompaniesData = new ArrayList<>();
         duties.forEach(assumptionOfDuty -> {
             String companyName = assumptionOfDuty.getCompanyDetails().getCompanyName();
+            String companyTown = assumptionOfDuty.getCompanyDetails().getCompanyTown();
+            String companyExactLocation = assumptionOfDuty.getCompanyDetails().getCompanyExactLocation();
 
-            topCompaniesData.forEach(comp -> {
-                if (companyName.equals(comp.getName())) {
-                    comp.setTotalStudents(comp.getTotalStudents() + 1);
-                } else {
-                    String companyTown = assumptionOfDuty.getCompanyDetails().getCompanyTown();
-                    String companyExactLocation = assumptionOfDuty.getCompanyDetails().getCompanyExactLocation();
+            // make sure there is at least a single data in the top companies
+            if (topCompaniesData.isEmpty()) {
+                topCompaniesData.add(createTopCompanyData(companyName, companyTown, companyExactLocation));
+            } else {
+                topCompaniesData.forEach(comp -> {
 
-                    topCompaniesData.add(
-                            new TopCompaniesData(
-                                    companyName,
-                                    companyTown,
-                                    companyExactLocation,
-                                    1
-                            )
-                    );
-                }
-            });
+                    if (companyName.equals(comp.getName())) {
+                        comp.setTotalStudents(comp.getTotalStudents() + 1);
+                    } else {
+                        topCompaniesData.add(createTopCompanyData(companyName, companyTown, companyExactLocation));
+                    }
+                });
+            }
         });
 
         topCompaniesData.sort(Comparator.comparing(TopCompaniesData::getTotalStudents));
@@ -278,12 +275,23 @@ public class LecturerServiceImpl implements LecturerService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    private HashMap<String, Integer> sortMap(HashMap<String, Integer> map) {
-        return map.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(
-                Map.Entry::getKey,
-                Map.Entry::getValue,
-                (e1, e2) -> e1, LinkedHashMap::new
-        ));
+
+    /**
+     * This method creates a new {@link TopCompaniesData} object with the provided company details.
+     * The initial ranking is set to 1.
+     *
+     * @param companyName the name of the company
+     * @param companyTown the town where the company is located
+     * @param companyExactLocation the exact location of the company
+     * @return a new {@link TopCompaniesData} object populated with the given details and an initial ranking of 1
+     */
+    private TopCompaniesData createTopCompanyData(String companyName, String companyTown, String companyExactLocation) {
+        return new TopCompaniesData(
+                companyName,
+                companyTown,
+                companyExactLocation,
+                1
+        );
     }
 
     /**
