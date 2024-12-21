@@ -1,5 +1,7 @@
 package com.backend.liaison_system.users.lecturer.responses;
 
+import java.util.Objects;
+
 public class TopCompaniesData{
         private String name;
         private String town;
@@ -46,5 +48,28 @@ public class TopCompaniesData{
 
     public void setTotalStudents(int totalStudents) {
         this.totalStudents = totalStudents;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TopCompaniesData that = (TopCompaniesData) o;
+        return totalStudents == that.totalStudents && Objects.equals(name, that.name) && Objects.equals(town, that.town) && Objects.equals(exactLocation, that.exactLocation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, town, exactLocation, totalStudents);
+    }
+
+    @Override
+    public String toString() {
+        return "TopCompaniesData{" +
+                "name='" + name + '\'' +
+                ", town='" + town + '\'' +
+                ", exactLocation='" + exactLocation + '\'' +
+                ", totalStudents=" + totalStudents +
+                '}';
     }
 }
