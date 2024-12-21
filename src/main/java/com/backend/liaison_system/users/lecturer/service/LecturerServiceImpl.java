@@ -260,8 +260,7 @@ public class LecturerServiceImpl implements LecturerService {
         List<FacultyData> facultyData = new ArrayList<>();
         List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone);
 
-        System.out.println("duties = " + duties);
-
+        // MAKE SURE YOU OPTIMIZE THIS HERE...
         duties.forEach(assumptionOfDuty -> studentRepository.findById(assumptionOfDuty.getStudentId())
                 .ifPresent(student -> {
 
