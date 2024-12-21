@@ -35,4 +35,6 @@ public interface LecturerService {
     ResponseEntity<Response<?>> getStudentsLocation(String lecturerId);
 
     ResponseEntity<Response<?>> getTopIndustries(String lecturerId, ConstantRequestParam param);
+
+    ResponseEntity<Response<?>> getStudentsFacultyAnalytics(String lecturerId, ConstantRequestParam param);
 }
