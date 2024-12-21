@@ -68,4 +68,13 @@ public class LecturerController {
     ) {
         return lecturerService.getTopIndustries(lecturerId, param);
     }
+
+
+    @GetMapping(path = "/{lecturer-id}/student/faculty/analytics")
+    public ResponseEntity<Response<?>> getStudentsFacultyAnalytics(
+            @PathVariable("lecturer-id") String lecturerId,
+            ConstantRequestParam param
+    ) {
+        return lecturerService.getStudentsFacultyAnalytics(lecturerId, param);
+    }
 }

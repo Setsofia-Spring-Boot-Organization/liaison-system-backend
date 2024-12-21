@@ -184,6 +184,7 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
 
+
     @Override
     public ResponseEntity<Response<?>> getStudentsLocation(String lecturerId) {
         //Verify that the user is a lecturer
@@ -208,31 +209,6 @@ public class LecturerServiceImpl implements LecturerService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    private Zone getLecturerZone(String lecturerId) {
-        AtomicReference<Zone> atomicZone = new AtomicReference<>();
-        zoneRepository.findAll().forEach(
-                zone -> {
-                    if (zone.getLecturers().lecturers().contains(lecturerId)) {
-                        atomicZone.set(zone);
-                    }
-                }
-        );
-
-        return atomicZone.get();
-    }
-
-    private List<AssumptionOfDuty> getAssumptionOfDutiesInAParticularZone(Zone atomicZone) {
-        List<AssumptionOfDuty> duties = new ArrayList<>();
-        assumptionOfDutyRepository.findAll().iterator().forEachRemaining(assumptionOfDuty ->
-                {
-                    if (assumptionOfDuty.getCompanyDetails().getCompanyRegion().equals(atomicZone.getRegion()) && atomicZone.getTowns().towns().contains(assumptionOfDuty.getCompanyDetails().getCompanyTown())) {
-                        duties.add(assumptionOfDuty);
-                    }
-                }
-        );
-
-        return duties;
-    }
 
 
     @Override
@@ -251,17 +227,14 @@ public class LecturerServiceImpl implements LecturerService {
             String companyExactLocation = assumptionOfDuty.getCompanyDetails().getCompanyExactLocation();
 
             // make sure there is at least a single data in the top companies
-            if (topCompaniesData.isEmpty()) {
-                topCompaniesData.add(createTopCompanyData(companyName, companyTown, companyExactLocation));
-            } else {
-                topCompaniesData.forEach(comp -> {
+            Optional<TopCompaniesData> existingCompany = topCompaniesData.stream()
+                    .filter(comp -> companyName.equals(comp.getName()))
+                    .findFirst();
 
-                    if (companyName.equals(comp.getName())) {
-                        comp.setTotalStudents(comp.getTotalStudents() + 1);
-                    } else {
-                        topCompaniesData.add(createTopCompanyData(companyName, companyTown, companyExactLocation));
-                    }
-                });
+            if (existingCompany.isPresent()) {
+                existingCompany.get().setTotalStudents(existingCompany.get().getTotalStudents() + 1);
+            } else {
+                topCompaniesData.add(createTopCompanyData(companyName, companyTown, companyExactLocation));
             }
         });
 
@@ -273,6 +246,94 @@ public class LecturerServiceImpl implements LecturerService {
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+
+    @Override
+    public ResponseEntity<Response<?>> getStudentsFacultyAnalytics(String lecturerId, ConstantRequestParam param) {
+        // verify that the user is a lecturer
+        lecturerUtil.verifyUserIsLecturer(lecturerId);
+
+        Zone zone = getLecturerZone(lecturerId);
+
+        List<FacultyData> facultyData = new ArrayList<>();
+        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone);
+
+        // MAKE SURE YOU OPTIMIZE THIS HERE...
+        duties.forEach(assumptionOfDuty -> studentRepository.findById(assumptionOfDuty.getStudentId())
+                .ifPresent(student -> {
+
+                    System.out.println("assumptionOfDuty = " + assumptionOfDuty);
+
+                    if (facultyData.isEmpty()) {
+                        facultyData.add(new FacultyData(
+                                student.getStudentFaculty(),
+                                1
+                        ));
+                    } else {
+                        for (FacultyData data : facultyData) {
+                            if (data.getName().equals(student.getStudentFaculty())) {
+                                int count = data.getTotalStudents();
+                                data.setTotalStudents(count + 1);
+                            } else {
+                                facultyData.add(new FacultyData(
+                                        student.getStudentFaculty(),
+                                        1
+                                ));
+                            }
+                        }
+                    }
+                }));
+
+        StudentsFacultyData studentsFacultyData = new StudentsFacultyData(facultyData, duties.size());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new Response.Builder<>()
+                        .status(HttpStatus.OK.value())
+                        .message("students faculty analytics")
+                        .data(studentsFacultyData)
+                .build());
+    }
+
+    /**
+     * This method retrieves the {@link Zone} where a specific lecturer is located, based on their ID.
+     * It searches through all available zones to find the one containing the given lecturer ID.
+     *
+     * @param lecturerId the ID of the lecturer whose zone is to be retrieved
+     * @return the {@link Zone} object containing the lecturer, or {@code null} if no matching zone is found
+     */
+    private Zone getLecturerZone(String lecturerId) {
+        AtomicReference<Zone> atomicZone = new AtomicReference<>();
+        zoneRepository.findAll().forEach(
+                zone -> {
+                    if (zone.getLecturers().lecturers().contains(lecturerId)) {
+                        atomicZone.set(zone);
+                    }
+                }
+        );
+
+        return atomicZone.get();
+    }
+
+    /**
+     * This method retrieves a list of {@link AssumptionOfDuty} objects that are located within a specific zone.
+     * It filters the assumptions of duty based on the region and towns of the specified {@link Zone}.
+     *
+     * @param atomicZone the {@link Zone} object containing the region and towns to filter assumptions of duty
+     * @return a list of {@link AssumptionOfDuty} objects that match the specified zone
+     */
+    private List<AssumptionOfDuty> getAssumptionOfDutiesInAParticularZone(Zone atomicZone) {
+        List<AssumptionOfDuty> duties = new ArrayList<>();
+        assumptionOfDutyRepository.findAll().iterator().forEachRemaining(assumptionOfDuty ->
+                {
+                    if (assumptionOfDuty.getCompanyDetails().getCompanyRegion().equals(atomicZone.getRegion()) && atomicZone.getTowns().towns().contains(assumptionOfDuty.getCompanyDetails().getCompanyTown())) {
+                        duties.add(assumptionOfDuty);
+                    }
+                }
+        );
+
+        return duties;
     }
 
 
