@@ -84,17 +84,7 @@ public class LecturerServiceImpl implements LecturerService {
 
         List<Lecturer> lecturers = lecturerRepository.findAll();
 
-        List<LecturerList> lecturerLists = new ArrayList<>();
-
-        for (Lecturer lecturer : lecturers) {
-            lecturerLists.add(
-                    new LecturerList(
-                            lecturer.getId(),
-                            lecturer.getLastName() + " " + lecturer.getFirstName(),
-                            lecturer.getProfilePictureUrl()
-                    )
-            );
-        }
+        List<LecturerList> lecturerLists = getLecturerLists(lecturers);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new Response.Builder<List<LecturerList>>()
@@ -105,6 +95,20 @@ public class LecturerServiceImpl implements LecturerService {
         );
     }
 
+    private static List<LecturerList> getLecturerLists(List<Lecturer> lecturers) {
+        List<LecturerList> lecturerLists = new ArrayList<>();
+
+        for (Lecturer lecturer : lecturers) {
+            lecturerLists.add(
+                    new LecturerList(
+                            lecturer.getId(),
+                            lecturer.getOtherName() == null? lecturer.getFirstName() + " " + lecturer.getLastName() : lecturer.getFirstName() + " " + lecturer.getOtherName() + " " + lecturer.getOtherName(),
+                            lecturer.getProfilePictureUrl()
+                    )
+            );
+        }
+        return lecturerLists;
+    }
 
 
     @Override
