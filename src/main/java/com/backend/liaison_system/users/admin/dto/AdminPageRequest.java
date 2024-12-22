@@ -9,9 +9,12 @@ public class AdminPageRequest {
     String name;
     String faculty;
     String department;
+    int semester;
     Boolean internship;
 
-    public AdminPageRequest(Integer page, Integer size, String find, String adminId, String name, String faculty, String department, Boolean internship) {
+    public AdminPageRequest() {}
+
+    public AdminPageRequest(Integer page, Integer size, String find, String adminId, String name, String faculty, String department, int semester, Boolean internship) {
         this.page = page;
         this.size = size;
         this.find = find;
@@ -19,10 +22,9 @@ public class AdminPageRequest {
         this.name = name;
         this.faculty = faculty;
         this.department = department;
+        this.semester = semester;
         this.internship = internship;
     }
-
-    public AdminPageRequest() {}
 
     public Integer getPage() {
         return page;
@@ -84,6 +86,14 @@ public class AdminPageRequest {
         return internship;
     }
 
+    public int getSemester() {
+        return semester;
+    }
+
+    public void setSemester(int semester) {
+        this.semester = semester;
+    }
+
     public void setInternship(Boolean internship) {
         this.internship = internship;
     }
@@ -98,6 +108,7 @@ public class AdminPageRequest {
                 ", name='" + name + '\'' +
                 ", faculty='" + faculty + '\'' +
                 ", department='" + department + '\'' +
+                ", semester=" + semester +
                 ", internship=" + internship +
                 '}';
     }
@@ -121,7 +132,13 @@ public class AdminPageRequest {
         String name;
         String faculty;
         String department;
+        int semester;
         Boolean internship;
+
+        public Builder semester(Integer semester) {
+            this.semester = semester;
+            return this;
+        }
 
         public Builder page(Integer page) {
             this.page = page;

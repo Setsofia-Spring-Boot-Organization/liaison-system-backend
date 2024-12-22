@@ -21,14 +21,23 @@ import java.util.Optional;
 
 public interface AssumptionOfDutyRepository extends CrudRepository<AssumptionOfDuty, String>, JpaSpecificationExecutor<AssumptionOfDuty> {
 
-    default Optional<AssumptionOfDuty> findAssumptionOfDutyByStudentId(String id) {
+    default Optional<AssumptionOfDuty> findAssumptionOfDutyByStudentId(String id, ConstantRequestParam param) {
+
+        LocalDateTime startDate = UAcademicYear.startOfAcademicYear(param.startOfAcademicYear());
+        LocalDateTime endDate = UAcademicYear.endOfAcademicYear(param.endOfAcademicYear());
+
         return findOne((root, query, criteriaBuilder) -> {
             // Create a subquery to find the maximum dateCreated
             assert query != null;
             Subquery<LocalDateTime> subquery = query.subquery(LocalDateTime.class);
             Root<AssumptionOfDuty> subRoot = subquery.from(AssumptionOfDuty.class);
             subquery.select(criteriaBuilder.greatest(subRoot.get("dateCreated").as(LocalDateTime.class)))
-                    .where(criteriaBuilder.equal(subRoot.get("studentId"), id));
+                    .where(criteriaBuilder.and(
+                            criteriaBuilder.equal(subRoot.get("studentId"), id),
+                            criteriaBuilder.equal(subRoot.get("semester"), param.semester()),
+                            criteriaBuilder.greaterThanOrEqualTo(root.get("startOfAcademicYear"), startDate),
+                            criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), endDate)
+                    ));
 
             // Main query: Find the entity where dateCreated matches the maximum
             return criteriaBuilder.and(
@@ -52,6 +61,7 @@ public interface AssumptionOfDutyRepository extends CrudRepository<AssumptionOfD
         Specification<AssumptionOfDuty> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
                 criteriaBuilder.greaterThanOrEqualTo(root.get("endOfAcademicYear"), startOfYear),
                 criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), endOfYear),
+                criteriaBuilder.equal(root.get("semester"), param.semester()),
                 criteriaBuilder.equal(root.get("isInternship"), param.internship()),
                 criteriaBuilder.isTrue(root.get("isUpdated"))
         );

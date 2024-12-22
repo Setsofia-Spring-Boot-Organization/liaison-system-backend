@@ -21,6 +21,8 @@ public class AssumptionOfDuty {
     private LocalDateTime startOfAcademicYear;
     private LocalDateTime endOfAcademicYear;
 
+    private int semester;
+
     private boolean isInternship;
     private boolean isUpdated;
 
@@ -29,13 +31,14 @@ public class AssumptionOfDuty {
 
     public AssumptionOfDuty() { }
 
-    public AssumptionOfDuty(String studentId, LocalDateTime dateCreated, LocalDateTime dateUpdated, String dateCommenced, LocalDateTime startOfAcademicYear, LocalDateTime endOfAcademicYear, boolean isInternship, boolean isUpdated, CompanyDetails companyDetails) {
+    public AssumptionOfDuty(String studentId, LocalDateTime dateCreated, LocalDateTime dateUpdated, String dateCommenced, LocalDateTime startOfAcademicYear, LocalDateTime endOfAcademicYear, int semester, boolean isInternship, boolean isUpdated, CompanyDetails companyDetails) {
         this.studentId = studentId;
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
         this.dateCommenced = dateCommenced;
         this.startOfAcademicYear = startOfAcademicYear;
         this.endOfAcademicYear = endOfAcademicYear;
+        this.semester = semester;
         this.isInternship = isInternship;
         this.isUpdated = isUpdated;
         this.companyDetails = companyDetails;
@@ -43,6 +46,10 @@ public class AssumptionOfDuty {
 
     public String getId() {
         return id;
+    }
+
+    public int getSemester() {
+        return semester;
     }
 
     public void setId(String id) {
@@ -126,12 +133,16 @@ public class AssumptionOfDuty {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AssumptionOfDuty that = (AssumptionOfDuty) o;
-        return isInternship == that.isInternship && isUpdated == that.isUpdated && Objects.equals(id, that.id) && Objects.equals(studentId, that.studentId) && Objects.equals(dateCreated, that.dateCreated) && Objects.equals(dateUpdated, that.dateUpdated) && Objects.equals(dateCommenced, that.dateCommenced) && Objects.equals(startOfAcademicYear, that.startOfAcademicYear) && Objects.equals(endOfAcademicYear, that.endOfAcademicYear) && Objects.equals(companyDetails, that.companyDetails);
+        return semester == that.semester && isInternship == that.isInternship && isUpdated == that.isUpdated && Objects.equals(id, that.id) && Objects.equals(studentId, that.studentId) && Objects.equals(dateCreated, that.dateCreated) && Objects.equals(dateUpdated, that.dateUpdated) && Objects.equals(dateCommenced, that.dateCommenced) && Objects.equals(startOfAcademicYear, that.startOfAcademicYear) && Objects.equals(endOfAcademicYear, that.endOfAcademicYear) && Objects.equals(companyDetails, that.companyDetails);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, studentId, dateCreated, dateUpdated, dateCommenced, startOfAcademicYear, endOfAcademicYear, isInternship, isUpdated, companyDetails);
+        return Objects.hash(id, studentId, dateCreated, dateUpdated, dateCommenced, startOfAcademicYear, endOfAcademicYear, semester, isInternship, isUpdated, companyDetails);
+    }
+
+    public void setSemester(int semester) {
+        this.semester = semester;
     }
 
     @Override
@@ -142,8 +153,9 @@ public class AssumptionOfDuty {
                 ", dateCreated=" + dateCreated +
                 ", dateUpdated=" + dateUpdated +
                 ", dateCommenced='" + dateCommenced + '\'' +
-                ", startOfAcademicYear='" + startOfAcademicYear + '\'' +
-                ", endOfAcademicYear='" + endOfAcademicYear + '\'' +
+                ", startOfAcademicYear=" + startOfAcademicYear +
+                ", endOfAcademicYear=" + endOfAcademicYear +
+                ", semester=" + semester +
                 ", isInternship=" + isInternship +
                 ", isUpdated=" + isUpdated +
                 ", companyDetails=" + companyDetails +
