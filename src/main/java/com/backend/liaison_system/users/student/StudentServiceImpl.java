@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.student;
 
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
@@ -35,7 +36,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public ResponseEntity<Response<?>> getDashboardData(String studentId) {
+    public ResponseEntity<Response<?>> getDashboardData(String studentId, ConstantRequestParam param) {
         // Verify that the use is a student
         studentUtil.verifyUserIsStudent(studentId);
 
@@ -44,7 +45,7 @@ public class StudentServiceImpl implements StudentService{
         studentRepository.findById(studentId).ifPresent(
                 data -> {
                     List<Colleagues> colleagues = new ArrayList<>();
-                    assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(data.getId()).ifPresent(assumptionOfDuty -> assumptionOfDutyRepository.findAll().forEach(
+                    assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(data.getId(), param).ifPresent(assumptionOfDuty -> assumptionOfDutyRepository.findAll().forEach(
                             duty -> {
                                 if (assumptionOfDuty.getCompanyDetails().getCompanyName().equals(duty.getCompanyDetails().getCompanyName())) {
                                     studentRepository.findById(duty.getStudentId()).ifPresent(
@@ -64,7 +65,7 @@ public class StudentServiceImpl implements StudentService{
                     // get a list of the student's previous assumption of duties
                     List<AssumptionOfDuty> duties = assumptionOfDutyRepository.findAll().stream().filter(assumptionOfDuty -> assumptionOfDuty.getStudentId().equals(data.getId())).toList();
 
-                    List<AssignedLecturer> assignedLecturers = getAssignedLecturers(data.getId());
+                    List<AssignedLecturer> assignedLecturers = getAssignedLecturers(data.getId(), param);
                     dashboardRes.set(new StudentDashboardRes(
                             data.getId(),
                             data.getStudentFirstName(),
@@ -91,12 +92,12 @@ public class StudentServiceImpl implements StudentService{
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    private List<AssignedLecturer> getAssignedLecturers(String studentId) {
+    private List<AssignedLecturer> getAssignedLecturers(String studentId, ConstantRequestParam param) {
 
         // find the zone using the Region r and Town t
         List<String> lecturers = new ArrayList<>();
-        assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(studentId)
-                .flatMap(assumptionOfDuty -> zoneRepository.findZoneByRegionAndTown(assumptionOfDuty.getCompanyDetails().getCompanyRegion(), assumptionOfDuty.getCompanyDetails().getCompanyTown()))
+        assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(studentId, param)
+                .flatMap(assumptionOfDuty -> zoneRepository.findZoneByRegionAndTown(assumptionOfDuty.getCompanyDetails().getCompanyRegion(), assumptionOfDuty.getCompanyDetails().getCompanyTown(), param))
                 .ifPresent(zone -> lecturers.addAll(zone.getLecturers().lecturers()));
 
 
