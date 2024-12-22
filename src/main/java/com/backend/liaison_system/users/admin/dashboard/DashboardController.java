@@ -25,12 +25,20 @@ public class DashboardController {
     }
 
 
-
-    @GetMapping(path = "/{admin-id}/student-analytics")
+    @GetMapping(path = "/{admin-id}/assigned/unassigned/students")
     public ResponseEntity<Response<?>> getAssignedAndUnassignedStudents(
             @PathVariable("admin-id") String adminId,
             ConstantRequestParam param
     ) {
         return dashboardService.getAssignedAndUnassignedStudents(adminId, param);
+    }
+
+
+    @GetMapping(path = "/{admin-id}/assigned/unassigned/lecturers")
+    public ResponseEntity<Response<?>> getAssignedAndUnassignedLecturers(
+            @PathVariable("admin-id") String adminId,
+            ConstantRequestParam param
+    ) {
+        return dashboardService.getAssignedAndUnassignedLecturers(adminId, param);
     }
 }
