@@ -16,4 +16,6 @@ public interface DashboardService {
     ResponseEntity<Response<Statistics>> getStatistics(String id, ConstantRequestParam param);
 
     ResponseEntity<Response<?>> getAssignedAndUnassignedStudents(String adminId, ConstantRequestParam param);
+
+    ResponseEntity<Response<?>> getAssignedAndUnassignedLecturers(String adminId, ConstantRequestParam param);
 }
