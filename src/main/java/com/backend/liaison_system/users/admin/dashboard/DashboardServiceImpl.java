@@ -2,10 +2,8 @@ package com.backend.liaison_system.users.admin.dashboard;
 
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
-import com.backend.liaison_system.users.admin.dashboard.dao.AssignedAndUnassignedStudents;
-import com.backend.liaison_system.users.admin.dashboard.dao.AssignedStudents;
-import com.backend.liaison_system.users.admin.dashboard.dao.Statistics;
-import com.backend.liaison_system.users.admin.dashboard.dao.UnassignedStudents;
+import com.backend.liaison_system.users.admin.dao.Lecturers;
+import com.backend.liaison_system.users.admin.dashboard.dao.*;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
@@ -82,5 +80,46 @@ public class DashboardServiceImpl implements DashboardService{
                 )).build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    @Override
+    public ResponseEntity<Response<?>> getAssignedAndUnassignedLecturers(String adminId, ConstantRequestParam param) {
+        //verify that the user is an admin
+        adminUtil.verifyUserIsAdmin(adminId);
+
+        List<Lecturers> assignedLecturers = new ArrayList<>();
+        List<Lecturers> unAssignedLecturers = new ArrayList<>();
+        lecturerRepository.findAll().forEach(lecturer -> zoneRepository.findAll().forEach(
+                zone -> {
+                    if (zone.getLecturers().lecturers().contains(lecturer.getId())) {
+                        assignedLecturers.add(createLecturerDTO(lecturer));
+                    } else {
+                        unAssignedLecturers.add(createLecturerDTO(lecturer));
+                    }
+                }
+        ));
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("assigned and unassigned lecturers")
+                .data(new AssignedAndUnassignedLecturers(
+                        new AssignedLecturers(assignedLecturers, assignedLecturers.size()),
+                        new UnassignedLecturers(unAssignedLecturers, unAssignedLecturers.size()),
+                        assignedLecturers.size() + unAssignedLecturers.size()
+                ))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private Lecturers createLecturerDTO(Lecturer lecturer) {
+        return new Lecturers(
+                lecturer.getId(),
+                lecturer.getProfilePictureUrl(),
+                lecturer.getOtherName() == null? lecturer.getFirstName() + " " + lecturer.getLastName() : lecturer.getFirstName() + " " + lecturer.getOtherName() + " " + lecturer.getLastName(),
+                lecturer.getFaculty(),
+                lecturer.getDepartment()
+        );
     }
 }
