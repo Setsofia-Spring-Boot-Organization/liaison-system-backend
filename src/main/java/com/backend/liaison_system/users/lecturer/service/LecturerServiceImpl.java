@@ -260,29 +260,20 @@ public class LecturerServiceImpl implements LecturerService {
         List<FacultyData> facultyData = new ArrayList<>();
         List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone);
 
-        // MAKE SURE YOU OPTIMIZE THIS HERE...
         duties.forEach(assumptionOfDuty -> studentRepository.findById(assumptionOfDuty.getStudentId())
                 .ifPresent(student -> {
 
-                    System.out.println("assumptionOfDuty = " + assumptionOfDuty);
+                    Optional<FacultyData> existingData = facultyData.stream()
+                            .filter(data -> data.getName().equals(student.getStudentFaculty()))
+                            .findFirst();
 
-                    if (facultyData.isEmpty()) {
+                    if (existingData.isPresent()) {
+                        existingData.get().setTotalStudents(existingData.get().getTotalStudents() + 1);
+                    } else {
                         facultyData.add(new FacultyData(
                                 student.getStudentFaculty(),
                                 1
                         ));
-                    } else {
-                        for (FacultyData data : facultyData) {
-                            if (data.getName().equals(student.getStudentFaculty())) {
-                                int count = data.getTotalStudents();
-                                data.setTotalStudents(count + 1);
-                            } else {
-                                facultyData.add(new FacultyData(
-                                        student.getStudentFaculty(),
-                                        1
-                                ));
-                            }
-                        }
                     }
                 }));
 
