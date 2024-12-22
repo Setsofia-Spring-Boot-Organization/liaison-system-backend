@@ -15,7 +15,9 @@ public class LecturerSpecification {
 
         return (root, query, criteriaBuilder) -> criteriaBuilder.and(
                 criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), startDate),
-                criteriaBuilder.lessThanOrEqualTo(root.get("updatedAt"), endDate)
+                criteriaBuilder.lessThanOrEqualTo(root.get("updatedAt"), endDate),
+                criteriaBuilder.equal(root.get("semester"), param.semester()),
+                criteriaBuilder.equal(root.get("semester"), param.semester())
         );
     }
 }
