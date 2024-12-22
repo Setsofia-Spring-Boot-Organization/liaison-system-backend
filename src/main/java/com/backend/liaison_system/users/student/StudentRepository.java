@@ -40,6 +40,7 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
                 criteriaBuilder.and(
                         criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), UAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
                         criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), UAcademicYear.endOfAcademicYear(param.startOfAcademicYear())),
+                        criteriaBuilder.equal(root.get("semester"), param.semester()),
                         criteriaBuilder.equal(root.get("internshipType"), (param.internship())? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT)
                 );
 

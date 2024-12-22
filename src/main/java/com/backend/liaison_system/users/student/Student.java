@@ -46,6 +46,8 @@ public class Student {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
+    private int semester;
+
     private Status status;
 
     @Enumerated(EnumType.STRING)
@@ -62,7 +64,7 @@ public class Student {
 
     public Student() { }
 
-    public Student(String email, String password, String studentFirstName, String studentLastName, String studentOtherName, String studentAge, String studentEmail, String studentGender, String studentPhone, String studentAbout, String profilePictureUrl, String studentDepartment, String studentFaculty, String studentCourse, String placeOfInternship, LocalDateTime startDate, LocalDateTime endDate, Status status, InternshipType internshipType, UserRoles role, boolean isSupervised, boolean isAssumeDuty, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Student(String email, String password, String studentFirstName, String studentLastName, String studentOtherName, String studentAge, String studentEmail, String studentGender, String studentPhone, String studentAbout, String profilePictureUrl, String studentDepartment, String studentFaculty, String studentCourse, String placeOfInternship, LocalDateTime startDate, LocalDateTime endDate, int semester, Status status, InternshipType internshipType, UserRoles role, boolean isSupervised, boolean isAssumeDuty, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.email = email;
         this.password = password;
         this.studentFirstName = studentFirstName;
@@ -80,6 +82,7 @@ public class Student {
         this.placeOfInternship = placeOfInternship;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.semester = semester;
         this.status = status;
         this.internshipType = internshipType;
         this.role = role;
@@ -233,6 +236,14 @@ public class Student {
         this.endDate = endDate;
     }
 
+    public int getSemester() {
+        return semester;
+    }
+
+    public void setSemester(int semester) {
+        this.semester = semester;
+    }
+
     public Status getStatus() {
         return status;
     }
@@ -294,12 +305,12 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return isSupervised == student.isSupervised && isAssumeDuty == student.isAssumeDuty && Objects.equals(id, student.id) && Objects.equals(email, student.email) && Objects.equals(password, student.password) && Objects.equals(studentFirstName, student.studentFirstName) && Objects.equals(studentLastName, student.studentLastName) && Objects.equals(studentOtherName, student.studentOtherName) && Objects.equals(studentAge, student.studentAge) && Objects.equals(studentEmail, student.studentEmail) && Objects.equals(studentGender, student.studentGender) && Objects.equals(studentPhone, student.studentPhone) && Objects.equals(studentAbout, student.studentAbout) && Objects.equals(profilePictureUrl, student.profilePictureUrl) && Objects.equals(studentDepartment, student.studentDepartment) && Objects.equals(studentFaculty, student.studentFaculty) && Objects.equals(studentCourse, student.studentCourse) && Objects.equals(placeOfInternship, student.placeOfInternship) && Objects.equals(startDate, student.startDate) && Objects.equals(endDate, student.endDate) && status == student.status && internshipType == student.internshipType && role == student.role && Objects.equals(createdAt, student.createdAt) && Objects.equals(updatedAt, student.updatedAt);
+        return semester == student.semester && isSupervised == student.isSupervised && isAssumeDuty == student.isAssumeDuty && Objects.equals(id, student.id) && Objects.equals(email, student.email) && Objects.equals(password, student.password) && Objects.equals(studentFirstName, student.studentFirstName) && Objects.equals(studentLastName, student.studentLastName) && Objects.equals(studentOtherName, student.studentOtherName) && Objects.equals(studentAge, student.studentAge) && Objects.equals(studentEmail, student.studentEmail) && Objects.equals(studentGender, student.studentGender) && Objects.equals(studentPhone, student.studentPhone) && Objects.equals(studentAbout, student.studentAbout) && Objects.equals(profilePictureUrl, student.profilePictureUrl) && Objects.equals(studentDepartment, student.studentDepartment) && Objects.equals(studentFaculty, student.studentFaculty) && Objects.equals(studentCourse, student.studentCourse) && Objects.equals(placeOfInternship, student.placeOfInternship) && Objects.equals(startDate, student.startDate) && Objects.equals(endDate, student.endDate) && status == student.status && internshipType == student.internshipType && role == student.role && Objects.equals(createdAt, student.createdAt) && Objects.equals(updatedAt, student.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, studentFirstName, studentLastName, studentOtherName, studentAge, studentEmail, studentGender, studentPhone, studentAbout, profilePictureUrl, studentDepartment, studentFaculty, studentCourse, placeOfInternship, startDate, endDate, status, internshipType, role, isSupervised, isAssumeDuty, createdAt, updatedAt);
+        return Objects.hash(id, email, password, studentFirstName, studentLastName, studentOtherName, studentAge, studentEmail, studentGender, studentPhone, studentAbout, profilePictureUrl, studentDepartment, studentFaculty, studentCourse, placeOfInternship, startDate, endDate, semester, status, internshipType, role, isSupervised, isAssumeDuty, createdAt, updatedAt);
     }
 
     @Override
@@ -323,6 +334,7 @@ public class Student {
                 ", placeOfInternship='" + placeOfInternship + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
+                ", semester=" + semester +
                 ", status=" + status +
                 ", internshipType=" + internshipType +
                 ", role=" + role +
