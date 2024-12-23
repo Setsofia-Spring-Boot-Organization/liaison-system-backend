@@ -127,7 +127,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Response<?> uploadStudents(String adminID, MultipartFile file, boolean internship) {
+    public Response<?> uploadStudents(String adminID, MultipartFile file, ConstantRequestParam param) {
         // confirm user is an admin
         adminUtil.verifyUserIsAdmin(adminID);
 
@@ -152,11 +152,11 @@ public class AdminServiceImpl implements AdminService{
             //For each row in the sheet extract the student details
             for(Row row : sheet) {
                 if(row.getRowNum() == 0) continue;
-                Student currentStudent = adminUtil.buildStudentFromExcel(row);
+                Student currentStudent = adminUtil.buildStudentFromExcel(row, param);
                 //Ensure student does not already exist
                 Optional<Student> studentCheck = studentRepository.findStudentByStudentEmail(currentStudent.getEmail());
                 if(studentCheck.isEmpty()) {
-                    if (!internship) {
+                    if (!param.internship()) {
                         currentStudent.setInternshipType(InternshipType.SEMESTER_OUT);
                     } else {
                         currentStudent.setInternshipType(InternshipType.INTERNSHIP);
