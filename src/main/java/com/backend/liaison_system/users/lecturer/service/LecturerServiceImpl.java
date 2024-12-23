@@ -20,7 +20,7 @@ import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.zone.entity.Zone;
-import com.backend.liaison_system.zone.repository.ZoneRepository;
+import com.backend.liaison_system.zone.specification.ZoneSpecification;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
@@ -40,21 +40,21 @@ public class LecturerServiceImpl implements LecturerService {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final AdminUtil adminUtil;
     private final LecturerUtil lecturerUtil;
-    private final ZoneRepository zoneRepository;
     private final AssumptionOfDutyRepository assumptionOfDutyRepository;
     private final StudentRepository studentRepository;
+    private final ZoneSpecification zoneSpecification;
 
-    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil, LecturerUtil lecturerUtil, ZoneRepository zoneRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, StudentRepository studentRepository) {
+    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil, LecturerUtil lecturerUtil, AssumptionOfDutyRepository assumptionOfDutyRepository, StudentRepository studentRepository, ZoneSpecification zoneSpecification) {
         this.lecturerRepository = lecturerRepository;
         this.adminUtil = adminUtil;
         this.lecturerUtil = lecturerUtil;
-        this.zoneRepository = zoneRepository;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
         this.studentRepository = studentRepository;
+        this.zoneSpecification = zoneSpecification;
     }
 
     @Override
-    public ResponseEntity<Response<List<Lecturer>>> createNewLecturer(String adminID, List<NewLecturerRequest> requests) {
+    public ResponseEntity<Response<List<Lecturer>>> createNewLecturer(String adminID, List<NewLecturerRequest> requests, ConstantRequestParam param) {
         // verify that the user performing this action is an admin
         adminUtil.verifyUserIsAdmin(adminID);
 
@@ -62,7 +62,7 @@ public class LecturerServiceImpl implements LecturerService {
         verifyExistingEmails(requests);
 
         // save the lecturers
-        List<Lecturer> lecturers = saveLecturers(requests);
+        List<Lecturer> lecturers = saveLecturers(requests, param);
 
         // save the lecturers
         List<Lecturer> savedLectures = lecturerRepository.saveAll(lecturers);
@@ -79,10 +79,10 @@ public class LecturerServiceImpl implements LecturerService {
 
 
     @Override
-    public ResponseEntity<Response<List<LecturerList>>> getLecturers(String id) {
+    public ResponseEntity<Response<List<LecturerList>>> getLecturers(String id, ConstantRequestParam param) {
         adminUtil.verifyUserIsAdmin(id);
 
-        List<Lecturer> lecturers = lecturerRepository.findAll();
+        List<Lecturer> lecturers = lecturerRepository.findAllLectures(param);
 
         List<LecturerList> lecturerLists = getLecturerLists(lecturers);
 
@@ -112,13 +112,13 @@ public class LecturerServiceImpl implements LecturerService {
 
 
     @Override
-    public ResponseEntity<Response<?>> getDashboardData(String id) {
+    public ResponseEntity<Response<?>> getDashboardData(String id, ConstantRequestParam param) {
         //Verify that the user is a lecturer
         lecturerUtil.verifyUserIsLecturer(id);
 
-        Zone atomicZone = getLecturerZone(id); // get the lecturer's zone
+        Zone atomicZone = getLecturerZone(id, param); // get the lecturer's zone
 
-        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(atomicZone); // get the list of assumption of duties from a particular zone
+        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(atomicZone, param); // get the list of assumption of duties from a particular zone
 
         List<Student> students = new ArrayList<>();
         Map<String, Integer> companies = new HashMap<>();
@@ -190,13 +190,13 @@ public class LecturerServiceImpl implements LecturerService {
 
 
     @Override
-    public ResponseEntity<Response<?>> getStudentsLocation(String lecturerId) {
+    public ResponseEntity<Response<?>> getStudentsLocation(String lecturerId, ConstantRequestParam param) {
         //Verify that the user is a lecturer
         lecturerUtil.verifyUserIsLecturer(lecturerId);
 
-        Zone atomicZone = getLecturerZone(lecturerId); // get the lecturer's zone
+        Zone atomicZone = getLecturerZone(lecturerId, param); // get the lecturer's zone
 
-        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(atomicZone); // get the list of assumption of duties from a particular zone
+        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(atomicZone, param); // get the list of assumption of duties from a particular zone
 
         List<StudentLocationData> locationData = new ArrayList<>();
         duties.forEach(assumptionOfDuty -> {
@@ -220,9 +220,9 @@ public class LecturerServiceImpl implements LecturerService {
         // Verify that the uer is an admin
         lecturerUtil.verifyUserIsLecturer(lecturerId);
 
-        Zone zone = getLecturerZone(lecturerId);
+        Zone zone = getLecturerZone(lecturerId, param);
 
-        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone);
+        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone, param);
 
         List<TopCompaniesData> topCompaniesData = new ArrayList<>();
         duties.forEach(assumptionOfDuty -> {
@@ -259,10 +259,10 @@ public class LecturerServiceImpl implements LecturerService {
         // verify that the user is a lecturer
         lecturerUtil.verifyUserIsLecturer(lecturerId);
 
-        Zone zone = getLecturerZone(lecturerId);
+        Zone zone = getLecturerZone(lecturerId, param);
 
         List<FacultyData> facultyData = new ArrayList<>();
-        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone);
+        List<AssumptionOfDuty> duties = getAssumptionOfDutiesInAParticularZone(zone, param);
 
         duties.forEach(assumptionOfDuty -> studentRepository.findById(assumptionOfDuty.getStudentId())
                 .ifPresent(student -> {
@@ -298,9 +298,9 @@ public class LecturerServiceImpl implements LecturerService {
      * @param lecturerId the ID of the lecturer whose zone is to be retrieved
      * @return the {@link Zone} object containing the lecturer, or {@code null} if no matching zone is found
      */
-    private Zone getLecturerZone(String lecturerId) {
+    private Zone getLecturerZone(String lecturerId, ConstantRequestParam param) {
         AtomicReference<Zone> atomicZone = new AtomicReference<>();
-        zoneRepository.findAll().forEach(
+        zoneSpecification.findZonesUsingZoneTypeAndAcademicDates(param).forEach(
                 zone -> {
                     if (zone.getLecturers().lecturers().contains(lecturerId)) {
                         atomicZone.set(zone);
@@ -318,9 +318,9 @@ public class LecturerServiceImpl implements LecturerService {
      * @param atomicZone the {@link Zone} object containing the region and towns to filter assumptions of duty
      * @return a list of {@link AssumptionOfDuty} objects that match the specified zone
      */
-    private List<AssumptionOfDuty> getAssumptionOfDutiesInAParticularZone(Zone atomicZone) {
+    private List<AssumptionOfDuty> getAssumptionOfDutiesInAParticularZone(Zone atomicZone, ConstantRequestParam param) {
         List<AssumptionOfDuty> duties = new ArrayList<>();
-        assumptionOfDutyRepository.findAll().iterator().forEachRemaining(assumptionOfDuty ->
+        assumptionOfDutyRepository.findAllDuties(param).iterator().forEachRemaining(assumptionOfDuty ->
                 {
                     if (assumptionOfDuty.getCompanyDetails().getCompanyRegion().equals(atomicZone.getRegion()) && atomicZone.getTowns().towns().contains(assumptionOfDuty.getCompanyDetails().getCompanyTown())) {
                         duties.add(assumptionOfDuty);
@@ -381,7 +381,7 @@ public class LecturerServiceImpl implements LecturerService {
      * @param requests a list of NewLecturerRequest objects containing the data for each new lecturer
      * @return a list of Lecturer entities created from the provided requests
      */
-    private List<Lecturer> saveLecturers(List<NewLecturerRequest> requests) {
+    private List<Lecturer> saveLecturers(List<NewLecturerRequest> requests, ConstantRequestParam param) {
 
         List<Lecturer> lecturers = new ArrayList<>();
         for (NewLecturerRequest request : requests) {
@@ -409,6 +409,8 @@ public class LecturerServiceImpl implements LecturerService {
 
             lecturer.setRole(UserRoles.LECTURER);
             lecturer.setZoneLead(false);
+
+            lecturer.setSemester(param.semester());
 
             // add the lecturer to the lecturers' list
             lecturers.add(lecturer);
