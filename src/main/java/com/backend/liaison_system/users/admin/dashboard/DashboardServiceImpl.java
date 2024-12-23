@@ -61,9 +61,26 @@ public class DashboardServiceImpl implements DashboardService{
 
 
     @Override
-    public ResponseEntity<Response<?>> getAssignedAndUnassignedStudents(String adminId, ConstantRequestParam param) {
+    public ResponseEntity<Response<?>> getAssignedAndUnassignedStudentsAndLecturers(String adminId, ConstantRequestParam param) {
         //verify that the user is an admin
         adminUtil.verifyUserIsAdmin(adminId);
+
+        AssignedAndUnassignedStudents assignedAndUnassignedStudents = getAssignedAndUnassignedStudents(param);
+        AssignedAndUnassignedLecturers assignedAndUnassignedLecturers = getAssignedAndUnassignedLecturers(param);
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("assigned and unassigned students and lecturers")
+                .data(new AssignedAndUnassignedLecturersAndStudentsData(
+                        assignedAndUnassignedStudents,
+                        assignedAndUnassignedLecturers
+                ))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private AssignedAndUnassignedStudents getAssignedAndUnassignedStudents(ConstantRequestParam param) {
 
         List<Student> assignedStudents = new ArrayList<>();
         List<Student> unAssignedStudents = new ArrayList<>();
@@ -74,23 +91,15 @@ public class DashboardServiceImpl implements DashboardService{
                 param
         )).ifPresentOrElse(zone -> assignedStudents.add(student), () -> unAssignedStudents.add(student)));
 
-        Response<?> response = new Response.Builder<>()
-                .status(HttpStatus.OK.value())
-                .message("assigned and unassigned students")
-                .data(new AssignedAndUnassignedStudents(
-                        new AssignedStudents(assignedStudents.stream().map(adminUtil::buildStudentDtoFromStudent).toList(), assignedStudents.size()),
-                        new UnassignedStudents(unAssignedStudents.stream().map(adminUtil::buildStudentDtoFromStudent).toList(), unAssignedStudents.size()),
-                        assignedStudents.size() + unAssignedStudents.size()
-                )).build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return  new AssignedAndUnassignedStudents(
+                new AssignedStudents(assignedStudents.stream().map(adminUtil::buildStudentDtoFromStudent).toList(), assignedStudents.size()),
+                new UnassignedStudents(unAssignedStudents.stream().map(adminUtil::buildStudentDtoFromStudent).toList(), unAssignedStudents.size()),
+                assignedStudents.size() + unAssignedStudents.size()
+        );
     }
 
 
-    @Override
-    public ResponseEntity<Response<?>> getAssignedAndUnassignedLecturers(String adminId, ConstantRequestParam param) {
-        //verify that the user is an admin
-        adminUtil.verifyUserIsAdmin(adminId);
+    private AssignedAndUnassignedLecturers getAssignedAndUnassignedLecturers(ConstantRequestParam param) {
 
         List<Lecturers> assignedLecturers = new ArrayList<>();
         List<Lecturers> unAssignedLecturers = new ArrayList<>();
@@ -104,17 +113,11 @@ public class DashboardServiceImpl implements DashboardService{
                 }
         ));
 
-        Response<?> response = new Response.Builder<>()
-                .status(HttpStatus.OK.value())
-                .message("assigned and unassigned lecturers")
-                .data(new AssignedAndUnassignedLecturers(
-                        new AssignedLecturers(assignedLecturers, assignedLecturers.size()),
-                        new UnassignedLecturers(unAssignedLecturers, unAssignedLecturers.size()),
-                        assignedLecturers.size() + unAssignedLecturers.size()
-                ))
-                .build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return new AssignedAndUnassignedLecturers(
+                new AssignedLecturers(assignedLecturers, assignedLecturers.size()),
+                new UnassignedLecturers(unAssignedLecturers, unAssignedLecturers.size()),
+                assignedLecturers.size() + unAssignedLecturers.size()
+        );
     }
 
     private Lecturers createLecturerDTO(Lecturer lecturer) {
