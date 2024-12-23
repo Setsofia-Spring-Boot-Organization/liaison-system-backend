@@ -47,9 +47,22 @@ public interface AssumptionOfDutyRepository extends CrudRepository<AssumptionOfD
         });
     }
 
-
     @Override
     List<AssumptionOfDuty> findAll();
+
+    default List<AssumptionOfDuty> findAllDuties(ConstantRequestParam param) {
+        LocalDateTime startOfYear = UAcademicYear.startOfAcademicYear(param.startOfAcademicYear());
+        LocalDateTime endOfYear = UAcademicYear.endOfAcademicYear(param.endOfAcademicYear());
+
+        Specification<AssumptionOfDuty> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
+                criteriaBuilder.greaterThanOrEqualTo(root.get("endOfAcademicYear"), startOfYear),
+                criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), endOfYear),
+                criteriaBuilder.equal(root.get("semester"), param.semester()),
+                criteriaBuilder.equal(root.get("isInternship"), param.internship())
+        );
+
+        return findAll(specification);
+    };
 
     default List<AssumptionOfDuty> findUpdatedDuties(ConstantRequestParam param, int page, int size) {
 
