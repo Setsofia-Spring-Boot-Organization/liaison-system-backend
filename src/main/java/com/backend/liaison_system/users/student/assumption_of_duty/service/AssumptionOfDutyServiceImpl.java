@@ -42,13 +42,13 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
 
     @Override
-    public ResponseEntity<Response<?>> getStudentAssumptionOfDuties(String studentId) {
+    public ResponseEntity<Response<?>> getStudentAssumptionOfDuties(String studentId, ConstantRequestParam param) {
 
         // verify that the user is a students
         studentUtil.verifyUserIsStudent(studentId);
 
         //filtering the data by the student's id
-        List<AssumptionOfDuty> duties =  assumptionOfDutyRepository.findAll().stream().filter(assumptionOfDuty -> assumptionOfDuty.getStudentId().equals(studentId)).toList();
+        List<AssumptionOfDuty> duties =  assumptionOfDutyRepository.findAllDuties(param).stream().filter(assumptionOfDuty -> assumptionOfDuty.getStudentId().equals(studentId)).toList();
 
         Response<?> response = new Response.Builder<>()
                 .status(HttpStatus.OK.value())
@@ -104,6 +104,8 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         assumption.setInternship(param.internship());
         assumption.setStartOfAcademicYear(UAcademicYear.startOfAcademicYear(param.startOfAcademicYear()));
         assumption.setEndOfAcademicYear(UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()));
+
+        assumption.setSemester(param.semester());
 
         // get the company details
         CompanyDetails companyDetails = createCompanyDetails(newAssumptionOfDuty);
@@ -204,8 +206,6 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         // Handle coordinates
         companyDetails.setCompanyLongitude(!(duty.companyExactLocation().isEmpty()) ? location.get().lng() : assumptionOfDuty.getCompanyDetails().getCompanyLongitude());
         companyDetails.setCompanyLatitude(!(duty.companyExactLocation().isEmpty()) ? location.get().lat() : assumptionOfDuty.getCompanyDetails().getCompanyLatitude());
-
-        System.out.println("companyDetails = " + companyDetails);
 
         return companyDetails;
     }
