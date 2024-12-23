@@ -38,8 +38,9 @@ public class AssumptionOfDutyController {
 
     @GetMapping(path = "/{student-id}")
     public ResponseEntity<Response<?>> getStudentAssumptionOfDuties(
-            @PathVariable("student-id") String studentId
+            @PathVariable("student-id") String studentId,
+            ConstantRequestParam param
     ) {
-        return assumptionOfDutyService.getStudentAssumptionOfDuties(studentId);
+        return assumptionOfDutyService.getStudentAssumptionOfDuties(studentId, param);
     }
 }

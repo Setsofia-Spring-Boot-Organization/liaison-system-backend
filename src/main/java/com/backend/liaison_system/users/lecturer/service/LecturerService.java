@@ -17,7 +17,7 @@ public interface LecturerService {
      * @param request A list of {@link NewLecturerRequest} containing the details for creating new lecturers.
      * @return A {@link ResponseEntity} containing a {@link Response} with a list of created {@link Lecturer} objects.
      */
-    ResponseEntity<Response<List<Lecturer>>> createNewLecturer(String adminID, List<NewLecturerRequest> request);
+    ResponseEntity<Response<List<Lecturer>>> createNewLecturer(String adminID, List<NewLecturerRequest> request, ConstantRequestParam param);
 
     /**
      * This method retrieves a list of lecturers associated with the specified ID.
@@ -26,13 +26,13 @@ public interface LecturerService {
      * @param id The ID used to retrieve the list of lecturers.
      * @return A {@link ResponseEntity} containing a {@link Response} with the {@link LecturerList}.
      */
-    ResponseEntity<Response<List<LecturerList>>> getLecturers(String id);
+    ResponseEntity<Response<List<LecturerList>>> getLecturers(String id, ConstantRequestParam param);
 
-    ResponseEntity<Response<?>> getDashboardData(String id);
+    ResponseEntity<Response<?>> getDashboardData(String id, ConstantRequestParam param);
 
     ResponseEntity<Response<?>> superviseStudent(String lecturerId, String studentId);
 
-    ResponseEntity<Response<?>> getStudentsLocation(String lecturerId);
+    ResponseEntity<Response<?>> getStudentsLocation(String lecturerId, ConstantRequestParam param);
 
     ResponseEntity<Response<?>> getTopIndustries(String lecturerId, ConstantRequestParam param);
 

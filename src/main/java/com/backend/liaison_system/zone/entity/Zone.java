@@ -28,6 +28,8 @@ public class Zone {
     private LocalDateTime dateCreated;
     private LocalDateTime dateUpdated;
 
+    private int semester;
+
     private InternshipType internshipType;
 
     @Embedded
@@ -36,8 +38,10 @@ public class Zone {
     @Embedded
     private Towns towns;
 
-    public Zone(String id, String name, String region, String zoneLead, LocalDateTime startOfAcademicYear, LocalDateTime endOfAcademicYear, LocalDateTime dateCreated, LocalDateTime dateUpdated, InternshipType internshipType, ZoneLecturers lecturers, Towns towns) {
-        this.id = id;
+
+    public Zone() {}
+
+    public Zone(String name, String region, String zoneLead, LocalDateTime startOfAcademicYear, LocalDateTime endOfAcademicYear, LocalDateTime dateCreated, LocalDateTime dateUpdated, int semester, InternshipType internshipType, ZoneLecturers lecturers, Towns towns) {
         this.name = name;
         this.region = region;
         this.zoneLead = zoneLead;
@@ -45,12 +49,19 @@ public class Zone {
         this.endOfAcademicYear = endOfAcademicYear;
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
+        this.semester = semester;
         this.internshipType = internshipType;
         this.lecturers = lecturers;
         this.towns = towns;
     }
 
-    public Zone() {}
+    public int getSemester() {
+        return semester;
+    }
+
+    public void setSemester(int semester) {
+        this.semester = semester;
+    }
 
     public String getId() {
         return id;
@@ -141,19 +152,16 @@ public class Zone {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Zone zone = (Zone) o;
-        return getId() != null && Objects.equals(getId(), zone.getId());
+        return semester == zone.semester && Objects.equals(id, zone.id) && Objects.equals(name, zone.name) && Objects.equals(region, zone.region) && Objects.equals(zoneLead, zone.zoneLead) && Objects.equals(startOfAcademicYear, zone.startOfAcademicYear) && Objects.equals(endOfAcademicYear, zone.endOfAcademicYear) && Objects.equals(dateCreated, zone.dateCreated) && Objects.equals(dateUpdated, zone.dateUpdated) && internshipType == zone.internshipType && Objects.equals(lecturers, zone.lecturers) && Objects.equals(towns, zone.towns);
     }
 
     @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public int hashCode() {
+        return Objects.hash(id, name, region, zoneLead, startOfAcademicYear, endOfAcademicYear, dateCreated, dateUpdated, semester, internshipType, lecturers, towns);
     }
 
     @Override
@@ -167,6 +175,7 @@ public class Zone {
                 ", endOfAcademicYear=" + endOfAcademicYear +
                 ", dateCreated=" + dateCreated +
                 ", dateUpdated=" + dateUpdated +
+                ", semester=" + semester +
                 ", internshipType=" + internshipType +
                 ", lecturers=" + lecturers +
                 ", towns=" + towns +

@@ -32,6 +32,8 @@ public class Lecturer {
     private String faculty;
     private String department;
 
+    private int semester;
+
     private boolean isZoneLead;
 
     @Enumerated(EnumType.STRING)
@@ -39,7 +41,7 @@ public class Lecturer {
 
     public Lecturer() {}
 
-    public Lecturer(String lecturerId, LocalDateTime createdAt, LocalDateTime updatedAt, String firstName, String lastName, String otherName, String email, String profilePictureUrl, String phone, String company, String password, String faculty, String department, boolean isZoneLead, UserRoles role) {
+    public Lecturer(String lecturerId, LocalDateTime createdAt, LocalDateTime updatedAt, String firstName, String lastName, String otherName, String email, String profilePictureUrl, String phone, String company, String password, String faculty, String department, int semester, boolean isZoneLead, UserRoles role) {
         this.lecturerId = lecturerId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -53,12 +55,21 @@ public class Lecturer {
         this.password = password;
         this.faculty = faculty;
         this.department = department;
+        this.semester = semester;
         this.isZoneLead = isZoneLead;
         this.role = role;
     }
 
     public String getId() {
         return id;
+    }
+
+    public int getSemester() {
+        return semester;
+    }
+
+    public void setSemester(int semester) {
+        this.semester = semester;
     }
 
     public void setId(String id) {
@@ -190,11 +201,11 @@ public class Lecturer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Lecturer lecturer = (Lecturer) o;
-        return isZoneLead == lecturer.isZoneLead && Objects.equals(id, lecturer.id) && Objects.equals(lecturerId, lecturer.lecturerId) && Objects.equals(createdAt, lecturer.createdAt) && Objects.equals(updatedAt, lecturer.updatedAt) && Objects.equals(firstName, lecturer.firstName) && Objects.equals(lastName, lecturer.lastName) && Objects.equals(otherName, lecturer.otherName) && Objects.equals(email, lecturer.email) && Objects.equals(profilePictureUrl, lecturer.profilePictureUrl) && Objects.equals(phone, lecturer.phone) && Objects.equals(company, lecturer.company) && Objects.equals(password, lecturer.password) && Objects.equals(faculty, lecturer.faculty) && Objects.equals(department, lecturer.department) && role == lecturer.role;
+        return semester == lecturer.semester && isZoneLead == lecturer.isZoneLead && Objects.equals(id, lecturer.id) && Objects.equals(lecturerId, lecturer.lecturerId) && Objects.equals(createdAt, lecturer.createdAt) && Objects.equals(updatedAt, lecturer.updatedAt) && Objects.equals(firstName, lecturer.firstName) && Objects.equals(lastName, lecturer.lastName) && Objects.equals(otherName, lecturer.otherName) && Objects.equals(email, lecturer.email) && Objects.equals(profilePictureUrl, lecturer.profilePictureUrl) && Objects.equals(phone, lecturer.phone) && Objects.equals(company, lecturer.company) && Objects.equals(password, lecturer.password) && Objects.equals(faculty, lecturer.faculty) && Objects.equals(department, lecturer.department) && role == lecturer.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, lecturerId, createdAt, updatedAt, firstName, lastName, otherName, email, profilePictureUrl, phone, company, password, faculty, department, isZoneLead, role);
+        return Objects.hash(id, lecturerId, createdAt, updatedAt, firstName, lastName, otherName, email, profilePictureUrl, phone, company, password, faculty, department, semester, isZoneLead, role);
     }
 }

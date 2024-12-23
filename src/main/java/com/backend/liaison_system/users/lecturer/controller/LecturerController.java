@@ -25,23 +25,26 @@ public class LecturerController {
     @PostMapping(path = "{admin-id}")
     public ResponseEntity<Response<List<Lecturer>>> createNewLecturer(
             @RequestBody List<NewLecturerRequest> requests,
-            @PathVariable("admin-id") String adminID
+            @PathVariable("admin-id") String adminID,
+            ConstantRequestParam param
     ) throws LiaisonException {
-        return lecturerService.createNewLecturer(adminID, requests);
+        return lecturerService.createNewLecturer(adminID, requests, param);
     }
 
     @GetMapping(path = "{admin-id}")
     public ResponseEntity<Response<List<LecturerList>>> getLecturers(
-            @PathVariable("admin-id") String id
+            @PathVariable("admin-id") String id,
+            ConstantRequestParam param
     ) throws LiaisonException {
-        return lecturerService.getLecturers(id);
+        return lecturerService.getLecturers(id, param);
     }
 
     @GetMapping(path = "dashboard/{lecture-id}")
     public ResponseEntity<Response<?>> dashboardStatistics(
-            @PathVariable("lecture-id") String id
+            @PathVariable("lecture-id") String id,
+            ConstantRequestParam param
     ) {
-        return lecturerService.getDashboardData(id);
+        return lecturerService.getDashboardData(id, param);
     }
 
     @PutMapping(path = "/{lecturer-id}/supervise/{student-id}")
@@ -55,9 +58,10 @@ public class LecturerController {
 
     @GetMapping(path = "/{lecturer-id}/students/location")
     public ResponseEntity<Response<?>> getAllStudentsLocation(
-            @PathVariable("lecturer-id") String lecturerId
+            @PathVariable("lecturer-id") String lecturerId,
+            ConstantRequestParam param
     ) {
-        return lecturerService.getStudentsLocation(lecturerId);
+        return lecturerService.getStudentsLocation(lecturerId, param);
     }
 
 

@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.student;
 
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +20,9 @@ public class StudentController {
 
     @GetMapping(path = "/dashboard/{student-id}")
     public ResponseEntity<Response<?>> studentDashboardData(
-            @PathVariable("student-id") String studentId
+            @PathVariable("student-id") String studentId,
+            ConstantRequestParam param
     ) {
-            return studentService.getDashboardData(studentId);
+            return studentService.getDashboardData(studentId, param);
     }
 }

@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.lecturer;
 
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
@@ -148,7 +149,7 @@ class LecturerServiceImplTest {
 
         // operation and assertions:
         String adminId = "";
-        ResponseEntity<Response<List<Lecturer>>> response = lecturerService.createNewLecturer(adminId, requests);
+        ResponseEntity<Response<List<Lecturer>>> response = lecturerService.createNewLecturer(adminId, requests, new ConstantRequestParam("2024", "2025", 1, false));
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -200,7 +201,7 @@ class LecturerServiceImplTest {
 
         // operations:
         String adminID = "";
-        LiaisonException exception = assertThrows(LiaisonException.class, () -> lecturerService.createNewLecturer(adminID, requests));
+        LiaisonException exception = assertThrows(LiaisonException.class, () -> lecturerService.createNewLecturer(adminID, requests, new ConstantRequestParam("2024", "2025", 1, false)));
 
         assertEquals(Error.EMAIL_ALREADY_EXISTS.label, exception.getMessage());
     }
@@ -233,7 +234,7 @@ class LecturerServiceImplTest {
         when(lecturerRepository.findAll()).thenReturn(lecturers);
 
         // operations and assertions
-        ResponseEntity<Response<List<LecturerList>>> response = lecturerService.getLecturers(admin().getId());
+        ResponseEntity<Response<List<LecturerList>>> response = lecturerService.getLecturers(admin().getId(), new ConstantRequestParam("2024", "2025", 1, false));
 
         assertNotNull(response);
         assertNotNull(response.getBody());

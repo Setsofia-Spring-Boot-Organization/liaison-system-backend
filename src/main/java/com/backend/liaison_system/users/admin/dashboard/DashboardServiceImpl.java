@@ -11,6 +11,7 @@ import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
+import com.backend.liaison_system.zone.specification.ZoneSpecification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,15 @@ public class DashboardServiceImpl implements DashboardService{
     private final LecturerRepository lecturerRepository;
     private final AssumptionOfDutyRepository assumptionOfDutyRepository;
     private final ZoneRepository zoneRepository;
+    private final ZoneSpecification zoneSpecification;
 
-    public DashboardServiceImpl(AdminUtil adminUtil, StudentRepository studentRepository, LecturerRepository lecturerRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, ZoneRepository zoneRepository) {
+    public DashboardServiceImpl(AdminUtil adminUtil, StudentRepository studentRepository, LecturerRepository lecturerRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, ZoneRepository zoneRepository, ZoneSpecification zoneSpecification) {
         this.adminUtil = adminUtil;
         this.studentRepository = studentRepository;
         this.lecturerRepository = lecturerRepository;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
         this.zoneRepository = zoneRepository;
+        this.zoneSpecification = zoneSpecification;
     }
 
     @Override
@@ -64,10 +67,11 @@ public class DashboardServiceImpl implements DashboardService{
 
         List<Student> assignedStudents = new ArrayList<>();
         List<Student> unAssignedStudents = new ArrayList<>();
-        studentRepository.findAllStudents(param).forEach(student -> assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(student.getId())
+        studentRepository.findAllStudents(param).forEach(student -> assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(student.getId(), param)
                 .flatMap(assumptionOfDuty -> zoneRepository.findZoneByRegionAndTown(
                 assumptionOfDuty.getCompanyDetails().getCompanyRegion(),
-                assumptionOfDuty.getCompanyDetails().getCompanyTown()
+                assumptionOfDuty.getCompanyDetails().getCompanyTown(),
+                param
         )).ifPresentOrElse(zone -> assignedStudents.add(student), () -> unAssignedStudents.add(student)));
 
         Response<?> response = new Response.Builder<>()
@@ -90,7 +94,7 @@ public class DashboardServiceImpl implements DashboardService{
 
         List<Lecturers> assignedLecturers = new ArrayList<>();
         List<Lecturers> unAssignedLecturers = new ArrayList<>();
-        lecturerRepository.findAll().forEach(lecturer -> zoneRepository.findAll().forEach(
+        lecturerRepository.findAllLectures(param).forEach(lecturer -> zoneSpecification.findZonesUsingZoneTypeAndAcademicDates(param).forEach(
                 zone -> {
                     if (zone.getLecturers().lecturers().contains(lecturer.getId())) {
                         assignedLecturers.add(createLecturerDTO(lecturer));

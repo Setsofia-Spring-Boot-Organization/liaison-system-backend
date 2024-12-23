@@ -9,6 +9,7 @@ import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
+import com.backend.liaison_system.util.UAcademicYear;
 import com.backend.liaison_system.zone.dao.AllZones;
 import com.backend.liaison_system.zone.dto.NewZone;
 import com.backend.liaison_system.zone.entity.Towns;
@@ -55,12 +56,8 @@ public class ZoneServiceImpl implements ZoneService{
         // sanitize the ids, making sure that they exist
         sanitizeTheLecturerIds(zones);
 
-        // create the new zone data
-        int startOfAcademicYear = Integer.parseInt(param.startOfAcademicYear());
-        int endOfAcademicYear = Integer.parseInt(param.endOfAcademicYear());
-
-        LocalDateTime startDate = LocalDate.of(startOfAcademicYear, 1, 1).atStartOfDay();
-        LocalDateTime endDate = LocalDate.of(endOfAcademicYear, 12, 31).atTime(23, 59, 59, 999999999);
+        LocalDateTime startDate = UAcademicYear.startOfAcademicYear(param.startOfAcademicYear());
+        LocalDateTime endDate = UAcademicYear.endOfAcademicYear(param.endOfAcademicYear());
 
         List<Zone> zones1 = new ArrayList<>();
         List<String> zoneLeadIds = new ArrayList<>();
@@ -82,6 +79,8 @@ public class ZoneServiceImpl implements ZoneService{
             zone1.setInternshipType((param.internship()) ? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT);
             zone1.setStartOfAcademicYear(startDate);
             zone1.setEndOfAcademicYear(endDate);
+
+            zone1.setSemester(param.semester());
 
             zone1.setLecturers(new ZoneLecturers(zone.lecturerIds()));
 

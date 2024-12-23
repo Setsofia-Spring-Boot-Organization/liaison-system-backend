@@ -22,6 +22,7 @@ public class StudentSpecifications {
         return (((root, query, criteriaBuilder) -> criteriaBuilder.and(
                 criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), startYear),
                 criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), endYear),
+                criteriaBuilder.equal(root.get("semester"), param.semester()),
                 criteriaBuilder.equal(root.get("internshipType"), (param.internship())? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT))
         ));
     }
