@@ -146,7 +146,8 @@ public class LecturerServiceImpl implements LecturerService {
         LecturerDashboardDataRes dataRes = new LecturerDashboardDataRes(
                 new StudentsData(studentData, students.size()),
                 new CompaniesData(companies, companies.size()),
-                new OtherLecturersData(atomicZone.getLecturers().lecturers(), atomicZone.getLecturers().lecturers().size())
+                atomicZone != null? new OtherLecturersData(atomicZone.getLecturers().lecturers(), atomicZone.getLecturers().lecturers().size()) :
+                                    new OtherLecturersData(Set.of(), 0)
         );
 
         Response<?> response = new Response.Builder<>()
