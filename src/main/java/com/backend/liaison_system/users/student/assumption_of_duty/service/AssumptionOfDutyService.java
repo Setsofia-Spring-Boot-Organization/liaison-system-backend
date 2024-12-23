@@ -11,5 +11,5 @@ public interface AssumptionOfDutyService {
 
     ResponseEntity<Response<?>> updateAssumptionOfDuty(String studentId, String dutyId, CreateNewAssumptionOfDuty duty);
 
-    ResponseEntity<Response<?>> getStudentAssumptionOfDuties(String studentId);
+    ResponseEntity<Response<?>> getStudentAssumptionOfDuties(String studentId, ConstantRequestParam param);
 }
