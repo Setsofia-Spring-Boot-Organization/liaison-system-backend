@@ -2,6 +2,7 @@ package com.backend.liaison_system.users.admin.dashboard;
 
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.admin.dao.Lecturers;
 import com.backend.liaison_system.users.admin.dashboard.dao.*;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
@@ -53,7 +54,7 @@ public class DashboardServiceImpl implements DashboardService{
                 .data(new Statistics(
                         lecturers.size(),
                         students.size(),
-                        0
+                        param.internship()? students.stream().filter(student -> student.getInternshipType().equals(InternshipType.INTERNSHIP)).toList().size() : students.stream().filter(student -> student.getInternshipType().equals(InternshipType.SEMESTER_OUT)).toList().size()
                 )).build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
