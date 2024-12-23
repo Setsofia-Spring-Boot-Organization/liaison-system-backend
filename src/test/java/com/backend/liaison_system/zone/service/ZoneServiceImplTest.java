@@ -110,6 +110,7 @@ class ZoneServiceImplTest {
         ConstantRequestParam param = new ConstantRequestParam(
                 "",
                 "",
+                1,
                 true
         );
 
