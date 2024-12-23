@@ -51,7 +51,7 @@ public class AdminUtil {
                 student.isAssumeDuty(),
                 student.getStartDate(),
                 student.getEndDate(),
-                student.getStatus()
+                student.getEndDate().isBefore(LocalDateTime.now())? Status.COMPLETED : Status.IN_PROGRESS
         );
     }
 
