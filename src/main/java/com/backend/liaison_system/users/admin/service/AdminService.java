@@ -26,7 +26,7 @@ public interface AdminService {
      * @param file an Excel sheet that contains all the students and their details
      * @return a Response Object
      */
-    Response<?> uploadStudents(String adminID, MultipartFile file, boolean internship);
+    Response<?> uploadStudents(String adminID, MultipartFile file, ConstantRequestParam param);
 
     Response<?> getStudents(String adminID, ConstantRequestParam param, int page, int size);
 
