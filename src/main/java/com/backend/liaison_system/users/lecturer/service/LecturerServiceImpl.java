@@ -102,7 +102,7 @@ public class LecturerServiceImpl implements LecturerService {
             lecturerLists.add(
                     new LecturerList(
                             lecturer.getId(),
-                            lecturer.getOtherName() == null? lecturer.getFirstName() + " " + lecturer.getLastName() : lecturer.getFirstName() + " " + lecturer.getOtherName() + " " + lecturer.getOtherName(),
+                            lecturer.getOtherName() == null? lecturer.getFirstName() + " " + lecturer.getLastName() : lecturer.getFirstName() + " " + lecturer.getOtherName() + " " + lecturer.getLastName(),
                             lecturer.getProfilePictureUrl()
                     )
             );
@@ -242,7 +242,7 @@ public class LecturerServiceImpl implements LecturerService {
             }
         });
 
-        topCompaniesData.sort(Comparator.comparing(TopCompaniesData::getTotalStudents));
+        topCompaniesData.sort(Comparator.comparing(TopCompaniesData::getTotalStudents).reversed());
         Response<?> response = new Response.Builder<>()
                 .status(HttpStatus.OK.value())
                 .message("top companies")
