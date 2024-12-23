@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.admin.util;
 
+import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
@@ -59,7 +60,7 @@ public class AdminUtil {
      * @param row the Excel row containing all the info on the student
      * @return a Student Object
      */
-    public Student buildStudentFromExcel(Row row) {
+    public Student buildStudentFromExcel(Row row, ConstantRequestParam param) {
         String password = getCellValueAsString(row.getCell(9));
         Student student = new Student();
         student.setEmail(getCellValueAsString(row.getCell(0)));
@@ -81,6 +82,7 @@ public class AdminUtil {
         student.setRole(UserRoles.STUDENT);
         student.setAssumeDuty(false);
         student.setSupervised(false);
+        student.setSemester(param.semester());
         student.setCreatedAt(LocalDateTime.now());
         student.setUpdatedAt(LocalDateTime.now());
         return student;
