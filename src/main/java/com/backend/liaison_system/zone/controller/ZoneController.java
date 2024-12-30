@@ -34,7 +34,8 @@ public class ZoneController {
     @GetMapping(path = "/{admin-id}/zone/{zone-id}")
     public ResponseEntity<Response<?>> getSingleZone(
             @PathVariable("admin-id") String adminId,
-            @PathVariable("zone-id") String zoneId) {
+            @PathVariable("zone-id") String zoneId
+    ) {
         return zoneService.getSingleZone(adminId, zoneId);
     }
 
