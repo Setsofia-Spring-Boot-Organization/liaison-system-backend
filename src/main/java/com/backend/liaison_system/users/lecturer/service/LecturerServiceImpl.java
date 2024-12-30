@@ -122,7 +122,6 @@ public class LecturerServiceImpl implements LecturerService {
         return lecturerLists;
     }
 
-
     @Override
     public ResponseEntity<Response<?>> getDashboardData(String id, ConstantRequestParam param) {
         //Verify that the user is a lecturer
