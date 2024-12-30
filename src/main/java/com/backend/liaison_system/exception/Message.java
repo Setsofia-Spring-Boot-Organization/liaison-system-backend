@@ -14,7 +14,8 @@ public enum Message {
     THE_REQUESTED_ZONE_DOES_NOT_EXIST("The requested zone does not exist"),
     FAILED_TO_SUPERVISE_STUDENT("Failed to supervise student. Try again"),
     THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS("The exact company location cannot be found on the map"),
-    THE_UPDATED_DATA_CANNOT_BE_SAVED("The updated data cannot be saved");
+    THE_UPDATED_DATA_CANNOT_BE_SAVED("The updated data cannot be saved"),
+    THE_STUDENT_CANNOT_BE_SUPERVISED_A_THIS_MOMENT("The student cannot be supervised at this moment. Try again later");
 
     public final String label;
     Message(String label) {
