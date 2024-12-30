@@ -7,6 +7,8 @@ import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 public interface LecturerService {
@@ -30,11 +32,15 @@ public interface LecturerService {
 
     ResponseEntity<Response<?>> getDashboardData(String id, ConstantRequestParam param);
 
-    ResponseEntity<Response<?>> superviseStudent(String lecturerId, String studentId);
+    ResponseEntity<Response<?>> superviseStudent(String lecturerId, String studentId, ConstantRequestParam param);
 
     ResponseEntity<Response<?>> getStudentsLocation(String lecturerId, ConstantRequestParam param);
 
     ResponseEntity<Response<?>> getTopIndustries(String lecturerId, ConstantRequestParam param);
 
     ResponseEntity<Response<?>> getStudentsFacultyAnalytics(String lecturerId, ConstantRequestParam param);
+
+    ResponseEntity<Response<?>> getStudentsSupervisedBySupervisor(String supervisorId, ConstantRequestParam param);
+
+    void generateStudentSupervisionReport(HttpServletResponse response, String supervisorId, ConstantRequestParam param) throws IOException;
 }

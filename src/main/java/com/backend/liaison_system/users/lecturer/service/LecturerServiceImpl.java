@@ -2,6 +2,7 @@ package com.backend.liaison_system.users.lecturer.service;
 
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
@@ -19,6 +20,10 @@ import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
+import com.backend.liaison_system.users.student.supervision.Supervision;
+import com.backend.liaison_system.users.student.supervision.SupervisionRepository;
+import com.backend.liaison_system.users.student.supervision.suoervision_report.SupervisionReportGenerator;
+import com.backend.liaison_system.util.UAcademicYear;
 import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.specification.ZoneSpecification;
 import jakarta.transaction.Transactional;
@@ -29,9 +34,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 public class LecturerServiceImpl implements LecturerService {
@@ -43,14 +53,16 @@ public class LecturerServiceImpl implements LecturerService {
     private final AssumptionOfDutyRepository assumptionOfDutyRepository;
     private final StudentRepository studentRepository;
     private final ZoneSpecification zoneSpecification;
+    private final SupervisionRepository supervisionRepository;
 
-    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil, LecturerUtil lecturerUtil, AssumptionOfDutyRepository assumptionOfDutyRepository, StudentRepository studentRepository, ZoneSpecification zoneSpecification) {
+    public LecturerServiceImpl(LecturerRepository lecturerRepository, AdminUtil adminUtil, LecturerUtil lecturerUtil, AssumptionOfDutyRepository assumptionOfDutyRepository, StudentRepository studentRepository, ZoneSpecification zoneSpecification, SupervisionRepository supervisionRepository) {
         this.lecturerRepository = lecturerRepository;
         this.adminUtil = adminUtil;
         this.lecturerUtil = lecturerUtil;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
         this.studentRepository = studentRepository;
         this.zoneSpecification = zoneSpecification;
+        this.supervisionRepository = supervisionRepository;
     }
 
     @Override
@@ -110,7 +122,6 @@ public class LecturerServiceImpl implements LecturerService {
         return lecturerLists;
     }
 
-
     @Override
     public ResponseEntity<Response<?>> getDashboardData(String id, ConstantRequestParam param) {
         //Verify that the user is a lecturer
@@ -163,7 +174,7 @@ public class LecturerServiceImpl implements LecturerService {
 
     @Transactional(rollbackOn = LiaisonException.class)
     @Override
-    public ResponseEntity<Response<?>> superviseStudent(String lecturerId, String studentId) {
+    public ResponseEntity<Response<?>> superviseStudent(String lecturerId, String studentId, ConstantRequestParam param) {
 
         //Verify that the user is a lecturer
         lecturerUtil.verifyUserIsLecturer(lecturerId);
@@ -175,6 +186,8 @@ public class LecturerServiceImpl implements LecturerService {
 
                 student.setSupervised(!student.isSupervised()); // set the supervised state to its opposite
                 studentRepository.save(student);
+
+                saveSupervisedStudent(student.getId(), lecturerId, param);
             } catch (Exception e) {
                 throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.FAILED_TO_SUPERVISE_STUDENT.label));
             }
@@ -184,11 +197,88 @@ public class LecturerServiceImpl implements LecturerService {
                 .status(HttpStatus.CREATED.value())
                 .message(isSupervised.get()? "student supervised successfully!" : "student unsupervised successfully!")
                 .build();
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
+    // Create the supervision data
+    @Transactional(rollbackOn = LiaisonException.class)
+    protected void saveSupervisedStudent(String studentId, String supervisorId, ConstantRequestParam param) {
+        Supervision supervision = new Supervision();
+        supervision.setCreatedAt(LocalDateTime.now());
+        supervision.setUpdatedAt(LocalDateTime.now());
+
+        supervision.setStudentId(studentId);
+        supervision.setSupervisorId(supervisorId);
+
+        supervision.setStartOfAcademicYear(UAcademicYear.startOfAcademicYear(param.startOfAcademicYear()));
+        supervision.setEndOfAcademicYear(UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()));
+
+        supervision.setSemester(param.semester());
+        supervision.setInternshipType(param.internship()? InternshipType.INTERNSHIP : InternshipType.SEMESTER_OUT);
+
+        try {
+            supervisionRepository.save(supervision);
+        } catch (Exception e) {
+            throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_STUDENT_CANNOT_BE_SUPERVISED_A_THIS_MOMENT.label));
+        }
+    }
+
+
+
+    @Override
+    public ResponseEntity<Response<?>> getStudentsSupervisedBySupervisor(String supervisorId, ConstantRequestParam param) {
+        // make sure that the user is a supervisor
+        lecturerUtil.verifyUserIsLecturer(supervisorId);
+
+        // get the students supervised by this supervisor
+        Set<StudentDto> supervisedStudents = getSupervisedStudents(supervisorId, param);
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("supervised students")
+                .data(supervisedStudents)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    @Override
+    public void generateStudentSupervisionReport(HttpServletResponse response, String supervisorId, ConstantRequestParam param) throws IOException {
+        // assert that the user is a supervisor
+        lecturerUtil.verifyUserIsLecturer(supervisorId);
+
+        response.setContentType("application/octet-stream");
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = formatter.format(LocalDateTime.now());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=student_supervision_report" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        // get the students supervised by this supervisor
+        Set<StudentDto> supervisedStudents = getSupervisedStudents(supervisorId, param);
+
+        SupervisionReportGenerator reportGenerator = new SupervisionReportGenerator(supervisedStudents);
+        reportGenerator.generateSupervisionReport(response);
+    }
+
+    /**
+     * This method retrieves a set of {@link Student} objects supervised by a specific supervisor based on the provided criteria.
+     * It fetches supervision records for the supervisor and retrieves the corresponding student details.
+     *
+     * @param supervisorId the ID of the supervisor
+     * @param param the {@link ConstantRequestParam} object containing details such as academic year, semester,
+     *              and internship type
+     * @return a set of {@link Student} objects supervised by the specified supervisor
+     */
+    private Set<StudentDto> getSupervisedStudents(String supervisorId, ConstantRequestParam param) {
+        Set<Student> supervisedStudents = new HashSet<>();
+        supervisionRepository.findAllStudentsSupervisedBySpecificSupervisor(supervisorId, param).forEach(
+                supervision -> studentRepository.findById(supervision.getStudentId()).ifPresent(supervisedStudents::add)
+        );
+        return supervisedStudents.stream().map(adminUtil::buildStudentDtoFromStudent).collect(Collectors.toSet()).stream().filter(StudentDto::isSupervised).collect(Collectors.toSet());
+    }
 
     @Override
     public ResponseEntity<Response<?>> getStudentsLocation(String lecturerId, ConstantRequestParam param) {
