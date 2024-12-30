@@ -11,6 +11,8 @@ import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.util.UAcademicYear;
 import com.backend.liaison_system.zone.dao.AllZones;
+import com.backend.liaison_system.zone.dao.LecturerData;
+import com.backend.liaison_system.zone.dao.ZoneData;
 import com.backend.liaison_system.zone.dto.NewZone;
 import com.backend.liaison_system.zone.entity.Towns;
 import com.backend.liaison_system.zone.entity.Zone;
@@ -22,11 +24,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class ZoneServiceImpl implements ZoneService{
@@ -42,6 +45,57 @@ public class ZoneServiceImpl implements ZoneService{
         this.zoneRepository = zoneRepository;
         this.zoneSpecification = zoneSpecification;
     }
+
+
+    @Override
+    public ResponseEntity<Response<?>> getSingleZone(String adminId, String zoneId) {
+        // verify that the user is an admin
+        adminUtil.verifyUserIsAdmin(adminId);
+
+        Set<Lecturer> lecturers = new HashSet<>();
+        AtomicReference<ZoneData> zoneData = new AtomicReference<>();
+        zoneRepository.findById(zoneId).ifPresent(
+                zone -> {
+                    Lecturer lecturer = getZoneLeadData(zone.getZoneLead());
+                    zone.getLecturers().lecturers().forEach(lecturerId -> lecturerRepository.findById(lecturerId).ifPresent(lecturers::add));
+
+                    // set the zone data
+                    zoneData.set(new ZoneData(
+                            zone.getName(),
+                            zone.getRegion(),
+                            zone.getTowns().towns(),
+                            lecturer.getOtherName() == null? lecturer.getFirstName() + " " + lecturer.getLastName() : lecturer.getFirstName() + " " + lecturer.getOtherName() + " " + lecturer.getLastName(),
+                            UAcademicYear.sanitizeLocalDateTimeToAcademicYear(zone.getStartOfAcademicYear()),
+                            UAcademicYear.sanitizeLocalDateTimeToAcademicYear(zone.getEndOfAcademicYear()),
+                            zone.getSemester(),
+                            new LecturerData(lecturers, lecturers.size())
+                    ));
+                }
+        );
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("zone details")
+                .data(zoneData)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * This method retrieves the {@link Lecturer} data for a specific zone lead based on their ID.
+     * It fetches the lecturer from the repository if the ID is found.
+     *
+     * @param id the ID of the zone lead
+     * @return the {@link Lecturer} object representing the zone lead, or {@code null} if no lecturer is found
+     */
+    private Lecturer getZoneLeadData(String id) {
+        AtomicReference<Lecturer> lecturer = new AtomicReference<>();
+
+        lecturerRepository.findById(id).ifPresent(lecturer::set);
+        return lecturer.get();
+    }
+
+
 
     @Transactional(rollbackOn = { Exception.class, LiaisonException.class })
     @Override
