@@ -50,7 +50,7 @@ public class ZoneController {
 
 
 
-    @PatchMapping(path = "/{admin-id}/update/{zone-id}")
+    @PutMapping(path = "/{admin-id}/update/{zone-id}")
     public ResponseEntity<Response<?>> updateZone(
             @PathVariable("admin-id") String adminId,
             @PathVariable("zone-id") String zoneId,
