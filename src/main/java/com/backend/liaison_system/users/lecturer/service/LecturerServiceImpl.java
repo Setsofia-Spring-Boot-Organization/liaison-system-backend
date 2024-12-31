@@ -22,7 +22,7 @@ import com.backend.liaison_system.users.student.assumption_of_duty.entities.Assu
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.users.student.supervision.Supervision;
 import com.backend.liaison_system.users.student.supervision.SupervisionRepository;
-import com.backend.liaison_system.users.student.supervision.suoervision_report.SupervisionReportGenerator;
+import com.backend.liaison_system.users.student.supervision.supervision_report.SupervisionReportGenerator;
 import com.backend.liaison_system.util.UAcademicYear;
 import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.specification.ZoneSpecification;
