@@ -239,6 +239,8 @@ public class ZoneServiceImpl implements ZoneService{
                     oldZone.setDateUpdated(LocalDateTime.now());
 
                     zoneRepository.save(oldZone);
+
+                    System.out.println("\nZone updated = \n");
                 },
                 () -> {throw new LiaisonException(Error.INVALID_ZONE_ID, new Throwable(Message.THE_REQUESTED_ZONE_DOES_NOT_EXIST.label));}
         );
