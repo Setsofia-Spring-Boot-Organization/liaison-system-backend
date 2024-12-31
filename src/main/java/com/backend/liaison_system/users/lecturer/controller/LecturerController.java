@@ -7,23 +7,12 @@ import com.backend.liaison_system.users.dao.LecturerList;
 import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.service.LecturerService;
 import com.backend.liaison_system.users.lecturer.dto.NewLecturerRequest;
-import com.backend.liaison_system.users.lecturer.util.LecturerUtil;
-import com.backend.liaison_system.users.student.Student;
-import com.backend.liaison_system.users.student.StudentRepository;
-import com.backend.liaison_system.users.student.supervision.SupervisionRepository;
-import com.backend.liaison_system.users.student.supervision.suoervision_report.SupervisionReportGenerator;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.DateFormatter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/lecturers")

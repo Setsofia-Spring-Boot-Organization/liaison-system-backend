@@ -1,6 +1,8 @@
 package com.backend.liaison_system.users.student.supervision.suoervision_report;
 
 import com.backend.liaison_system.users.admin.dto.StudentDto;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -8,9 +10,6 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Set;
 
@@ -23,7 +22,7 @@ public class SupervisionReportGenerator {
 
     public SupervisionReportGenerator(Set<StudentDto> students) {
         this.students = students;
-        xssfWorkbook = new XSSFWorkbook();
+        this.xssfWorkbook = new XSSFWorkbook();
     }
 
     private void writeHeader() {
@@ -34,6 +33,7 @@ public class SupervisionReportGenerator {
         xssfFont.setBold(true);
         xssfFont.setFontHeight(16);
         cellStyle.setFont(xssfFont);
+
         createCell(row, 0, "Student ID", cellStyle);
         createCell(row, 1, "Student Name", cellStyle);
         createCell(row, 2, "Student Email", cellStyle);
@@ -53,43 +53,43 @@ public class SupervisionReportGenerator {
             cell.setCellValue((Long) cellValue);
         } else if (cellValue instanceof String) {
             cell.setCellValue((String) cellValue);
-        } else {
+        } else if (cellValue instanceof Boolean) {
             cell.setCellValue((Boolean) cellValue);
         }
         cell.setCellStyle(cellStyle);
     }
 
-    private void writeFile() {
+    private void writeDataRows() {
         int rowCount = 1;
         CellStyle cellStyle = xssfWorkbook.createCellStyle();
         XSSFFont xssfFont = xssfWorkbook.createFont();
         xssfFont.setFontHeight(14);
         cellStyle.setFont(xssfFont);
 
-        students.forEach(
-            student -> {
-                Row row = xssfSheet.createRow(rowCount+1);
-                int columnCount = 0;
+        for (StudentDto student : students) {
+            Row row = xssfSheet.createRow(rowCount++);
+            int columnCount = 0;
 
-                createCell(row, columnCount+1, student.id(), cellStyle);
-                createCell(row, columnCount+1, student.name(), cellStyle);
-                createCell(row, columnCount+1, student.email(), cellStyle);
-                createCell(row, columnCount+1, student.phone(), cellStyle);
-                createCell(row, columnCount+1, student.faculty(), cellStyle);
-                createCell(row, columnCount+1, student.department(), cellStyle);
-                createCell(row, columnCount+1, student.course(), cellStyle);
-                createCell(row, columnCount+1, student.placeOfInternship(), cellStyle);
-            }
-        );
+            createCell(row, columnCount++, student.id(), cellStyle);
+            createCell(row, columnCount++, student.name(), cellStyle);
+            createCell(row, columnCount++, student.email(), cellStyle);
+            createCell(row, columnCount++, student.phone(), cellStyle);
+            createCell(row, columnCount++, student.faculty(), cellStyle);
+            createCell(row, columnCount++, student.department(), cellStyle);
+            createCell(row, columnCount++, student.course(), cellStyle);
+            createCell(row, columnCount++, student.placeOfInternship(), cellStyle);
+        }
     }
 
     public void generateSupervisionReport(HttpServletResponse response) throws IOException {
         writeHeader();
-        writeFile();
+        writeDataRows();
 
-        ServletOutputStream outputStream = response.getOutputStream();
-        xssfWorkbook.write(outputStream);
-        xssfWorkbook.close();
-        outputStream.close();
+        try (ServletOutputStream outputStream = response.getOutputStream()) {
+            xssfWorkbook.write(outputStream);
+        } finally {
+            xssfWorkbook.close();
+        }
     }
 }
+
