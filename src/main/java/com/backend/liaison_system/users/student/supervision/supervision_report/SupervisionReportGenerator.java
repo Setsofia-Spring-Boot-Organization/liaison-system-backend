@@ -1,4 +1,4 @@
-package com.backend.liaison_system.users.student.supervision.suoervision_report;
+package com.backend.liaison_system.users.student.supervision.supervision_report;
 
 import com.backend.liaison_system.users.admin.dto.StudentDto;
 import jakarta.servlet.ServletOutputStream;
@@ -45,7 +45,7 @@ public class SupervisionReportGenerator {
     }
 
     private void createCell(Row row, int columnCount, Object cellValue, CellStyle cellStyle) {
-        xssfSheet.autoSizeColumn(columnCount);
+        xssfSheet.setColumnWidth(columnCount, 5000); // Set fixed column width (adjust as needed)
         Cell cell = row.createCell(columnCount);
         if (cellValue instanceof Integer) {
             cell.setCellValue((Integer) cellValue);
@@ -58,6 +58,7 @@ public class SupervisionReportGenerator {
         }
         cell.setCellStyle(cellStyle);
     }
+
 
     private void writeDataRows() {
         int rowCount = 1;
