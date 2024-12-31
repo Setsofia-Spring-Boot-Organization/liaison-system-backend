@@ -26,6 +26,7 @@ import com.backend.liaison_system.users.student.supervision.suoervision_report.S
 import com.backend.liaison_system.util.UAcademicYear;
 import com.backend.liaison_system.zone.entity.Zone;
 import com.backend.liaison_system.zone.specification.ZoneSpecification;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
@@ -34,11 +35,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -249,8 +248,8 @@ public class LecturerServiceImpl implements LecturerService {
         lecturerUtil.verifyUserIsLecturer(supervisorId);
 
         response.setContentType("application/octet-stream");
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = formatter.format(LocalDateTime.now());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = LocalDateTime.now().format(formatter);
 
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=student_supervision_report" + currentDateTime + ".xlsx";
@@ -272,7 +271,7 @@ public class LecturerServiceImpl implements LecturerService {
      *              and internship type
      * @return a set of {@link Student} objects supervised by the specified supervisor
      */
-    private Set<StudentDto> getSupervisedStudents(String supervisorId, ConstantRequestParam param) {
+    public Set<StudentDto> getSupervisedStudents(String supervisorId, ConstantRequestParam param) {
         Set<Student> supervisedStudents = new HashSet<>();
         supervisionRepository.findAllStudentsSupervisedBySpecificSupervisor(supervisorId, param).forEach(
                 supervision -> studentRepository.findById(supervision.getStudentId()).ifPresent(supervisedStudents::add)
