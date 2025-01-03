@@ -2,6 +2,8 @@ package com.backend.liaison_system.users.student.assumption_of_duty.service;
 
 import com.backend.liaison_system.google_maps.responses.GMapLocation;
 import com.backend.liaison_system.region.util.RegionUtil;
+import com.backend.liaison_system.users.admin.dao.UpdatedAssumptionOfDutyData;
+import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.CompanyDetails;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.OldAssumptionOfDuty;
@@ -24,7 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -35,13 +39,15 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
     private final RegionUtil regionUtil;
     private final StudentUtil studentUtil;
     private final OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository;
+    private final AdminUtil adminUtil;
 
-    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil, OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository) {
+    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil, OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository, AdminUtil adminUtil) {
         this.studentRepository = studentRepository;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
         this.regionUtil = regionUtil;
         this.studentUtil = studentUtil;
         this.oldAssumptionOfDutyRepository = oldAssumptionOfDutyRepository;
+        this.adminUtil = adminUtil;
     }
 
 
@@ -257,5 +263,29 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         companyDetails.setCompanyLatitude(!(duty.companyExactLocation().isEmpty()) ? location.get().lat() : assumptionOfDuty.getCompanyDetails().getCompanyLatitude());
 
         return companyDetails;
+    }
+
+
+    @Override
+    public ResponseEntity<Response<?>> getUpdatedDutyDetails(String adminId, String assumptionId) {
+        // verify that the user is and admin
+        adminUtil.verifyUserIsAdmin(adminId);
+
+        AtomicReference<UpdatedAssumptionOfDutyData> updatedAssumptionOfDutyData = new AtomicReference<>();
+        Set<OldAssumptionOfDuty> oldAssumptionOfDuties = new HashSet<>();
+
+        assumptionOfDutyRepository.findById(assumptionId).ifPresent(assumptionOfDuty ->
+                {
+                    oldAssumptionOfDuties.addAll(oldAssumptionOfDutyRepository.findByAssumptionId(assumptionOfDuty.getId()));
+                    updatedAssumptionOfDutyData.set(new UpdatedAssumptionOfDutyData(oldAssumptionOfDuties, assumptionOfDuty));
+                }
+        );
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("updated assumption of duty")
+                .data(updatedAssumptionOfDutyData)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
