@@ -6,6 +6,6 @@ import com.backend.liaison_system.users.student.assumption_of_duty.entities.OldA
 import java.util.Set;
 
 public record UpdatedAssumptionOfDutyData(
-        Set<OldAssumptionOfDuty> oldAssumptionOfDuty,
+        Set<OldAssumptionOfDuty> oldAssumptionOfDuties,
         AssumptionOfDuty updatedAssumptionOfDuty
 ) { }
