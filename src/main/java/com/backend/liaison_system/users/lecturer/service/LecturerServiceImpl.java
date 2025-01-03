@@ -415,6 +415,12 @@ public class LecturerServiceImpl implements LecturerService {
      */
     private List<AssumptionOfDuty> getAssumptionOfDutiesInAParticularZone(Zone atomicZone, ConstantRequestParam param) {
         List<AssumptionOfDuty> duties = new ArrayList<>();
+
+        // return empty list if the zone is empty
+        if (atomicZone == null) {
+            return duties;
+        }
+
         assumptionOfDutyRepository.findAllDuties(param).iterator().forEachRemaining(assumptionOfDuty ->
                 {
                     if (assumptionOfDuty.getCompanyDetails().getCompanyRegion().equals(atomicZone.getRegion()) && atomicZone.getTowns().towns().contains(assumptionOfDuty.getCompanyDetails().getCompanyTown())) {
@@ -422,7 +428,6 @@ public class LecturerServiceImpl implements LecturerService {
                     }
                 }
         );
-
         return duties;
     }
 
