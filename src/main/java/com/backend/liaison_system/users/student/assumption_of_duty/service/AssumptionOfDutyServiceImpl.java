@@ -276,7 +276,7 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         assumptionOfDutyRepository.findById(assumptionId).ifPresent(assumptionOfDuty ->
                 {
-                    oldAssumptionOfDuties.addAll(oldAssumptionOfDutyRepository.findByAssumptionId(assumptionOfDuty.getId()));
+                    oldAssumptionOfDuties.addAll(oldAssumptionOfDutyRepository.findByAssumptionIdOrderByDateCreatedDesc(assumptionOfDuty.getId()));
                     updatedAssumptionOfDutyData.set(new UpdatedAssumptionOfDutyData(oldAssumptionOfDuties, assumptionOfDuty));
                 }
         );
