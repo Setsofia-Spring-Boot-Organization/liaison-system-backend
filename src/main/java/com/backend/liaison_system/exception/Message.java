@@ -15,7 +15,8 @@ public enum Message {
     FAILED_TO_SUPERVISE_STUDENT("Failed to supervise student. Try again"),
     THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS("The exact company location cannot be found on the map"),
     THE_UPDATED_DATA_CANNOT_BE_SAVED("The updated data cannot be saved"),
-    THE_STUDENT_CANNOT_BE_SUPERVISED_A_THIS_MOMENT("The student cannot be supervised at this moment. Try again later");
+    THE_STUDENT_CANNOT_BE_SUPERVISED_A_THIS_MOMENT("The student cannot be supervised at this moment. Try again later"),
+    CANNOT_GENERATE_AN_EMPTY_REPORT("Cannot generate an empty supervision report");
 
     public final String label;
     Message(String label) {

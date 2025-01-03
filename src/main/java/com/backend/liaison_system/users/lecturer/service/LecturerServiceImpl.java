@@ -258,6 +258,11 @@ public class LecturerServiceImpl implements LecturerService {
         // get the students supervised by this supervisor
         Set<StudentDto> supervisedStudents = getSupervisedStudents(supervisorId, param);
 
+        // throw an exception when the lecturer had not supervised any student
+        if (supervisedStudents.isEmpty()) {
+            throw new LiaisonException(Error.CANNOT_GENERATE_REPORT, new Throwable(Message.CANNOT_GENERATE_AN_EMPTY_REPORT.label));
+        }
+
         SupervisionReportGenerator reportGenerator = new SupervisionReportGenerator(supervisedStudents);
         reportGenerator.generateSupervisionReport(response);
     }
