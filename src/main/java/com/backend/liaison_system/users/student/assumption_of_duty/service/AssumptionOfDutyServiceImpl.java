@@ -4,7 +4,9 @@ import com.backend.liaison_system.google_maps.responses.GMapLocation;
 import com.backend.liaison_system.region.util.RegionUtil;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.CompanyDetails;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.OldAssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
+import com.backend.liaison_system.users.student.assumption_of_duty.repository.OldAssumptionOfDutyRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.requests.CreateNewAssumptionOfDuty;
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
@@ -32,12 +34,14 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
     private final AssumptionOfDutyRepository assumptionOfDutyRepository;
     private final RegionUtil regionUtil;
     private final StudentUtil studentUtil;
+    private final OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository;
 
-    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil) {
+    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil, OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository) {
         this.studentRepository = studentRepository;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
         this.regionUtil = regionUtil;
         this.studentUtil = studentUtil;
+        this.oldAssumptionOfDutyRepository = oldAssumptionOfDutyRepository;
     }
 
 
@@ -158,6 +162,9 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         assumptionOfDutyRepository.findById(dutyId).ifPresent(assumptionOfDuty -> {
             try {
+                // create the old version of the assumption of duty
+                createOldAssumptionOfDuty(assumptionOfDuty);
+
                 // update the assumption of duty
                 CompanyDetails companyDetails = updateCompanyDetails(duty, assumptionOfDuty);
 
@@ -174,10 +181,52 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         Response<?> response = new Response.Builder<>()
                 .status(HttpStatus.CREATED.value())
-                .message("assumption of duty submitted successfully!")
+                .message("assumption of duty updated successfully!")
                 .build();
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    private static CompanyDetails getOldCompanyDetails(AssumptionOfDuty assumptionOfDuty) {
+        CompanyDetails oldCompanyDetails = new CompanyDetails();
+        oldCompanyDetails.setCompanyName(assumptionOfDuty.getCompanyDetails().getCompanyName());
+        oldCompanyDetails.setCompanyPhone(assumptionOfDuty.getCompanyDetails().getCompanyPhone());
+        oldCompanyDetails.setCompanyExactLocation(assumptionOfDuty.getCompanyDetails().getCompanyExactLocation());
+        oldCompanyDetails.setCompanyTown(assumptionOfDuty.getCompanyDetails().getCompanyTown());
+        oldCompanyDetails.setCompanyRegion(assumptionOfDuty.getCompanyDetails().getCompanyRegion());
+        oldCompanyDetails.setCompanyAddress(assumptionOfDuty.getCompanyDetails().getCompanyAddress());
+        oldCompanyDetails.setCompanyEmail(assumptionOfDuty.getCompanyDetails().getCompanyEmail());
+        oldCompanyDetails.setCompanySupervisor(assumptionOfDuty.getCompanyDetails().getCompanySupervisor());
+        oldCompanyDetails.setSupervisorPhone(assumptionOfDuty.getCompanyDetails().getSupervisorPhone());
+        oldCompanyDetails.setLetterTo(assumptionOfDuty.getCompanyDetails().getLetterTo());
+        oldCompanyDetails.setCompanyLatitude(assumptionOfDuty.getCompanyDetails().getCompanyLatitude());
+        oldCompanyDetails.setCompanyLongitude(assumptionOfDuty.getCompanyDetails().getCompanyLongitude());
+        return oldCompanyDetails;
+    }
+
+    @Transactional(rollbackOn = LiaisonException.class)
+    protected void createOldAssumptionOfDuty(AssumptionOfDuty assumptionOfDuty) {
+        OldAssumptionOfDuty oldAssumptionOfDuty = new OldAssumptionOfDuty();
+
+        oldAssumptionOfDuty.setStudentId(oldAssumptionOfDuty.getStudentId());
+        oldAssumptionOfDuty.setAssumptionId(assumptionOfDuty.getId());
+
+        oldAssumptionOfDuty.setDateCreated(LocalDateTime.now());
+        oldAssumptionOfDuty.setDateCommenced(assumptionOfDuty.getDateCommenced());
+
+        oldAssumptionOfDuty.setStartOfAcademicYear(assumptionOfDuty.getStartOfAcademicYear());
+        oldAssumptionOfDuty.setEndOfAcademicYear(assumptionOfDuty.getEndOfAcademicYear());
+
+        oldAssumptionOfDuty.setSemester(assumptionOfDuty.getSemester());
+        oldAssumptionOfDuty.setInternship(assumptionOfDuty.isInternship());
+
+        CompanyDetails oldCompanyDetails = getOldCompanyDetails(assumptionOfDuty);
+        oldAssumptionOfDuty.setCompanyDetails(oldCompanyDetails);
+
+        try {
+            oldAssumptionOfDutyRepository.save(oldAssumptionOfDuty);
+        } catch (Exception e) {
+            throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_UPDATED_DATA_CANNOT_BE_SAVED.label));
+        }
     }
 
     private CompanyDetails updateCompanyDetails(CreateNewAssumptionOfDuty duty, AssumptionOfDuty assumptionOfDuty) {
