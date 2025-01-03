@@ -12,7 +12,8 @@ public enum Error {
     INVALID_USER_IDS("invalid user ids"),
     INVALID_INTERNSHIP_TYPE("invalid internship type"),
     FILE_SIZE_TOO_LARGE("file size too large"),
-    INVALID_ZONE_ID("invalid zone id");
+    INVALID_ZONE_ID("invalid zone id"),
+    CANNOT_GENERATE_REPORT("cannot generate report");
 
     public final String label;
     Error(String label) {
