@@ -6,6 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface OldAssumptionOfDutyRepository extends CrudRepository<OldAssumptionOfDuty, String> {
-
-    List<OldAssumptionOfDuty> findByAssumptionId(String assumptionId);
+    List<OldAssumptionOfDuty> findByAssumptionIdOrderByDateCreatedDesc(String assumptionId);
 }
