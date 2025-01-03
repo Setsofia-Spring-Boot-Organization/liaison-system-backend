@@ -3,7 +3,7 @@ package com.backend.liaison_system.exception;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LiaisonException extends RuntimeException{
+public class LiaisonException extends RuntimeException {
     final Error error;
 
     public LiaisonException(Error error) {
