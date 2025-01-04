@@ -12,9 +12,10 @@ public class OldAssumptionOfDuty {
     private String id;
 
     private String studentId;
-    private String assumptionId;
+    private String updatedAssumptionOfDutyId;
 
     private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
 
     private  String dateCommenced;
 
@@ -31,10 +32,11 @@ public class OldAssumptionOfDuty {
 
     public OldAssumptionOfDuty() { }
 
-    public OldAssumptionOfDuty(String studentId, String assumptionId, LocalDateTime dateCreated, String dateCommenced, LocalDateTime startOfAcademicYear, LocalDateTime endOfAcademicYear, int semester, boolean isInternship, boolean isUpdated, CompanyDetails companyDetails) {
+    public OldAssumptionOfDuty(String studentId, String updatedAssumptionOfDutyId, LocalDateTime dateCreated, LocalDateTime dateUpdated, String dateCommenced, LocalDateTime startOfAcademicYear, LocalDateTime endOfAcademicYear, int semester, boolean isInternship, boolean isUpdated, CompanyDetails companyDetails) {
         this.studentId = studentId;
-        this.assumptionId = assumptionId;
+        this.updatedAssumptionOfDutyId = updatedAssumptionOfDutyId;
         this.dateCreated = dateCreated;
+        this.dateUpdated = dateUpdated;
         this.dateCommenced = dateCommenced;
         this.startOfAcademicYear = startOfAcademicYear;
         this.endOfAcademicYear = endOfAcademicYear;
@@ -60,12 +62,12 @@ public class OldAssumptionOfDuty {
         this.studentId = studentId;
     }
 
-    public String getAssumptionId() {
-        return assumptionId;
+    public String getUpdatedAssumptionOfDutyId() {
+        return updatedAssumptionOfDutyId;
     }
 
-    public void setAssumptionId(String assumptionId) {
-        this.assumptionId = assumptionId;
+    public void setUpdatedAssumptionOfDutyId(String updatedAssumptionOfDutyId) {
+        this.updatedAssumptionOfDutyId = updatedAssumptionOfDutyId;
     }
 
     public LocalDateTime getDateCreated() {
@@ -74,6 +76,14 @@ public class OldAssumptionOfDuty {
 
     public void setDateCreated(LocalDateTime dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public LocalDateTime getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(LocalDateTime dateUpdated) {
+        this.dateUpdated = dateUpdated;
     }
 
     public String getDateCommenced() {
@@ -136,12 +146,12 @@ public class OldAssumptionOfDuty {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         OldAssumptionOfDuty that = (OldAssumptionOfDuty) o;
-        return semester == that.semester && isInternship == that.isInternship && isUpdated == that.isUpdated && Objects.equals(id, that.id) && Objects.equals(studentId, that.studentId) && Objects.equals(assumptionId, that.assumptionId) && Objects.equals(dateCreated, that.dateCreated) && Objects.equals(dateCommenced, that.dateCommenced) && Objects.equals(startOfAcademicYear, that.startOfAcademicYear) && Objects.equals(endOfAcademicYear, that.endOfAcademicYear) && Objects.equals(companyDetails, that.companyDetails);
+        return semester == that.semester && isInternship == that.isInternship && isUpdated == that.isUpdated && Objects.equals(id, that.id) && Objects.equals(studentId, that.studentId) && Objects.equals(updatedAssumptionOfDutyId, that.updatedAssumptionOfDutyId) && Objects.equals(dateCreated, that.dateCreated) && Objects.equals(dateUpdated, that.dateUpdated) && Objects.equals(dateCommenced, that.dateCommenced) && Objects.equals(startOfAcademicYear, that.startOfAcademicYear) && Objects.equals(endOfAcademicYear, that.endOfAcademicYear) && Objects.equals(companyDetails, that.companyDetails);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, studentId, assumptionId, dateCreated, dateCommenced, startOfAcademicYear, endOfAcademicYear, semester, isInternship, isUpdated, companyDetails);
+        return Objects.hash(id, studentId, updatedAssumptionOfDutyId, dateCreated, dateUpdated, dateCommenced, startOfAcademicYear, endOfAcademicYear, semester, isInternship, isUpdated, companyDetails);
     }
 
     @Override
@@ -149,8 +159,9 @@ public class OldAssumptionOfDuty {
         return "OldAssumptionOfDuty{" +
                 "id='" + id + '\'' +
                 ", studentId='" + studentId + '\'' +
-                ", assumptionId='" + assumptionId + '\'' +
+                ", updatedAssumptionOfDutyId='" + updatedAssumptionOfDutyId + '\'' +
                 ", dateCreated=" + dateCreated +
+                ", dateUpdated=" + dateUpdated +
                 ", dateCommenced='" + dateCommenced + '\'' +
                 ", startOfAcademicYear=" + startOfAcademicYear +
                 ", endOfAcademicYear=" + endOfAcademicYear +
