@@ -214,16 +214,20 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         OldAssumptionOfDuty oldAssumptionOfDuty = new OldAssumptionOfDuty();
 
         oldAssumptionOfDuty.setStudentId(oldAssumptionOfDuty.getStudentId());
-        oldAssumptionOfDuty.setAssumptionId(assumptionOfDuty.getId());
+        oldAssumptionOfDuty.setUpdatedAssumptionOfDutyId(assumptionOfDuty.getId());
 
-        oldAssumptionOfDuty.setDateCreated(LocalDateTime.now());
+        oldAssumptionOfDuty.setDateCreated(assumptionOfDuty.getDateCreated());
+        oldAssumptionOfDuty.setDateUpdated(assumptionOfDuty.getDateUpdated());
+
         oldAssumptionOfDuty.setDateCommenced(assumptionOfDuty.getDateCommenced());
 
         oldAssumptionOfDuty.setStartOfAcademicYear(assumptionOfDuty.getStartOfAcademicYear());
         oldAssumptionOfDuty.setEndOfAcademicYear(assumptionOfDuty.getEndOfAcademicYear());
 
         oldAssumptionOfDuty.setSemester(assumptionOfDuty.getSemester());
+
         oldAssumptionOfDuty.setInternship(assumptionOfDuty.isInternship());
+        oldAssumptionOfDuty.setUpdated(assumptionOfDuty.isUpdated());
 
         CompanyDetails oldCompanyDetails = getOldCompanyDetails(assumptionOfDuty);
         oldAssumptionOfDuty.setCompanyDetails(oldCompanyDetails);
@@ -276,7 +280,7 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         assumptionOfDutyRepository.findById(assumptionId).ifPresent(assumptionOfDuty ->
                 {
-                    oldAssumptionOfDuties.addAll(oldAssumptionOfDutyRepository.findByAssumptionIdOrderByDateCreatedDesc(assumptionOfDuty.getId()));
+                    oldAssumptionOfDuties.addAll(oldAssumptionOfDutyRepository.findByUpdatedAssumptionOfDutyIdOrderByDateCreatedDesc(assumptionOfDuty.getId()));
                     updatedAssumptionOfDutyData.set(new UpdatedAssumptionOfDutyData(oldAssumptionOfDuties, assumptionOfDuty));
                 }
         );
