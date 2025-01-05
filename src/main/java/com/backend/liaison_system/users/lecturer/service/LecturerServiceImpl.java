@@ -510,6 +510,9 @@ public class LecturerServiceImpl implements LecturerService {
             lecturer.setRole(UserRoles.LECTURER);
             lecturer.setZoneLead(false);
 
+            lecturer.setStartOfAcademicYear(UAcademicYear.startOfAcademicYear(param.startOfAcademicYear()));
+            lecturer.setEndOfAcademicYear(UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()));
+
             lecturer.setSemester(param.semester());
 
             // add the lecturer to the lecturers' list
