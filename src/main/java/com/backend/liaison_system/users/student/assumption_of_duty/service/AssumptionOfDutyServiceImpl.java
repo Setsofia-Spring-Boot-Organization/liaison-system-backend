@@ -319,7 +319,7 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         Response<?> response = new Response.Builder<>()
                 .status(HttpStatus.OK.value())
-                .message("updated assumption of duty")
+                .message("attachments")
                 .data(attachments)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
