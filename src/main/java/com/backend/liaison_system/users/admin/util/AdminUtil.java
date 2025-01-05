@@ -13,6 +13,7 @@ import com.backend.liaison_system.users.admin.dto.StudentDto;
 import com.backend.liaison_system.users.admin.repository.AdminRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
+import com.backend.liaison_system.util.UAcademicYear;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -75,8 +76,8 @@ public class AdminUtil {
         student.setStudentEmail(getCellValueAsString(row.getCell(11)));
         student.setStudentPhone(getCellValueAsString(row.getCell(12)));
         student.setPlaceOfInternship(getCellValueAsString(row.getCell(13)));
-        student.setStartDate(row.getCell(14).getLocalDateTimeCellValue());
-        student.setEndDate(row.getCell(15).getLocalDateTimeCellValue());
+        student.setStartDate(UAcademicYear.startOfAcademicYear(param.startOfAcademicYear()));
+        student.setEndDate(UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()));
         student.setStatus(Status.IN_PROGRESS);
         student.setPassword(passwordEncoder.encode(password));
         student.setRole(UserRoles.STUDENT);
