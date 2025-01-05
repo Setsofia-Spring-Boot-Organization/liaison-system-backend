@@ -5,17 +5,12 @@ import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.util.UAcademicYear;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
-
 public class LecturerSpecification {
     public static Specification<Lecturer> getAllLecturers(ConstantRequestParam param) {
 
-        LocalDateTime startDate = UAcademicYear.startOfAcademicYear(param.startOfAcademicYear());
-        LocalDateTime endDate = UAcademicYear.endOfAcademicYear(param.endOfAcademicYear());
-
         return (root, query, criteriaBuilder) -> criteriaBuilder.and(
-                criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), startDate),
-                criteriaBuilder.lessThanOrEqualTo(root.get("updatedAt"), endDate),
+                criteriaBuilder.greaterThanOrEqualTo(root.get("startOfAcademicYear"), UAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
+                criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), UAcademicYear.endOfAcademicYear(param.endOfAcademicYear())),
                 criteriaBuilder.equal(root.get("semester"), param.semester())
         );
     }
