@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.student.assumption_of_duty.service;
 
+import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.google_maps.responses.GMapLocation;
 import com.backend.liaison_system.region.util.RegionUtil;
 import com.backend.liaison_system.users.admin.dao.UpdatedAssumptionOfDutyData;
@@ -18,6 +19,7 @@ import com.backend.liaison_system.exception.Message;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.google_maps.GoogleMapServices;
+import com.backend.liaison_system.users.student.assumption_of_duty.responses.Attachments;
 import com.backend.liaison_system.users.student.util.StudentUtil;
 import com.backend.liaison_system.util.UAcademicYear;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,7 +71,6 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 
 
     @Transactional(rollbackOn = LiaisonException.class)
@@ -209,6 +211,7 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         return oldCompanyDetails;
     }
 
+
     @Transactional(rollbackOn = LiaisonException.class)
     protected void createOldAssumptionOfDuty(AssumptionOfDuty assumptionOfDuty) {
         OldAssumptionOfDuty oldAssumptionOfDuty = new OldAssumptionOfDuty();
@@ -289,6 +292,35 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
                 .status(HttpStatus.OK.value())
                 .message("updated assumption of duty")
                 .data(updatedAssumptionOfDutyData)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    @Override
+    public ResponseEntity<Response<?>> getAllDuties(String adminId, ConstantRequestParam param, int page, int size) {
+        // Verify that the user performing the action is an admin
+        adminUtil.verifyUserIsAdmin(adminId);
+
+        List<Attachments> attachments = new ArrayList<>();
+        assumptionOfDutyRepository.findAllDutiesWithPagination(param, page, size).forEach(assumption -> studentRepository.findById(assumption.getStudentId()).ifPresent(
+                student -> attachments.add(
+                        new Attachments(
+                                student.getId(),
+                                student.getStudentFirstName() + student.getStudentLastName() + student.getStudentOtherName(),
+                                student.getStudentDepartment(),
+                                student.getStudentFaculty(),
+                                UAcademicYear.stringDateToLocalDateTime(assumption.getDateCommenced()),
+                                student.getEndDate(),
+                                student.isSupervised()? Status.COMPLETED : student.isAssumeDuty()? Status.IN_PROGRESS : Status.NOT_STARTED
+                        )
+                )
+        ));
+
+        Response<?> response = new Response.Builder<>()
+                .status(HttpStatus.OK.value())
+                .message("updated assumption of duty")
+                .data(attachments)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
