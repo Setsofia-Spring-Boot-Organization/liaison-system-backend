@@ -30,4 +30,8 @@ public class UAcademicYear {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
         return formatter.format(dateTime);
     }
+
+    public static LocalDateTime stringDateToLocalDateTime(String date) {
+        return LocalDateTime.parse(date + "T00:00:00", DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    }
 }
