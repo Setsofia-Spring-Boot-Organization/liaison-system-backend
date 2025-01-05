@@ -5,6 +5,7 @@ import com.backend.liaison_system.users.student.assumption_of_duty.entities.Assu
 import com.backend.liaison_system.util.UAcademicYear;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
+import org.hibernate.query.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -58,6 +59,20 @@ public interface AssumptionOfDutyRepository extends CrudRepository<AssumptionOfD
         );
 
         return findAll(specification);
+    };
+
+    default List<AssumptionOfDuty> findAllDutiesWithPagination(ConstantRequestParam param, int page, int size) {
+
+        Pageable pageRequest = PageRequest.of(page, size);
+
+        Specification<AssumptionOfDuty> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
+                criteriaBuilder.greaterThanOrEqualTo(root.get("startOfAcademicYear"), UAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
+                criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), UAcademicYear.endOfAcademicYear(param.endOfAcademicYear())),
+                criteriaBuilder.equal(root.get("semester"), param.semester()),
+                criteriaBuilder.equal(root.get("isInternship"), param.internship())
+        );
+
+        return findAll(specification, pageRequest).getContent();
     };
 
     default List<AssumptionOfDuty> findUpdatedDuties(ConstantRequestParam param, int page, int size) {
