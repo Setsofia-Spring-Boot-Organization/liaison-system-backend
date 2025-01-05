@@ -182,8 +182,8 @@ public class AdminServiceImpl implements AdminService{
         Pageable pageable = PageRequest.of(page, size);
         Page<Student> students = studentRepository.findAll(param, pageable);
 
-        int studentSize = studentRepository.findAll().size();
-        List<StudentDto> studentDtoList = students.stream().map(adminUtil::buildStudentDtoFromStudent).toList();
+        int studentSize = students.getContent().size();
+        List<StudentDto> studentDtoList = students.getContent().stream().map(adminUtil::buildStudentDtoFromStudent).toList();
         TabularDataResponse response = new TabularDataResponse
                 .Builder()
                 .currentPage(students.getNumber())
