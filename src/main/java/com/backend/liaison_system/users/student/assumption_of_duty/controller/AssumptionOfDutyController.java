@@ -43,4 +43,14 @@ public class AssumptionOfDutyController {
     ) {
         return assumptionOfDutyService.getStudentAssumptionOfDuties(studentId, param);
     }
+
+    @GetMapping(path = "/{admin-id}/all/duties")
+    public ResponseEntity<Response<?>> getAllDuties(
+            @PathVariable("admin-id") String adminId,
+            ConstantRequestParam param,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        return assumptionOfDutyService.getAllDuties(adminId, param, page, size);
+    }
 }
