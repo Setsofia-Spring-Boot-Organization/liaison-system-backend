@@ -2,7 +2,6 @@ package com.backend.liaison_system.users.admin.dashboard;
 
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
-import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.users.admin.dao.Lecturers;
 import com.backend.liaison_system.users.admin.dashboard.dao.*;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
@@ -10,6 +9,7 @@ import com.backend.liaison_system.users.lecturer.entity.Lecturer;
 import com.backend.liaison_system.users.lecturer.repository.LecturerRepository;
 import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
+import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.zone.repository.ZoneRepository;
 import com.backend.liaison_system.zone.specification.ZoneSpecification;
@@ -47,6 +47,7 @@ public class DashboardServiceImpl implements DashboardService{
 
         List<Student> students = studentRepository.findAllStudents(param);
         List<Lecturer> lecturers = lecturerRepository.findAllLectures(param);
+        List<AssumptionOfDuty> assumptionOfDuties = assumptionOfDutyRepository.findAllDuties(param);
 
         Response<Statistics> response = new Response.Builder<Statistics>()
                 .status(HttpStatus.OK.value())
@@ -54,7 +55,7 @@ public class DashboardServiceImpl implements DashboardService{
                 .data(new Statistics(
                         lecturers.size(),
                         students.size(),
-                        param.internship()? students.stream().filter(student -> student.getInternshipType().equals(InternshipType.INTERNSHIP)).toList().size() : students.stream().filter(student -> student.getInternshipType().equals(InternshipType.SEMESTER_OUT)).toList().size()
+                        assumptionOfDuties.size()
                 )).build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

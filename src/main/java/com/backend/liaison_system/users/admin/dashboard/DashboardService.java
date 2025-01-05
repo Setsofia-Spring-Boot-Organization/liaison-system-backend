@@ -15,5 +15,15 @@ public interface DashboardService {
      */
     ResponseEntity<Response<Statistics>> getStatistics(String id, ConstantRequestParam param);
 
+
+    /**
+     * This method retrieves both assigned and unassigned students and lecturers for a specific admin.
+     *
+     * @param adminId the unique identifier of the admin requesting the information
+     * @param param a ConstantRequestParam object containing parameters for filtering or pagination
+     * @return a ResponseEntity containing a Response object. The Response object includes details
+     *         of assigned and unassigned students and lecturers, or an appropriate error message
+     *         if the retrieval fails.
+     */
     ResponseEntity<Response<?>> getAssignedAndUnassignedStudentsAndLecturers(String adminId, ConstantRequestParam param);
 }
