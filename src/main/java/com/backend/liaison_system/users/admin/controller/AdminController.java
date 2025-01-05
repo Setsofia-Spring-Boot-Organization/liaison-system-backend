@@ -9,7 +9,6 @@ import com.backend.liaison_system.users.admin.dto.AdminPageRequest;
 import com.backend.liaison_system.dto.NewUserRequest;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
-import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.service.AssumptionOfDutyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +23,10 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
     private final AssumptionOfDutyService assumptionOfDutyService;
-    private final AssumptionOfDutyRepository assumptionOfDutyRepository;
 
-    public AdminController(AdminService adminService, AssumptionOfDutyService assumptionOfDutyService, AssumptionOfDutyRepository assumptionOfDutyRepository) {
+    public AdminController(AdminService adminService, AssumptionOfDutyService assumptionOfDutyService) {
         this.adminService = adminService;
         this.assumptionOfDutyService = assumptionOfDutyService;
-        this.assumptionOfDutyRepository = assumptionOfDutyRepository;
     }
 
     @PostMapping
