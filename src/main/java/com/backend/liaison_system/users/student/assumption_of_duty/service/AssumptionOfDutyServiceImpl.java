@@ -26,6 +26,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -323,5 +324,14 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
                 .data(attachments)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    @Override
+    public ResponseEntity<Response<?>> uploadAssumptionOfDuties(String adminId, ConstantRequestParam param, MultipartFile file) {
+        //Verify that the user performing this action is an admin
+        adminUtil.verifyUserIsAdmin(adminId);
+
+        return null;
     }
 }

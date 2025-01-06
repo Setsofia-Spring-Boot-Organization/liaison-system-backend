@@ -89,12 +89,13 @@ public class AdminUtil {
         return student;
     }
 
+
     /**
      * This is a simple helper function that takes in each cell and returns its value as a String
      * @param cell the Cell containing the value
      * @return a String
      */
-    private String getCellValueAsString(Cell cell) {
+    public String getCellValueAsString(Cell cell) {
         if (cell == null) return "";
         return switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();

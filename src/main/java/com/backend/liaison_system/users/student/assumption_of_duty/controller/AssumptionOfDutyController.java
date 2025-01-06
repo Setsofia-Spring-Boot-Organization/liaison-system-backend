@@ -7,6 +7,7 @@ import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.dao.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "liaison/api/v1/assumption-of-duty")
@@ -52,5 +53,14 @@ public class AssumptionOfDutyController {
             @RequestParam int size
     ) {
         return assumptionOfDutyService.getAllDuties(adminId, param, page, size);
+    }
+
+    @PostMapping(path = "/{admin-id}/upload/duties")
+    public ResponseEntity<Response<?>> uploadAssumptionOfDuties(
+            @PathVariable("admin-id") String adminId,
+            ConstantRequestParam param,
+            @RequestPart(name = "file") MultipartFile file
+    ) {
+        return assumptionOfDutyService.uploadAssumptionOfDuties(adminId, param, file);
     }
 }
