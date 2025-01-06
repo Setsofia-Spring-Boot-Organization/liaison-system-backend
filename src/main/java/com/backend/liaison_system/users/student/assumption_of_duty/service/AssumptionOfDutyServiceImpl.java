@@ -20,20 +20,28 @@ import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.google_maps.GoogleMapServices;
 import com.backend.liaison_system.users.student.assumption_of_duty.responses.Attachments;
+import com.backend.liaison_system.users.student.assumption_of_duty.util.AssumptionOfDutyUtil;
 import com.backend.liaison_system.users.student.util.StudentUtil;
 import com.backend.liaison_system.util.UAcademicYear;
 import jakarta.transaction.Transactional;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.backend.liaison_system.exception.Error.ERROR_SAVING_DATA;
 
 @Service
 public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
@@ -44,14 +52,16 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
     private final StudentUtil studentUtil;
     private final OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository;
     private final AdminUtil adminUtil;
+    private final AssumptionOfDutyUtil dutyUtil;
 
-    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil, OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository, AdminUtil adminUtil) {
+    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil, OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository, AdminUtil adminUtil, AssumptionOfDutyUtil dutyUtil) {
         this.studentRepository = studentRepository;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
         this.regionUtil = regionUtil;
         this.studentUtil = studentUtil;
         this.oldAssumptionOfDutyRepository = oldAssumptionOfDutyRepository;
         this.adminUtil = adminUtil;
+        this.dutyUtil = dutyUtil;
     }
 
 
@@ -332,6 +342,43 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         //Verify that the user performing this action is an admin
         adminUtil.verifyUserIsAdmin(adminId);
 
-        return null;
+        try {
+
+            //create an arrayList of students
+            List<AssumptionOfDuty> assumptionOfDuties = new ArrayList<>();
+
+            //Turn the file into an InputStream and turn into a workbook
+            InputStream inputStream = new BufferedInputStream(file.getInputStream());
+            Workbook workbook;
+            if (FileMagic.valueOf(inputStream) == FileMagic.OOXML) {
+                workbook = new XSSFWorkbook(inputStream); // For `.xlsx` files
+            } else if (FileMagic.valueOf(inputStream) == FileMagic.OLE2) {
+                workbook = new HSSFWorkbook(inputStream); // For `.xls` files
+            } else  {
+                throw new LiaisonException(ERROR_SAVING_DATA);
+            }
+
+            Sheet sheet = workbook.getSheetAt(0);
+
+            //For each row in the sheet extract the student details
+            for(Row row : sheet) {
+                if(row.getRowNum() == 0) continue;
+                AssumptionOfDuty currentDuty = dutyUtil.buildDutyFromExcel(row, param);
+                //Ensure student does not already exist
+                Optional<AssumptionOfDuty> dutyCheck = assumptionOfDutyRepository.findById(currentDuty.getId());
+                if(dutyCheck.isEmpty()) {
+                    currentDuty.setInternship(!param.internship());
+                    assumptionOfDuties.add(currentDuty);
+                }
+            }
+            assumptionOfDutyRepository.saveAll(assumptionOfDuties);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new Response.Builder<>()
+                    .status(HttpStatus.CREATED.value())
+                    .message("assumption of duties created successfully")
+                    .build()
+            );
+        } catch (Exception e) {
+            throw new LiaisonException(ERROR_SAVING_DATA);
+        }
     }
 }
