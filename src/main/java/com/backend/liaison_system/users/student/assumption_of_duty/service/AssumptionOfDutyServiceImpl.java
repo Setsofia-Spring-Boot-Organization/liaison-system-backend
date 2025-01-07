@@ -386,6 +386,8 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
                 );
             }
 
+            System.out.println("assumptionOfDuties = " + assumptionOfDuties);
+
             System.out.println("STAGE ONE - 3");
 
 //            assumptionOfDutyRepository.saveAll(assumptionOfDuties);
