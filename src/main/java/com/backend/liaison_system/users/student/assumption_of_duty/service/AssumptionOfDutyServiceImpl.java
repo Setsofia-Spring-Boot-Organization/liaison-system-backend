@@ -1,5 +1,6 @@
 package com.backend.liaison_system.users.student.assumption_of_duty.service;
 
+import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.enums.Status;
 import com.backend.liaison_system.google_maps.responses.GMapLocation;
 import com.backend.liaison_system.region.util.RegionUtil;
@@ -364,14 +365,13 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
                 if(row.getRowNum() == 0) continue;
                 AssumptionOfDuty currentDuty = dutyUtil.buildDutyFromExcel(row, param);
 
-                System.out.println("currentDuty = " + currentDuty);
 
                 //Ensure assumption does not already exist
-                assumptionOfDutyRepository.findById(currentDuty.getId()).orElseGet(() -> {
+                Optional<AssumptionOfDuty> dutyCheck = assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(currentDuty.getStudentId(), param);
+                if(dutyCheck.isEmpty()) {
                     currentDuty.setInternship(!param.internship());
                     assumptionOfDuties.add(currentDuty);
-                    return null;}
-                );
+                }
             }
 
             System.out.println("assumptionOfDuties = " + assumptionOfDuties);
