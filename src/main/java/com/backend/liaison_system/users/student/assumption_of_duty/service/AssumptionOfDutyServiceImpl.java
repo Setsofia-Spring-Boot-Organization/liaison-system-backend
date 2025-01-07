@@ -344,6 +344,8 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
         try {
 
+            System.out.println("STAGE ONE - 1");
+
             //create an arrayList of students
             List<AssumptionOfDuty> assumptionOfDuties = new ArrayList<>();
 
@@ -358,20 +360,35 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
                 throw new LiaisonException(ERROR_SAVING_DATA);
             }
 
+            System.out.println("STAGE ONE - 2");
+
             Sheet sheet = workbook.getSheetAt(0);
+
+            System.out.println("STAGE ONE - 2.1.0");
 
             //For each row in the sheet extract the student details
             for(Row row : sheet) {
+
+                System.out.println("STAGE ONE - 2.1.1");
+
                 if(row.getRowNum() == 0) continue;
                 AssumptionOfDuty currentDuty = dutyUtil.buildDutyFromExcel(row, param);
-                //Ensure student does not already exist
-                Optional<AssumptionOfDuty> dutyCheck = assumptionOfDutyRepository.findById(currentDuty.getId());
-                if(dutyCheck.isEmpty()) {
+
+                System.out.println("currentDuty = " + currentDuty);
+
+                System.out.println("STAGE ONE - 2.1");
+
+                //Ensure assumption does not already exist
+                assumptionOfDutyRepository.findById(currentDuty.getId()).orElseGet(() -> {
                     currentDuty.setInternship(!param.internship());
                     assumptionOfDuties.add(currentDuty);
-                }
+                    return null;}
+                );
             }
-            assumptionOfDutyRepository.saveAll(assumptionOfDuties);
+
+            System.out.println("STAGE ONE - 3");
+
+//            assumptionOfDutyRepository.saveAll(assumptionOfDuties);
             return ResponseEntity.status(HttpStatus.CREATED).body(new Response.Builder<>()
                     .status(HttpStatus.CREATED.value())
                     .message("assumption of duties created successfully")
