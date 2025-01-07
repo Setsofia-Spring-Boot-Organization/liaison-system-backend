@@ -23,6 +23,8 @@ public class AssumptionOfDutyUtil {
 
     public AssumptionOfDuty buildDutyFromExcel(Row row, ConstantRequestParam param) {
 
+        System.out.println("adminUtil.getCellValueAsString(row.getCell(0)) = " + adminUtil.getCellValueAsString(row.getCell(0)));
+
         AssumptionOfDuty assumption = new AssumptionOfDuty();
 
         assumption.setStudentId(adminUtil.getCellValueAsString(row.getCell(0)));
@@ -37,29 +39,29 @@ public class AssumptionOfDutyUtil {
         assumption.setEndOfAcademicYear(UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()));
 
         assumption.setSemester(param.semester());
-
-        // use the Google map service to find the lng and lat of the place
-        GoogleMapServices googleMapServices = new GoogleMapServices();
-        GMapLocation location = googleMapServices.getCoordinates(adminUtil.getCellValueAsString(row.getCell(8)));
-
-        CompanyDetails companyDetails = new CompanyDetails();
-        companyDetails.setCompanyName(adminUtil.getCellValueAsString(row.getCell(6)));
-        companyDetails.setCompanyPhone(adminUtil.getCellValueAsString(row.getCell(7)));
-        companyDetails.setCompanyExactLocation(adminUtil.getCellValueAsString(row.getCell(8)));
-
-        companyDetails.setCompanyTown(adminUtil.getCellValueAsString(row.getCell(9)));
-        companyDetails.setCompanyRegion(adminUtil.getCellValueAsString(row.getCell(10)));
-        companyDetails.setCompanyAddress(adminUtil.getCellValueAsString(row.getCell(11)));
-
-        companyDetails.setCompanyEmail(adminUtil.getCellValueAsString(row.getCell(12)));
-        companyDetails.setCompanySupervisor(adminUtil.getCellValueAsString(row.getCell(13)));
-        companyDetails.setSupervisorPhone(adminUtil.getCellValueAsString(row.getCell(14)));
-
-        companyDetails.setLetterTo(adminUtil.getCellValueAsString(row.getCell(15)));
-        companyDetails.setCompanyLongitude(location.lng());
-        companyDetails.setCompanyLatitude(location.lat());
-
-        assumption.setCompanyDetails(companyDetails);
+//
+//        // use the Google map service to find the lng and lat of the place
+//        GoogleMapServices googleMapServices = new GoogleMapServices();
+//        GMapLocation location = googleMapServices.getCoordinates(adminUtil.getCellValueAsString(row.getCell(8)));
+//
+//        CompanyDetails companyDetails = new CompanyDetails();
+//        companyDetails.setCompanyName(adminUtil.getCellValueAsString(row.getCell(6)));
+//        companyDetails.setCompanyPhone(adminUtil.getCellValueAsString(row.getCell(7)));
+//        companyDetails.setCompanyExactLocation(adminUtil.getCellValueAsString(row.getCell(8)));
+//
+//        companyDetails.setCompanyTown(adminUtil.getCellValueAsString(row.getCell(9)));
+//        companyDetails.setCompanyRegion(adminUtil.getCellValueAsString(row.getCell(10)));
+//        companyDetails.setCompanyAddress(adminUtil.getCellValueAsString(row.getCell(11)));
+//
+//        companyDetails.setCompanyEmail(adminUtil.getCellValueAsString(row.getCell(12)));
+//        companyDetails.setCompanySupervisor(adminUtil.getCellValueAsString(row.getCell(13)));
+//        companyDetails.setSupervisorPhone(adminUtil.getCellValueAsString(row.getCell(14)));
+//
+//        companyDetails.setLetterTo(adminUtil.getCellValueAsString(row.getCell(15)));
+//        companyDetails.setCompanyLongitude(location.lng());
+//        companyDetails.setCompanyLatitude(location.lat());
+//
+//        assumption.setCompanyDetails(companyDetails);
 
         return assumption;
     }
