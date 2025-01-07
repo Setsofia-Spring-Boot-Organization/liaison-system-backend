@@ -31,13 +31,14 @@ public class GoogleMapServices {
                     .getJSONObject(0)
                     .getJSONObject("geometry")
                     .getJSONObject("location");
-
             double lat = location.getDouble("lat");
             double lng = location.getDouble("lng");
 
             return new GMapLocation(lat, lng);
+        } else {
+            System.out.println("LOCATION DOES NOT EXIST: " + placeName);
+            throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS.label));
         }
 
-        throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS.label));
     }
 }
