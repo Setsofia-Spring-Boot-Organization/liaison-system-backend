@@ -24,9 +24,6 @@ public interface AssumptionOfDutyRepository extends JpaRepository<AssumptionOfDu
 
     default Optional<AssumptionOfDuty> findAssumptionOfDutyByStudentId(String id, ConstantRequestParam param) {
 
-        LocalDateTime startDate = UAcademicYear.startOfAcademicYear(param.startOfAcademicYear());
-        LocalDateTime endDate = UAcademicYear.endOfAcademicYear(param.endOfAcademicYear());
-
         return findOne((root, query, criteriaBuilder) -> {
             // Create a subquery to find the maximum dateCreated
             assert query != null;
@@ -36,8 +33,8 @@ public interface AssumptionOfDutyRepository extends JpaRepository<AssumptionOfDu
                     .where(criteriaBuilder.and(
                             criteriaBuilder.equal(subRoot.get("studentId"), id),
                             criteriaBuilder.equal(subRoot.get("semester"), param.semester()),
-                            criteriaBuilder.greaterThanOrEqualTo(root.get("startOfAcademicYear"), startDate),
-                            criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), endDate)
+                            criteriaBuilder.greaterThanOrEqualTo(root.get("startOfAcademicYear"), UAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
+                            criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()))
                     ));
 
             // Main query: Find the entity where dateCreated matches the maximum
@@ -46,6 +43,18 @@ public interface AssumptionOfDutyRepository extends JpaRepository<AssumptionOfDu
                     criteriaBuilder.equal(root.get("dateCreated"), subquery)
             );
         });
+    }
+
+    default Optional<AssumptionOfDuty> findDutyByStudentId(String studentId, ConstantRequestParam param) {
+        Specification<AssumptionOfDuty> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
+                criteriaBuilder.equal(root.get("studentId"), studentId),
+                criteriaBuilder.greaterThanOrEqualTo(root.get("startOfAcademicYear"), UAcademicYear.startOfAcademicYear(param.startOfAcademicYear())),
+                criteriaBuilder.lessThanOrEqualTo(root.get("endOfAcademicYear"), UAcademicYear.endOfAcademicYear(param.endOfAcademicYear())),
+                criteriaBuilder.equal(root.get("semester"), param.semester()),
+                criteriaBuilder.equal(root.get("isInternship"), param.internship())
+        );
+
+        return findOne(specification);
     }
 
     @Override
