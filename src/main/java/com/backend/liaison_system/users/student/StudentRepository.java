@@ -28,6 +28,22 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
     Optional<Student> findStudentByStudentEmail(String email);
 
     /**
+     * Finds a student by their email address.
+     * This method retrieves a student from the database or storage system based on the provided email address.
+     * If a student with the given email exists, an {@link Optional} containing the student will be returned.
+     * If no student is found, an empty {@link Optional} will be returned.
+     *
+     * @param email the email address of the student to be retrieved
+     * @return an {@link Optional} containing the student if found, or an empty {@link Optional} if no student is found with the provided email
+     * @throws IllegalArgumentException if the provided email is {@code null} or empty
+     */
+    default Optional<Student> findByEmail(String email) {
+        Specification<Student> specification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("email"), email);
+        return findOne(specification);
+    };
+
+    /**
      * This method that queries the data and returns students that match the specified specifications.
      *
      * @param param the ConstantRequestParam Object
@@ -60,4 +76,6 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
     @Transactional
     @Query(value = "DROP TABLE IF EXISTS student", nativeQuery = true)
     void dropStudentTable();
+
+    Student findStudentByEmail(String email);
 }
