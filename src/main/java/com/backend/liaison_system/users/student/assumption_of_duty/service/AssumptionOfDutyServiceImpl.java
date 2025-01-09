@@ -363,8 +363,9 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
             Sheet sheet = workbook.getSheetAt(0);
             for(Row row : sheet) {
                 if(row.getRowNum() == 0) continue;
-                AssumptionOfDuty currentDuty = dutyUtil.buildDutyFromExcel(row, param);
 
+                //Create an instance of the duty
+                AssumptionOfDuty currentDuty = dutyUtil.buildDutyFromExcel(row, param);
 
                 //Ensure assumption does not already exist
                 Optional<AssumptionOfDuty> dutyCheck = assumptionOfDutyRepository.findAssumptionOfDutyByStudentId(currentDuty.getStudentId(), param);
@@ -374,13 +375,14 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
                 }
             }
 
+
             System.out.println("assumptionOfDuties = " + assumptionOfDuties);
-
-
-//            assumptionOfDutyRepository.saveAll(assumptionOfDuties);
+            List<AssumptionOfDuty> savedDuties = assumptionOfDutyRepository.saveAllAndFlush(assumptionOfDuties);
+            System.out.println("savedDuties = " + savedDuties);
             return ResponseEntity.status(HttpStatus.CREATED).body(new Response.Builder<>()
                     .status(HttpStatus.CREATED.value())
                     .message("assumption of duties created successfully")
+                    .data(savedDuties)
                     .build()
             );
         } catch (Exception e) {

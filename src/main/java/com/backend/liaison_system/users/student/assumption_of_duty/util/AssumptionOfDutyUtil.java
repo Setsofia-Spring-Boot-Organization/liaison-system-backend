@@ -39,8 +39,8 @@ public class AssumptionOfDutyUtil {
         assumption.setSemester(param.semester());
 
         // use the Google map service to find the lng and lat of the place
-        GoogleMapServices googleMapServices = new GoogleMapServices();
-        GMapLocation location = googleMapServices.getCoordinates(adminUtil.getCellValueAsString(row.getCell(8)));
+//        GoogleMapServices googleMapServices = new GoogleMapServices();
+//        GMapLocation location = googleMapServices.getCoordinates(adminUtil.getCellValueAsString(row.getCell(8)));
 
         CompanyDetails companyDetails = new CompanyDetails();
         companyDetails.setCompanyName(adminUtil.getCellValueAsString(row.getCell(6)));
@@ -56,8 +56,8 @@ public class AssumptionOfDutyUtil {
         companyDetails.setSupervisorPhone(adminUtil.getCellValueAsString(row.getCell(14)));
 
         companyDetails.setLetterTo(adminUtil.getCellValueAsString(row.getCell(15)));
-        companyDetails.setCompanyLongitude(location.lng());
-        companyDetails.setCompanyLatitude(location.lat());
+//        companyDetails.setCompanyLongitude(location.lng());
+//        companyDetails.setCompanyLatitude(location.lat());
 
         assumption.setCompanyDetails(companyDetails);
 
