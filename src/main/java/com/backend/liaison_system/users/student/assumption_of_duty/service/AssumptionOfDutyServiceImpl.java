@@ -52,16 +52,16 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
     private final StudentUtil studentUtil;
     private final OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository;
     private final AdminUtil adminUtil;
-    private final AssumptionOfDutyUtil dutyUtil;
+    private final AssumptionOfDutyUtil assumptionOfDutyUtil;
 
-    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil, OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository, AdminUtil adminUtil, AssumptionOfDutyUtil dutyUtil) {
+    public AssumptionOfDutyServiceImpl(StudentRepository studentRepository, AssumptionOfDutyRepository assumptionOfDutyRepository, RegionUtil regionUtil, StudentUtil studentUtil, OldAssumptionOfDutyRepository oldAssumptionOfDutyRepository, AdminUtil adminUtil, AssumptionOfDutyUtil assumptionOfDutyUtil) {
         this.studentRepository = studentRepository;
         this.assumptionOfDutyRepository = assumptionOfDutyRepository;
         this.regionUtil = regionUtil;
         this.studentUtil = studentUtil;
         this.oldAssumptionOfDutyRepository = oldAssumptionOfDutyRepository;
         this.adminUtil = adminUtil;
-        this.dutyUtil = dutyUtil;
+        this.assumptionOfDutyUtil = assumptionOfDutyUtil;
     }
 
 
@@ -116,24 +116,28 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
     private AssumptionOfDuty createAssumption(ConstantRequestParam param, CreateNewAssumptionOfDuty newAssumptionOfDuty, Student student) {
 
         AssumptionOfDuty assumption = new AssumptionOfDuty();
+        Optional<AssumptionOfDuty> dutyCheck = assumptionOfDutyRepository.findDutyByStudentId(student.getId(), param);
+        if (dutyCheck.isEmpty()) {
+            assumption.setStudentId(student.getId());
+            assumption.setStudentIndexNumber(student.getEmail());
 
-        assumption.setStudentId(student.getId());
-        assumption.setDateCreated(LocalDateTime.now());
-        assumption.setDateUpdated(LocalDateTime.now());
-        assumption.setUpdated(false);
+            assumption.setDateCreated(LocalDateTime.now());
+            assumption.setDateUpdated(LocalDateTime.now());
+            assumption.setUpdated(false);
 
-        assumption.setDateCommenced(newAssumptionOfDuty.dateCommenced());
+            assumption.setDateCommenced(newAssumptionOfDuty.dateCommenced());
 
-        assumption.setInternship(param.internship());
-        assumption.setStartOfAcademicYear(UAcademicYear.startOfAcademicYear(param.startOfAcademicYear()));
-        assumption.setEndOfAcademicYear(UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()));
+            assumption.setInternship(param.internship());
+            assumption.setStartOfAcademicYear(UAcademicYear.startOfAcademicYear(param.startOfAcademicYear()));
+            assumption.setEndOfAcademicYear(UAcademicYear.endOfAcademicYear(param.endOfAcademicYear()));
 
-        assumption.setSemester(param.semester());
+            assumption.setSemester(param.semester());
 
-        // get the company details
-        CompanyDetails companyDetails = createCompanyDetails(newAssumptionOfDuty);
+            // get the company details
+            CompanyDetails companyDetails = createCompanyDetails(newAssumptionOfDuty);
 
-        assumption.setCompanyDetails(companyDetails);
+            assumption.setCompanyDetails(companyDetails);
+        }
 
         try {
             return assumptionOfDutyRepository.save(assumption);
@@ -227,7 +231,9 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
     protected void createOldAssumptionOfDuty(AssumptionOfDuty assumptionOfDuty) {
         OldAssumptionOfDuty oldAssumptionOfDuty = new OldAssumptionOfDuty();
 
-        oldAssumptionOfDuty.setStudentId(oldAssumptionOfDuty.getStudentId());
+        oldAssumptionOfDuty.setStudentId(assumptionOfDuty.getStudentId());
+        oldAssumptionOfDuty.setStudentIndexNumber(assumptionOfDuty.getStudentIndexNumber());
+
         oldAssumptionOfDuty.setUpdatedAssumptionOfDutyId(assumptionOfDuty.getId());
 
         oldAssumptionOfDuty.setDateCreated(assumptionOfDuty.getDateCreated());
@@ -314,7 +320,8 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         adminUtil.verifyUserIsAdmin(adminId);
 
         List<Attachments> attachments = new ArrayList<>();
-        assumptionOfDutyRepository.findAllDutiesWithPagination(param, page, size).forEach(assumption -> studentRepository.findById(assumption.getStudentId()).ifPresent(
+        assumptionOfDutyRepository.findAllDutiesWithPagination(param, page, size).forEach(assumption ->
+                studentRepository.findById(assumption.getStudentId()).ifPresent(
                 student -> attachments.add(
                         new Attachments(
                                 student.getId(),
@@ -345,7 +352,7 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         try {
 
             //create an arrayList of students
-            List<AssumptionOfDuty> assumptionOfDuties = new ArrayList<>();
+            List<AssumptionOfDuty> assumptions = new ArrayList<>();
 
             //Turn the file into an InputStream and turn into a workbook
             InputStream inputStream = new BufferedInputStream(file.getInputStream());
@@ -358,32 +365,32 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
                 throw new LiaisonException(ERROR_SAVING_DATA);
             }
 
-            //For each row in the sheet extract the student details
             Sheet sheet = workbook.getSheetAt(0);
+
+            //For each row in the sheet extract the student details
             for(Row row : sheet) {
                 if(row.getRowNum() == 0) continue;
 
-                //Create an instance of the duty
-                AssumptionOfDuty currentDuty = dutyUtil.buildDutyFromExcel(row, param);
+                String studentEmail = adminUtil.getCellValueAsString(row.getCell(0));
 
-                //Ensure assumption does not already exist
-                Optional<AssumptionOfDuty> dutyCheck = assumptionOfDutyRepository.findDutyByStudentId(currentDuty.getStudentId(), param);
-                if(dutyCheck.isEmpty()) {
-                    currentDuty.setInternship(!param.internship());
-                    assumptionOfDuties.add(currentDuty);
-                }
+                Optional<Student> student = studentRepository.findStudentByStudentEmail(studentEmail);
+                student.ifPresent(stud -> {
+
+                    Optional<AssumptionOfDuty> dutyCheck = assumptionOfDutyRepository.findDutyByStudentId(stud.getId(), param);
+                    if (dutyCheck.isEmpty()) {
+                        AssumptionOfDuty assumption = assumptionOfDutyUtil.buildDutyFromExcel(row, param, stud.getEmail());
+                        assumptions.add(assumption);
+                    }
+                });
             }
 
+            List<AssumptionOfDuty> savedDuties = assumptionOfDutyRepository.saveAll(assumptions);
 
-            System.out.println("assumptionOfDuties = " + assumptionOfDuties);
-            List<AssumptionOfDuty> savedDuties = assumptionOfDutyRepository.saveAllAndFlush(assumptionOfDuties);
-            System.out.println("savedDuties = " + savedDuties);
             return ResponseEntity.status(HttpStatus.CREATED).body(new Response.Builder<>()
-                    .status(HttpStatus.CREATED.value())
-                    .message("assumption of duties created successfully")
-                    .data(savedDuties)
-                    .build()
-            );
+                            .status(HttpStatus.CREATED.value())
+                            .message("attachments uploaded successfully")
+                            .data(savedDuties)
+                            .build());
         } catch (Exception e) {
             throw new LiaisonException(ERROR_SAVING_DATA);
         }
