@@ -39,6 +39,5 @@ public class GoogleMapServices {
             System.out.println("LOCATION DOES NOT EXIST: " + placeName);
             throw new LiaisonException(Error.ERROR_SAVING_DATA, new Throwable(Message.THE_EXACT_COMPANY_LOCATION_DOES_NOT_EXISTS.label));
         }
-
     }
 }

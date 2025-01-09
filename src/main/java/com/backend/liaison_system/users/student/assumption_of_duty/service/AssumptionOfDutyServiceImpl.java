@@ -376,10 +376,13 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
             }
 
 
-            assumptionOfDutyRepository.saveAll(assumptionOfDuties);
+            System.out.println("assumptionOfDuties = " + assumptionOfDuties);
+            List<AssumptionOfDuty> savedDuties = assumptionOfDutyRepository.saveAllAndFlush(assumptionOfDuties);
+            System.out.println("savedDuties = " + savedDuties);
             return ResponseEntity.status(HttpStatus.CREATED).body(new Response.Builder<>()
                     .status(HttpStatus.CREATED.value())
                     .message("assumption of duties created successfully")
+                    .data(savedDuties)
                     .build()
             );
         } catch (Exception e) {
