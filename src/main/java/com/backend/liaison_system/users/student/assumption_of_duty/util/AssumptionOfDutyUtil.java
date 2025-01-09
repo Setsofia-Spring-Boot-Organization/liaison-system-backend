@@ -1,8 +1,6 @@
 package com.backend.liaison_system.users.student.assumption_of_duty.util;
 
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
-import com.backend.liaison_system.google_maps.GoogleMapServices;
-import com.backend.liaison_system.google_maps.responses.GMapLocation;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.CompanyDetails;
@@ -38,10 +36,6 @@ public class AssumptionOfDutyUtil {
 
         assumption.setSemester(param.semester());
 
-        // use the Google map service to find the lng and lat of the place
-//        GoogleMapServices googleMapServices = new GoogleMapServices();
-//        GMapLocation location = googleMapServices.getCoordinates(adminUtil.getCellValueAsString(row.getCell(8)));
-
         CompanyDetails companyDetails = new CompanyDetails();
         companyDetails.setCompanyName(adminUtil.getCellValueAsString(row.getCell(6)));
         companyDetails.setCompanyPhone(adminUtil.getCellValueAsString(row.getCell(7)));
@@ -56,8 +50,12 @@ public class AssumptionOfDutyUtil {
         companyDetails.setSupervisorPhone(adminUtil.getCellValueAsString(row.getCell(14)));
 
         companyDetails.setLetterTo(adminUtil.getCellValueAsString(row.getCell(15)));
-//        companyDetails.setCompanyLongitude(location.lng());
-//        companyDetails.setCompanyLatitude(location.lat());
+
+        double lat = Double.parseDouble(adminUtil.getCellValueAsString(row.getCell(16)));
+        double lng = Double.parseDouble(adminUtil.getCellValueAsString(row.getCell(17)));
+
+        companyDetails.setCompanyLongitude(lng);
+        companyDetails.setCompanyLatitude(lat);
 
         assumption.setCompanyDetails(companyDetails);
 
