@@ -19,6 +19,7 @@ import com.backend.liaison_system.users.student.Student;
 import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
+import com.backend.liaison_system.users.student.assumption_of_duty.service.AssumptionOfDutyServiceImpl;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.usermodel.Row;
@@ -137,17 +138,7 @@ public class AdminServiceImpl implements AdminService{
             List<Student> students = new ArrayList<>();
 
             //Turn the file into an InputStream and turn into a workbook
-            InputStream inputStream = new BufferedInputStream(file.getInputStream());
-            Workbook workbook;
-            if (FileMagic.valueOf(inputStream) == FileMagic.OOXML) {
-                workbook = new XSSFWorkbook(inputStream); // For `.xlsx` files
-            } else if (FileMagic.valueOf(inputStream) == FileMagic.OLE2) {
-                workbook = new HSSFWorkbook(inputStream); // For `.xls` files
-            } else  {
-                throw new LiaisonException(ERROR_SAVING_DATA);
-            }
-
-            Sheet sheet = workbook.getSheetAt(0);
+            AssumptionOfDutyServiceImpl.createWorkbook(file);
 
             //For each row in the sheet extract the student details
             for(Row row : sheet) {
