@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -355,17 +356,7 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
             List<AssumptionOfDuty> assumptions = new ArrayList<>();
 
             //Turn the file into an InputStream and turn into a workbook
-            InputStream inputStream = new BufferedInputStream(file.getInputStream());
-            Workbook workbook;
-            if (FileMagic.valueOf(inputStream) == FileMagic.OOXML) {
-                workbook = new XSSFWorkbook(inputStream); // For `.xlsx` files
-            } else if (FileMagic.valueOf(inputStream) == FileMagic.OLE2) {
-                workbook = new HSSFWorkbook(inputStream); // For `.xls` files
-            } else  {
-                throw new LiaisonException(ERROR_SAVING_DATA);
-            }
-
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = createWorkbook(file);
 
             //For each row in the sheet extract the student details
             for(Row row : sheet) {
@@ -394,5 +385,19 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
         } catch (Exception e) {
             throw new LiaisonException(ERROR_SAVING_DATA);
         }
+    }
+
+    public static Sheet createWorkbook(MultipartFile file) throws IOException {
+        InputStream inputStream = new BufferedInputStream(file.getInputStream());
+        Workbook workbook;
+        if (FileMagic.valueOf(inputStream) == FileMagic.OOXML) {
+            workbook = new XSSFWorkbook(inputStream); // For `.xlsx` files
+        } else if (FileMagic.valueOf(inputStream) == FileMagic.OLE2) {
+            workbook = new HSSFWorkbook(inputStream); // For `.xls` files
+        } else  {
+            throw new LiaisonException(ERROR_SAVING_DATA);
+        }
+
+        return workbook.getSheetAt(0);
     }
 }
