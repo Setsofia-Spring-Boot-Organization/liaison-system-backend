@@ -20,12 +20,8 @@ import com.backend.liaison_system.users.student.StudentRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.entities.AssumptionOfDuty;
 import com.backend.liaison_system.users.student.assumption_of_duty.repository.AssumptionOfDutyRepository;
 import com.backend.liaison_system.users.student.assumption_of_duty.service.AssumptionOfDutyServiceImpl;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,8 +31,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -138,7 +132,7 @@ public class AdminServiceImpl implements AdminService{
             List<Student> students = new ArrayList<>();
 
             //Turn the file into an InputStream and turn into a workbook
-            AssumptionOfDutyServiceImpl.createWorkbook(file);
+            Sheet sheet = AssumptionOfDutyServiceImpl.createWorkbook(file);
 
             //For each row in the sheet extract the student details
             for(Row row : sheet) {
