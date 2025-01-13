@@ -366,7 +366,6 @@ public class AssumptionOfDutyServiceImpl implements AssumptionOfDutyService {
 
                 Optional<Student> student = studentRepository.findStudentByStudentEmail(studentEmail);
                 student.ifPresent(stud -> {
-
                     Optional<AssumptionOfDuty> dutyCheck = assumptionOfDutyRepository.findDutyByStudentId(stud.getId(), param);
                     if (dutyCheck.isEmpty()) {
                         AssumptionOfDuty assumption = assumptionOfDutyUtil.buildDutyFromExcel(row, param, stud.getEmail());
