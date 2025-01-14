@@ -163,9 +163,11 @@ public class LecturerServiceImpl implements LecturerService {
         studentData.sort(Comparator.comparing(StudentDto::isSupervised));
 
         Set<Lecturer> lecturers = new HashSet<>();
-        atomicZone.getLecturers().lecturers().forEach(lecturerId -> lecturerRepository.findById(lecturerId).ifPresent(
-                lecturers::add
-        ));
+        if (atomicZone != null) {
+            atomicZone.getLecturers().lecturers().forEach(lecturerId -> lecturerRepository.findById(lecturerId).ifPresent(
+                    lecturers::add
+            ));
+        }
 
         LecturerDashboardDataRes dataRes = new LecturerDashboardDataRes(
                 new StudentsData(studentData, students.size()),
@@ -174,7 +176,7 @@ public class LecturerServiceImpl implements LecturerService {
                         companies,
                         companies.size()
                 ),
-                new OtherLecturersData(lecturers, atomicZone.getLecturers().lecturers().size())
+                (atomicZone == null)? new OtherLecturersData(Set.of(), 0) : new OtherLecturersData(lecturers, atomicZone.getLecturers().lecturers().size())
         );
 
         Response<?> response = new Response.Builder<>()
