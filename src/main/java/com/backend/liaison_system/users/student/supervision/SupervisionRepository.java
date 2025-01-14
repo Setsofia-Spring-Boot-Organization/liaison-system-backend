@@ -3,8 +3,11 @@ package com.backend.liaison_system.users.student.supervision;
 import com.backend.liaison_system.common.requests.ConstantRequestParam;
 import com.backend.liaison_system.enums.InternshipType;
 import com.backend.liaison_system.util.UAcademicYear;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -30,4 +33,9 @@ public interface SupervisionRepository extends CrudRepository<Supervision, Strin
         );
         return findAll(specification);
     }
+
+    @Modifying
+    @Transactional
+    @Query(value = "DROP TABLE IF EXISTS supervision", nativeQuery = true)
+    void dropSupervisionTable();
 }
