@@ -132,32 +132,34 @@ public class LecturerServiceImpl implements LecturerService {
 
         List<Student> students = new ArrayList<>();
         Map<String, Integer> companies = new HashMap<>();
-        duties.forEach(assumptionOfDuty -> {
-            studentRepository.findById(assumptionOfDuty.getStudentId()).ifPresent(student -> {
+        duties.forEach(assumptionOfDuty -> studentRepository.findById(assumptionOfDuty.getStudentId()).ifPresent(student -> {
 
-                // add the student to the students list
-                students.add(student);
+            // add the student to the students list
+            students.add(student);
 
-                // add the company to the companies list
-                String companyName = (assumptionOfDuty.getCompanyDetails().getCompanyName());
-                if (companies.containsKey(companyName)) {
-                    int count = companies.get(companyName);
-                    companies.put(companyName, count + 1);
-                } else {
-                    companies.put(companyName, 1);
-                }
-            });
-        });
+            // add the company to the companies list
+            String companyName = (assumptionOfDuty.getCompanyDetails().getCompanyName());
+            if (companies.containsKey(companyName)) {
+                int count = companies.get(companyName);
+                companies.put(companyName, count + 1);
+            } else {
+                companies.put(companyName, 1);
+            }
+        }));
 
         // put the data together
         List<StudentDto> studentData = new ArrayList<>(students.stream().map(adminUtil::buildStudentDtoFromStudent).toList());
         studentData.sort(Comparator.comparing(StudentDto::isSupervised));
 
+        Set<Lecturer> lecturers = new HashSet<>();
+        atomicZone.getLecturers().lecturers().forEach(lecturerId -> lecturerRepository.findById(lecturerId).ifPresent(
+                lecturers::add
+        ));
+
         LecturerDashboardDataRes dataRes = new LecturerDashboardDataRes(
                 new StudentsData(studentData, students.size()),
                 new CompaniesData(companies, companies.size()),
-                atomicZone != null? new OtherLecturersData(atomicZone.getLecturers().lecturers(), atomicZone.getLecturers().lecturers().size()) :
-                                    new OtherLecturersData(Set.of(), 0)
+                new OtherLecturersData(lecturers, atomicZone.getLecturers().lecturers().size())
         );
 
         Response<?> response = new Response.Builder<>()
