@@ -100,7 +100,6 @@ public class StudentServiceImpl implements StudentService{
                 .flatMap(assumptionOfDuty -> zoneRepository.findZoneByRegionAndTown(assumptionOfDuty.getCompanyDetails().getCompanyRegion(), assumptionOfDuty.getCompanyDetails().getCompanyTown(), param))
                 .ifPresent(zone -> lecturers.addAll(zone.getLecturers().lecturers()));
 
-
         List<AssignedLecturer> assignedLecturers = new ArrayList<>();
         for (String id : lecturers) {
             lecturerRepository.findById(id).map(
