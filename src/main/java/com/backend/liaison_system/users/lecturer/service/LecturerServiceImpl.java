@@ -7,6 +7,7 @@ import com.backend.liaison_system.enums.UserRoles;
 import com.backend.liaison_system.exception.Error;
 import com.backend.liaison_system.exception.LiaisonException;
 import com.backend.liaison_system.exception.Message;
+import com.backend.liaison_system.users.admin.dao.CompanyDetails;
 import com.backend.liaison_system.users.admin.dao.StudentLocationData;
 import com.backend.liaison_system.users.admin.dto.StudentDto;
 import com.backend.liaison_system.users.admin.util.AdminUtil;
@@ -132,6 +133,8 @@ public class LecturerServiceImpl implements LecturerService {
 
         List<Student> students = new ArrayList<>();
         Map<String, Integer> companies = new HashMap<>();
+        Set<CompanyDetails> companyDetails = new HashSet<>();
+
         duties.forEach(assumptionOfDuty -> studentRepository.findById(assumptionOfDuty.getStudentId()).ifPresent(student -> {
 
             // add the student to the students list
@@ -142,8 +145,16 @@ public class LecturerServiceImpl implements LecturerService {
             if (companies.containsKey(companyName)) {
                 int count = companies.get(companyName);
                 companies.put(companyName, count + 1);
+
             } else {
                 companies.put(companyName, 1);
+                companyDetails.add(new CompanyDetails(
+                        assumptionOfDuty.getCompanyDetails().getCompanyName(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyEmail(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyPhone(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyRegion(),
+                        assumptionOfDuty.getCompanyDetails().getCompanyExactLocation()
+                ));
             }
         }));
 
@@ -158,7 +169,11 @@ public class LecturerServiceImpl implements LecturerService {
 
         LecturerDashboardDataRes dataRes = new LecturerDashboardDataRes(
                 new StudentsData(studentData, students.size()),
-                new CompaniesData(companies, companies.size()),
+                new CompaniesData(
+                        companyDetails,
+                        companies,
+                        companies.size()
+                ),
                 new OtherLecturersData(lecturers, atomicZone.getLecturers().lecturers().size())
         );
 
